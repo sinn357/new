@@ -156,25 +156,38 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
         </div>
       )}
 
-      <div className="bg-white p-8 rounded-lg shadow-md mb-8">
-        <div className="flex justify-between items-start mb-4">
-          <h1 className="text-3xl font-bold text-gray-900">{post.title}</h1>
+      {/* 포스트 메인 영역 - 더 크고 눈에 띄게 */}
+      <div className="bg-white p-12 rounded-2xl shadow-lg mb-12 border border-gray-100">
+        <div className="flex justify-between items-start mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">{post.title}</h1>
           <button
             onClick={handleDeletePost}
-            className="text-red-500 hover:text-red-700 p-2 rounded-md hover:bg-red-50"
+            className="text-red-500 hover:text-red-700 p-3 rounded-lg hover:bg-red-50 transition-colors"
             title="포스트 삭제"
           >
             🗑️
           </button>
         </div>
-        <div className="text-sm text-gray-500 mb-6">
-          {new Date(post.createdAt).toLocaleString()}
+        <div className="text-base text-gray-500 mb-8 border-b border-gray-200 pb-6">
+          {new Date(post.createdAt).toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long'
+          })}
         </div>
-        <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{post.content}</p>
+        
+        {/* 포스트 내용 - 더 큰 텍스트와 여백 */}
+        <div className="prose prose-lg max-w-none">
+          <p className="text-gray-800 whitespace-pre-wrap leading-8 text-lg">
+            {post.content}
+          </p>
+        </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-2xl font-semibold mb-6">Comments ({comments.length})</h2>
+      {/* 댓글 영역 - 시각적으로 분리 */}
+      <div className="bg-gray-50 p-8 rounded-xl shadow-sm border border-gray-200">
+        <h2 className="text-xl font-semibold mb-4 text-gray-700">Comments ({comments.length})</h2>
         
         <form onSubmit={handleSubmit} className="mb-8 border-b pb-6">
           <div className="mb-4">
@@ -216,30 +229,30 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
           </button>
         </form>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {comments.length === 0 ? (
-            <div className="text-center text-gray-500 py-8">
+            <div className="text-center text-gray-500 py-6 text-sm">
               No comments yet. Be the first to comment!
             </div>
           ) : (
             comments.map((comment) => (
-              <div key={comment.id} className="border-l-4 border-gray-200 pl-4 py-3">
-                <div className="flex items-center justify-between mb-2">
+              <div key={comment.id} className="bg-white border-l-4 border-blue-200 pl-4 py-3 rounded-r-lg shadow-sm">
+                <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-900">{comment.author}</span>
-                    <span className="text-sm text-gray-500">
-                      {new Date(comment.createdAt).toLocaleString()}
+                    <span className="font-medium text-gray-800 text-sm">{comment.author}</span>
+                    <span className="text-xs text-gray-400">
+                      {new Date(comment.createdAt).toLocaleDateString('ko-KR')}
                     </span>
                   </div>
                   <button
                     onClick={() => handleDeleteComment(comment.id)}
-                    className="text-red-500 hover:text-red-700 p-1 rounded-md hover:bg-red-50"
+                    className="text-red-400 hover:text-red-600 p-1 rounded hover:bg-red-50 text-sm transition-colors"
                     title="댓글 삭제"
                   >
                     🗑️
                   </button>
                 </div>
-                <p className="text-gray-700 whitespace-pre-wrap">{comment.content}</p>
+                <p className="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed">{comment.content}</p>
               </div>
             ))
           )}
