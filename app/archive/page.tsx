@@ -11,7 +11,7 @@ export default function ArchivePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [category, setCategory] = useState<ArchiveCategory>('writing');
+  const [category, setCategory] = useState<ArchiveCategory>('business');
   const [tags, setTags] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -63,7 +63,7 @@ export default function ArchivePage() {
       // Reset form
       setTitle('');
       setContent('');
-      setCategory('writing');
+      setCategory('business');
       setTags('');
       setShowForm(false);
       

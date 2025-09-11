@@ -1,11 +1,19 @@
 import { prisma } from "@/lib/db";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     // 데이터베이스 연결 테스트
     await prisma.$connect();
     
-    const works = await prisma.work.findMany({ orderBy: { createdAt: "desc" } });
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get('category');
+    
+    const where = category ? { category } : {};
+    
+    const works = await prisma.work.findMany({ 
+      where,
+      orderBy: { createdAt: "desc" } 
+    });
     return Response.json({ works });
   } catch (error) {
     console.error('Database error:', error);
@@ -31,19 +39,27 @@ export async function POST(request: Request) {
     const { 
       title, 
       content, 
+      category = 'product',
       techStack = [], 
       githubUrl, 
       demoUrl, 
+      youtubeUrl,
+      instagramUrl,
       imageUrl, 
+      fileUrl,
       status = 'completed', 
       duration 
     } = body as { 
       title?: unknown; 
       content?: unknown; 
+      category?: string;
       techStack?: string[]; 
       githubUrl?: string; 
       demoUrl?: string; 
+      youtubeUrl?: string;
+      instagramUrl?: string;
       imageUrl?: string; 
+      fileUrl?: string;
       status?: string; 
       duration?: string; 
     };
@@ -57,7 +73,7 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log('Creating work with:', { title: title.trim(), content: content.trim(), techStack, githubUrl, demoUrl, imageUrl, status, duration });
+    console.log('Creating work with:', { title: title.trim(), content: content.trim(), category, techStack, githubUrl, demoUrl, youtubeUrl, instagramUrl, imageUrl, fileUrl, status, duration });
     
     // 데이터베이스 연결 확인
     await prisma.$connect();
@@ -66,10 +82,14 @@ export async function POST(request: Request) {
       data: { 
         title: title.trim(), 
         content: content.trim(),
+        category: category || 'product',
         techStack: Array.isArray(techStack) ? techStack : [],
         githubUrl: githubUrl || null,
         demoUrl: demoUrl || null,
+        youtubeUrl: youtubeUrl || null,
+        instagramUrl: instagramUrl || null,
         imageUrl: imageUrl || null,
+        fileUrl: fileUrl || null,
         status: status || 'completed',
         duration: duration || null
       } 

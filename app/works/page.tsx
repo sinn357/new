@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Work } from '@/lib/works-store';
+import { Work, WORK_CATEGORIES, WorkCategory } from '@/lib/works-store';
 import { useAdmin } from '@/contexts/AdminContext';
 
 const statusLabels = {
@@ -20,12 +20,18 @@ const statusColors = {
 export default function WorksPage() {
   const { isAdmin } = useAdmin();
   const [works, setWorks] = useState<Work[]>([]);
+  const [allWorks, setAllWorks] = useState<Work[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [category, setCategory] = useState<WorkCategory>('product');
   const [techStack, setTechStack] = useState<string>('');
   const [githubUrl, setGithubUrl] = useState('');
   const [demoUrl, setDemoUrl] = useState('');
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [instagramUrl, setInstagramUrl] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [fileUrl, setFileUrl] = useState('');
   const [status, setStatus] = useState<'completed' | 'in-progress' | 'planned'>('completed');
   const [duration, setDuration] = useState('');
   const [loading, setLoading] = useState(true);
@@ -33,9 +39,12 @@ export default function WorksPage() {
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
 
-  const fetchWorks = async () => {
+  const fetchWorks = async (categoryFilter?: string) => {
     try {
-      const response = await fetch('/api/works');
+      const url = categoryFilter 
+        ? `/api/works?category=${categoryFilter}`
+        : '/api/works';
+      const response = await fetch(url);
       const data = await response.json();
       setWorks(data.works || []);
     } catch {
@@ -45,9 +54,28 @@ export default function WorksPage() {
     }
   };
 
+  const fetchAllWorks = async () => {
+    try {
+      const response = await fetch('/api/works');
+      const data = await response.json();
+      return data.works || [];
+    } catch {
+      return [];
+    }
+  };
+
   useEffect(() => {
-    fetchWorks();
+    const loadWorks = async () => {
+      const all = await fetchAllWorks();
+      setAllWorks(all);
+      fetchWorks(selectedCategory || undefined);
+    };
+    loadWorks();
   }, []);
+
+  useEffect(() => {
+    fetchWorks(selectedCategory || undefined);
+  }, [selectedCategory]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,10 +91,14 @@ export default function WorksPage() {
         body: JSON.stringify({ 
           title: title.trim(), 
           content: content.trim(),
+          category,
           techStack: techStackArray,
           githubUrl: githubUrl.trim() || undefined,
           demoUrl: demoUrl.trim() || undefined,
+          youtubeUrl: youtubeUrl.trim() || undefined,
+          instagramUrl: instagramUrl.trim() || undefined,
           imageUrl: imageUrl.trim() || undefined,
+          fileUrl: fileUrl.trim() || undefined,
           status,
           duration: duration.trim() || undefined
         })
@@ -79,15 +111,21 @@ export default function WorksPage() {
       // Reset form
       setTitle('');
       setContent('');
+      setCategory('product');
       setTechStack('');
       setGithubUrl('');
       setDemoUrl('');
+      setYoutubeUrl('');
+      setInstagramUrl('');
       setImageUrl('');
+      setFileUrl('');
       setStatus('completed');
       setDuration('');
       setShowForm(false);
       
-      await fetchWorks();
+      const all = await fetchAllWorks();
+      setAllWorks(all);
+      await fetchWorks(selectedCategory || undefined);
     } catch {
       setError('Failed to create work');
     } finally {
@@ -113,7 +151,7 @@ export default function WorksPage() {
             My Works
           </h1>
           <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            제가 작업한 프로젝트들을 소개합니다. 각각의 작업물에는 사용된 기술과 경험이 담겨있습니다. 💻
+            프로덕트, 미디어, 포토그래피 등 다양한 작업물들을 소개합니다. 💻🎥📸
           </p>
           
           {isAdmin && (
@@ -124,6 +162,47 @@ export default function WorksPage() {
               {showForm ? '폼 숨기기' : '새 작업물 추가'}
             </button>
           )}
+        </div>
+      </section>
+
+      {/* Category Filter */}
+      <section className="px-6 pb-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">카테고리</h3>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setSelectedCategory('')}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${ 
+                  selectedCategory === '' 
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                전체 ({allWorks.length})
+              </button>
+              {Object.entries(WORK_CATEGORIES).map(([key, info]) => {
+                const categoryWorks = allWorks.filter(work => work.category === key);
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedCategory(key)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${ 
+                      selectedCategory === key 
+                        ? 'bg-blue-500 text-white' 
+                        : `${info.color} hover:opacity-80`
+                    }`}
+                  >
+                    <span>{info.icon}</span>
+                    {info.label}
+                    <span className="text-xs opacity-75">
+                      ({categoryWorks.length})
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -173,6 +252,24 @@ export default function WorksPage() {
                 </div>
 
                 <div>
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                    카테고리 *
+                  </label>
+                  <select
+                    id="category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value as WorkCategory)}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    {Object.entries(WORK_CATEGORIES).map(([key, info]) => (
+                      <option key={key} value={key}>
+                        {info.icon} {info.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
                   <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
                     설명 *
                   </label>
@@ -201,40 +298,77 @@ export default function WorksPage() {
                   />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 mb-2">
-                      GitHub URL
-                    </label>
-                    <input
-                      type="url"
-                      id="githubUrl"
-                      value={githubUrl}
-                      onChange={(e) => setGithubUrl(e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="https://github.com/username/repo"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="demoUrl" className="block text-sm font-medium text-gray-700 mb-2">
-                      데모 URL
-                    </label>
-                    <input
-                      type="url"
-                      id="demoUrl"
-                      value={demoUrl}
-                      onChange={(e) => setDemoUrl(e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="https://your-demo.com"
-                    />
-                  </div>
+                {/* Conditional URL Fields based on Category */}
+                <div className="space-y-6">
+                  {category === 'product' && (
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                          GitHub URL
+                        </label>
+                        <input
+                          type="url"
+                          id="githubUrl"
+                          value={githubUrl}
+                          onChange={(e) => setGithubUrl(e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="https://github.com/username/repo"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="demoUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                          데모 URL
+                        </label>
+                        <input
+                          type="url"
+                          id="demoUrl"
+                          value={demoUrl}
+                          onChange={(e) => setDemoUrl(e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="https://your-demo.com"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {category === 'media' && (
+                    <div>
+                      <label htmlFor="youtubeUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                        YouTube URL
+                      </label>
+                      <input
+                        type="url"
+                        id="youtubeUrl"
+                        value={youtubeUrl}
+                        onChange={(e) => setYoutubeUrl(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="https://www.youtube.com/watch?v=..."
+                      />
+                    </div>
+                  )}
+
+                  {category === 'photography' && (
+                    <div>
+                      <label htmlFor="instagramUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                        Instagram URL
+                      </label>
+                      <input
+                        type="url"
+                        id="instagramUrl"
+                        value={instagramUrl}
+                        onChange={(e) => setInstagramUrl(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="https://www.instagram.com/p/..."
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2">
-                      이미지 URL
+                      대표 이미지 URL
                     </label>
                     <input
                       type="url"
@@ -242,7 +376,7 @@ export default function WorksPage() {
                       value={imageUrl}
                       onChange={(e) => setImageUrl(e.target.value)}
                       className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="스크린샷 이미지 URL"
+                      placeholder="이미지 URL 입력"
                     />
                   </div>
                   
@@ -261,6 +395,20 @@ export default function WorksPage() {
                       <option value="planned">계획됨</option>
                     </select>
                   </div>
+                </div>
+
+                <div>
+                  <label htmlFor="fileUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                    파일 URL
+                  </label>
+                  <input
+                    type="url"
+                    id="fileUrl"
+                    value={fileUrl}
+                    onChange={(e) => setFileUrl(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="파일 URL 입력"
+                  />
                 </div>
                 
                 <button
@@ -323,9 +471,14 @@ export default function WorksPage() {
                   
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-3">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[work.status]}`}>
-                        {statusLabels[work.status]}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${WORK_CATEGORIES[work.category]?.color || 'bg-gray-100 text-gray-800'}`}>
+                          {WORK_CATEGORIES[work.category]?.icon} {WORK_CATEGORIES[work.category]?.label}
+                        </span>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[work.status]}`}>
+                          {statusLabels[work.status]}
+                        </span>
+                      </div>
                       {work.duration && (
                         <span className="text-xs text-gray-500">
                           ⏱ {work.duration}
@@ -390,6 +543,45 @@ export default function WorksPage() {
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </a>
+                        )}
+                        {work.youtubeUrl && (
+                          <a
+                            href={work.youtubeUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 text-gray-600 hover:text-red-600 transition-colors"
+                            title="YouTube"
+                          >
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                          </a>
+                        )}
+                        {work.instagramUrl && (
+                          <a
+                            href={work.instagramUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 text-gray-600 hover:text-pink-600 transition-colors"
+                            title="Instagram"
+                          >
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.070-4.85.070-3.204 0-3.584-.012-4.849-.070-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                          </a>
+                        )}
+                        {work.fileUrl && (
+                          <a
+                            href={work.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 text-gray-600 hover:text-purple-600 transition-colors"
+                            title="File"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                           </a>
                         )}

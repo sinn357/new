@@ -8,16 +8,20 @@ datasource db {
 }
 
 model Work {
-  id          String    @id @default(cuid())
-  title       String
-  content     String
-  techStack   String[]
-  githubUrl   String?
-  demoUrl     String?
-  imageUrl    String?
-  status      String    @default("completed") // "completed", "in-progress", "planned"
-  duration    String?
-  createdAt   DateTime  @default(now())
+  id           String    @id @default(cuid())
+  title        String
+  content      String
+  category     String    @default("product") // "product", "media", "photography"
+  techStack    String[]
+  githubUrl    String?
+  demoUrl      String?
+  youtubeUrl   String?
+  instagramUrl String?
+  imageUrl     String?
+  fileUrl      String?
+  status       String    @default("completed") // "completed", "in-progress", "planned"
+  duration     String?
+  createdAt    DateTime  @default(now())
 }
 
 model Archive {
