@@ -73,7 +73,11 @@ export async function POST(request: NextRequest) {
         ).end(buffer);
       });
 
-      const result = uploadResponse as any;
+      const result = uploadResponse as {
+        secure_url: string;
+        public_id: string;
+        [key: string]: unknown;
+      };
 
       return NextResponse.json({ 
         message: 'File uploaded successfully to cloud',
@@ -94,7 +98,7 @@ export async function POST(request: NextRequest) {
 
       try {
         await writeFile(filePath, buffer);
-      } catch (error) {
+      } catch {
         const { mkdir } = await import('fs/promises');
         await mkdir(uploadDir, { recursive: true });
         await writeFile(filePath, buffer);

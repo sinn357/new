@@ -58,7 +58,13 @@ export async function POST(request: NextRequest) {
       ).end(buffer);
     });
 
-    const result = uploadResponse as any;
+    const result = uploadResponse as {
+      secure_url: string;
+      public_id: string;
+      width?: number;
+      height?: number;
+      [key: string]: unknown;
+    };
 
     return NextResponse.json({ 
       message: 'File uploaded successfully',

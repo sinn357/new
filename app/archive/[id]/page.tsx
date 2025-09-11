@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Archive, ARCHIVE_CATEGORIES, ArchiveCategory } from '@/lib/archive-store';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAdmin } from '@/contexts/AdminContext';
 
 export default function ArchiveDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -184,12 +185,16 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
                         rel="noopener noreferrer"
                         className="inline-block"
                       >
-                        <img 
-                          src={archive.imageUrl} 
-                          alt="첨부 이미지"
-                          className="max-w-full h-auto rounded-md border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer"
-                          style={{ maxHeight: '300px' }}
-                        />
+                        <div className="relative max-w-full" style={{ maxHeight: '300px' }}>
+                          <Image 
+                            src={archive.imageUrl} 
+                            alt="첨부 이미지"
+                            width={400}
+                            height={300}
+                            className="rounded-md border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer object-contain"
+                            style={{ maxHeight: '300px', width: 'auto' }}
+                          />
+                        </div>
                       </a>
                     </div>
                   )}

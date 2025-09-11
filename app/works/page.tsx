@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Work, WORK_CATEGORIES, WorkCategory } from '@/lib/works-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
@@ -88,7 +89,7 @@ export default function WorksPage() {
       fetchWorks(selectedCategory || undefined);
     };
     loadWorks();
-  }, []);
+  }, [selectedCategory]);
 
   useEffect(() => {
     fetchWorks(selectedCategory || undefined);
@@ -608,9 +609,11 @@ export default function WorksPage() {
                 >
                   {work.imageUrl && (
                     <div className="h-48 bg-gray-100 overflow-hidden">
-                      <img
+                      <Image
                         src={work.imageUrl}
                         alt={work.title}
+                        width={400}
+                        height={192}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>

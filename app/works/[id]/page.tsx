@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Work } from '@/lib/works-store';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAdmin } from '@/contexts/AdminContext';
 
 const statusLabels = {
@@ -127,10 +128,12 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
             {work.imageUrl && (
               <div className="order-2 lg:order-1">
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-                  <img
+                  <Image
                     src={work.imageUrl}
                     alt={work.title}
-                    className="w-full h-auto"
+                    width={600}
+                    height={400}
+                    className="w-full h-auto object-cover"
                   />
                 </div>
               </div>
