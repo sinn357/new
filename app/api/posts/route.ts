@@ -23,25 +23,50 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    console.log('POST /api/posts - Start');
+    
     const body = await request.json();
+    console.log('Request body:', body);
+    
     const { title, content } = body as { title?: unknown; content?: unknown };
 
     if (typeof title !== "string" || typeof content !== "string" || 
         title.trim() === "" || content.trim() === "") {
+      console.log('Validation failed:', { title: typeof title, content: typeof content });
       return Response.json(
         { error: "Title and content must be non-empty strings" },
         { status: 400 }
       );
     }
 
+    console.log('Creating post with:', { title: title.trim(), content: content.trim() });
+    
+    // 데이터베이스 연결 확인
+    await prisma.$connect();
+    
     const post = await prisma.post.create({ 
       data: { title: title.trim(), content: content.trim() } 
     });
+    
+    console.log('Post created successfully:', post.id);
     return Response.json({ post }, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error('POST /api/posts error:', error);
+    console.error('Error type:', typeof error);
+    console.error('Error message:', error instanceof Error ? error.message : 'Unknown error');
+    
+    // JSON 파싱 에러 체크
+    if (error instanceof SyntaxError) {
+      return Response.json(
+        { error: "Invalid JSON format" },
+        { status: 400 }
+      );
+    }
+    
+    // 데이터베이스 에러 체크
     return Response.json(
-      { error: "Invalid JSON" },
-      { status: 400 }
+      { error: "Failed to create post", details: error instanceof Error ? error.message : 'Database error' },
+      { status: 500 }
     );
   }
 }
