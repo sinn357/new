@@ -2,9 +2,35 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import emailjs from '@emailjs/browser';
+
+interface FormData {
+  name: string;
+  email: string;
+  subject: string;
+  category: string;
+  message: string;
+}
+
+interface FormErrors {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+}
 
 export default function About() {
   const [showMore, setShowMore] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    subject: '',
+    category: 'general',
+    message: ''
+  });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const skills = [
     'JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js', 'Express',
@@ -14,6 +40,108 @@ export default function About() {
   const interests = [
     '웹 개발', '오픈소스', '새로운 기술', '문제 해결', '팀워크', '지식 공유'
   ];
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = '이름을 입력해주세요.';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = '이메일을 입력해주세요.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = '올바른 이메일 형식을 입력해주세요.';
+    }
+
+    if (!formData.subject.trim()) {
+      newErrors.subject = '제목을 입력해주세요.';
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = '메시지를 입력해주세요.';
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = '메시지는 최소 10자 이상 입력해주세요.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+    setStatus('idle');
+
+    try {
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error('EmailJS 환경변수가 설정되지 않았습니다');
+      }
+
+      emailjs.init(publicKey);
+
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        subject: formData.subject,
+        category: getCategoryLabel(formData.category),
+        message: formData.message,
+        to_name: '웹사이트 운영자',
+        reply_to: formData.email
+      };
+
+      await emailjs.send(serviceId, templateId, templateParams);
+      setStatus('success');
+      
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        category: 'general',
+        message: ''
+      });
+      setErrors({});
+    } catch (error) {
+      console.error('이메일 전송 실패:', error);
+      setStatus('error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getCategoryLabel = (category: string): string => {
+    const categoryMap: Record<string, string> = {
+      general: '일반 문의',
+      collaboration: '협업 제안',
+      technical: '기술 문의',
+      feedback: '피드백'
+    };
+    return categoryMap[category] || category;
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -141,25 +269,70 @@ export default function About() {
               </div>
             </div>
 
+            {/* 연락처 정보 섹션 */}
             <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-              <h3 className="text-xl font-bold text-gray-800 mb-6">연락하기</h3>
-              <p className="text-gray-600 mb-6">
-                프로젝트 협업이나 기술적인 이야기를 나누고 싶으시면 언제든 연락주세요!
-              </p>
+              <h3 className="text-xl font-bold text-gray-800 mb-6">연락처 정보</h3>
               
-              <div className="flex gap-4">
-                <Link
-                  href="/contact"
-                  className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
-                >
-                  연락하기
-                </Link>
-                <Link
-                  href="/posts"
-                  className="flex-1 border-2 border-gray-300 hover:border-gray-400 text-gray-700 py-3 px-6 rounded-lg font-medium transition-all duration-300 hover:bg-gray-50 text-center"
-                >
-                  포스트 보기
-                </Link>
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    📧
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-800">이메일</p>
+                    <p className="text-gray-600">your.email@example.com</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                    🌐
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-800">웹사이트</p>
+                    <p className="text-gray-600">https://your-blog.com</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    ⏰
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-800">응답 시간</p>
+                    <p className="text-gray-600">보통 24시간 이내</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Link
+                href="/works"
+                className="w-full block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
+              >
+                작업물 보기
+              </Link>
+            </div>
+            
+            {/* 연락 카테고리 정보 */}
+            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+              <h4 className="text-lg font-bold text-gray-800 mb-4">연락 카테고리</h4>
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span className="text-gray-700"><strong>일반 문의:</strong> 기본적인 질문이나 안내</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span className="text-gray-700"><strong>협업 제안:</strong> 프로젝트나 파트너십</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-gray-700"><strong>기술 문의:</strong> 개발 관련 질문</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="text-gray-700"><strong>피드백:</strong> 사이트 개선 제안</span>
+                </div>
               </div>
             </div>
           </div>
@@ -199,6 +372,136 @@ export default function About() {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Contact Form Section */}
+        <div className="mt-12 bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+          <h3 className="text-2xl font-bold text-center text-gray-800 mb-8">연락하기</h3>
+          
+          {status === 'success' && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
+              ✅ 메시지가 성공적으로 전송되었습니다! 곧 답변드리겠습니다.
+            </div>
+          )}
+          
+          {status === 'error' && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+              ❌ 메시지 전송에 실패했습니다. 다시 시도해주세요.
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  이름 *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                    errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                  }`}
+                  placeholder="홍길동"
+                />
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  이메일 *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                    errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                  }`}
+                  placeholder="your@email.com"
+                />
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                  카테고리
+                </label>
+                <select
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                >
+                  <option value="general">일반 문의</option>
+                  <option value="collaboration">협업 제안</option>
+                  <option value="technical">기술 문의</option>
+                  <option value="feedback">피드백</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                  제목 *
+                </label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                    errors.subject ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                  }`}
+                  placeholder="문의 제목을 입력하세요"
+                />
+                {errors.subject && <p className="text-red-500 text-sm mt-1">{errors.subject}</p>}
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                메시지 *
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                value={formData.message}
+                onChange={handleInputChange}
+                rows={6}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-vertical ${
+                  errors.message ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                }`}
+                placeholder="메시지를 자세히 적어주세요..."
+              />
+              {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
+            </div>
+
+            <div className="text-center">
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:from-gray-400 disabled:to-gray-500 text-white py-3 px-8 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:transform-none disabled:hover:shadow-lg"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div>
+                    전송 중...
+                  </span>
+                ) : (
+                  '메시지 보내기'
+                )}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

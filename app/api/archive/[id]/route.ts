@@ -7,19 +7,18 @@ export async function GET(
   const { id } = await params;
   
   try {
-    const post = await prisma.post.findUnique({ 
-      where: { id },
-      include: { comments: true }
+    const archive = await prisma.archive.findUnique({ 
+      where: { id }
     });
     
-    if (!post) {
+    if (!archive) {
       return Response.json(
-        { error: "Post not found" },
+        { error: "Archive not found" },
         { status: 404 }
       );
     }
     
-    return Response.json({ post });
+    return Response.json({ archive });
   } catch (error) {
     console.error("Database error:", error);
     return Response.json(
@@ -36,22 +35,22 @@ export async function DELETE(
   const { id } = await params;
   
   try {
-    const post = await prisma.post.findUnique({ 
+    const archive = await prisma.archive.findUnique({ 
       where: { id }
     });
     
-    if (!post) {
+    if (!archive) {
       return Response.json(
-        { error: "Post not found" },
+        { error: "Archive not found" },
         { status: 404 }
       );
     }
     
-    await prisma.post.delete({
+    await prisma.archive.delete({
       where: { id }
     });
     
-    return Response.json({ message: "Post deleted successfully" });
+    return Response.json({ message: "Archive deleted successfully" });
   } catch (error) {
     console.error("Database error:", error);
     return Response.json(
