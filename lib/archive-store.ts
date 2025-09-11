@@ -4,6 +4,8 @@ export interface Archive {
   content: string;
   category: string;
   tags: string[];
+  imageUrl?: string;
+  fileUrl?: string;
   createdAt: string;
 }
 

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Archive, ARCHIVE_CATEGORIES, ArchiveCategory } from '@/lib/archive-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
+import FileUpload from '@/components/FileUpload';
 
 export default function ArchivePage() {
   const { isAdmin } = useAdmin();
@@ -33,6 +34,8 @@ export default function ArchivePage() {
   });
   const [isDeleting, setIsDeleting] = useState(false);
   const [editingArchive, setEditingArchive] = useState<Archive | null>(null);
+  const [imageUrl, setImageUrl] = useState('');
+  const [fileUrl, setFileUrl] = useState('');
 
   const fetchArchives = async (categoryFilter?: string) => {
     try {
@@ -68,7 +71,9 @@ export default function ArchivePage() {
           title: title.trim(), 
           content: content.trim(),
           category,
-          tags: tagsArray
+          tags: tagsArray,
+          imageUrl: imageUrl.trim() || undefined,
+          fileUrl: fileUrl.trim() || undefined
         })
       });
 
@@ -81,6 +86,8 @@ export default function ArchivePage() {
       setContent('');
       setCategory('business');
       setTags('');
+      setImageUrl('');
+      setFileUrl('');
       setShowForm(false);
       
       await fetchArchives(selectedCategory || undefined);
@@ -131,6 +138,8 @@ export default function ArchivePage() {
     setContent(archive.content);
     setCategory(archive.category as ArchiveCategory);
     setTags(archive.tags?.join(', ') || '');
+    setImageUrl(archive.imageUrl || '');
+    setFileUrl(archive.fileUrl || '');
     setShowForm(true);
   };
 
@@ -149,7 +158,9 @@ export default function ArchivePage() {
           title: title.trim(), 
           content: content.trim(),
           category,
-          tags: tagsArray
+          tags: tagsArray,
+          imageUrl: imageUrl.trim() || undefined,
+          fileUrl: fileUrl.trim() || undefined
         })
       });
 
@@ -161,6 +172,8 @@ export default function ArchivePage() {
       setContent('');
       setCategory('business');
       setTags('');
+      setImageUrl('');
+      setFileUrl('');
       setShowForm(false);
       setEditingArchive(null);
       
@@ -177,6 +190,8 @@ export default function ArchivePage() {
     setContent('');
     setCategory('business');
     setTags('');
+    setImageUrl('');
+    setFileUrl('');
     setShowForm(false);
     setEditingArchive(null);
   };
@@ -345,6 +360,32 @@ export default function ArchivePage() {
                     placeholder="태그1, 태그2, 태그3 (쉼표로 구분)"
                   />
                 </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      대표 이미지
+                    </label>
+                    <FileUpload 
+                      onFileUpload={setImageUrl}
+                      accept="image/*"
+                      label="이미지 선택"
+                      currentUrl={imageUrl}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      첨부 파일
+                    </label>
+                    <FileUpload 
+                      onFileUpload={setFileUrl}
+                      accept="*/*"
+                      label="파일 선택"
+                      currentUrl={fileUrl}
+                    />
+                  </div>
+                </div>
                 
                 <button
                   type="submit"
@@ -446,6 +487,24 @@ export default function ArchivePage() {
                             #{tag}
                           </span>
                         ))}
+                      </div>
+                    )}
+
+                    {/* File attachments */}
+                    {(archive.imageUrl || archive.fileUrl) && (
+                      <div className="flex flex-wrap gap-3 mb-4">
+                        {archive.imageUrl && (
+                          <div className="flex items-center gap-1 text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded-md">
+                            <span>🖼️</span>
+                            <span>이미지</span>
+                          </div>
+                        )}
+                        {archive.fileUrl && (
+                          <div className="flex items-center gap-1 text-xs text-gray-500 bg-green-50 px-2 py-1 rounded-md">
+                            <span>📎</span>
+                            <span>첨부파일</span>
+                          </div>
+                        )}
                       </div>
                     )}
                     

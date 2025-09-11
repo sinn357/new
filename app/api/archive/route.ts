@@ -36,12 +36,16 @@ export async function POST(request: Request) {
       title, 
       content, 
       category = 'writing', 
-      tags = [] 
+      tags = [],
+      imageUrl,
+      fileUrl
     } = body as { 
       title?: unknown; 
       content?: unknown; 
       category?: string; 
-      tags?: string[]; 
+      tags?: string[];
+      imageUrl?: string;
+      fileUrl?: string;
     };
 
     if (typeof title !== "string" || typeof content !== "string" || 
@@ -62,7 +66,9 @@ export async function POST(request: Request) {
         title: title.trim(), 
         content: content.trim(),
         category: category || 'writing',
-        tags: Array.isArray(tags) ? tags : []
+        tags: Array.isArray(tags) ? tags : [],
+        imageUrl: imageUrl?.trim() || null,
+        fileUrl: fileUrl?.trim() || null
       } 
     });
     

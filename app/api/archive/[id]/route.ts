@@ -36,7 +36,7 @@ export async function PUT(
   
   try {
     const body = await request.json();
-    const { title, content, category, tags } = body;
+    const { title, content, category, tags, imageUrl, fileUrl } = body;
 
     if (!title?.trim() || !content?.trim()) {
       return Response.json(
@@ -62,7 +62,9 @@ export async function PUT(
         title: title.trim(),
         content: content.trim(),
         category,
-        tags: tags || []
+        tags: tags || [],
+        imageUrl: imageUrl?.trim() || null,
+        fileUrl: fileUrl?.trim() || null
       }
     });
     

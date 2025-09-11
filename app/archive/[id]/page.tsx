@@ -163,6 +163,58 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
                 </div>
               </div>
             )}
+
+            {/* File attachments */}
+            {(archive.imageUrl || archive.fileUrl) && (
+              <div className="mt-8 pt-8 border-t border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-600 mb-3">첨부 파일</h3>
+                <div className="grid gap-4">
+                  {archive.imageUrl && (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-2xl">🖼️</span>
+                        <div>
+                          <h4 className="font-medium text-gray-900">이미지</h4>
+                          <p className="text-sm text-gray-500">클릭하여 이미지 보기</p>
+                        </div>
+                      </div>
+                      <a 
+                        href={archive.imageUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-block"
+                      >
+                        <img 
+                          src={archive.imageUrl} 
+                          alt="첨부 이미지"
+                          className="max-w-full h-auto rounded-md border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer"
+                          style={{ maxHeight: '300px' }}
+                        />
+                      </a>
+                    </div>
+                  )}
+                  {archive.fileUrl && (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">📎</span>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900">첨부 파일</h4>
+                          <p className="text-sm text-gray-500">파일 다운로드</p>
+                        </div>
+                        <a 
+                          href={archive.fileUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                        >
+                          다운로드
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </article>
         </div>
       </section>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Work, WORK_CATEGORIES, WorkCategory } from '@/lib/works-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
+import FileUpload from '@/components/FileUpload';
 
 const statusLabels = {
   'completed': '완료됨',
@@ -515,18 +516,28 @@ export default function WorksPage() {
                   )}
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-3 gap-6">
                   <div>
-                    <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2">
-                      대표 이미지 URL
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      대표 이미지
                     </label>
-                    <input
-                      type="url"
-                      id="imageUrl"
-                      value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="이미지 URL 입력"
+                    <FileUpload 
+                      onFileUpload={setImageUrl}
+                      accept="image/*"
+                      label="이미지 선택"
+                      currentUrl={imageUrl}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      첨부 파일
+                    </label>
+                    <FileUpload 
+                      onFileUpload={setFileUrl}
+                      accept="*/*"
+                      label="파일 선택"
+                      currentUrl={fileUrl}
                     />
                   </div>
                   
@@ -545,20 +556,6 @@ export default function WorksPage() {
                       <option value="planned">계획됨</option>
                     </select>
                   </div>
-                </div>
-
-                <div>
-                  <label htmlFor="fileUrl" className="block text-sm font-medium text-gray-700 mb-2">
-                    파일 URL
-                  </label>
-                  <input
-                    type="url"
-                    id="fileUrl"
-                    value={fileUrl}
-                    onChange={(e) => setFileUrl(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="파일 URL 입력"
-                  />
                 </div>
                 
                 <button

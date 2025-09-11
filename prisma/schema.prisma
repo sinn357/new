@@ -30,5 +30,7 @@ model Archive {
   content   String
   category  String    // "writing", "essay", "review:movie", "review:book", "review:music", "travel", etc.
   tags      String[]  // Optional tags for additional filtering
+  imageUrl  String?   // Optional image for the post
+  fileUrl   String?   // Optional file attachment
   createdAt DateTime  @default(now())
 }
