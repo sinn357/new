@@ -15,9 +15,22 @@ export default function Home() {
         const response = await fetch('/api/posts');
         const data = await response.json();
         setPosts(data.posts.slice(0, 3)); // 최신 3개만
+        
+        // 각 포스트의 댓글 수를 가져오기
+        let totalComments = 0;
+        for (const post of data.posts) {
+          try {
+            const commentsResponse = await fetch(`/api/comments?postId=${post.id}`);
+            const commentsData = await commentsResponse.json();
+            totalComments += commentsData.comments?.length || 0;
+          } catch {
+            // 에러 발생시 무시
+          }
+        }
+        
         setStats({
           totalPosts: data.posts.length,
-          totalComments: data.posts.reduce((sum: number, post: Post) => sum + (post.comments?.length || 0), 0)
+          totalComments
         });
       } catch (error) {
         console.error('Failed to fetch posts:', error);
