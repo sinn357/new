@@ -1,10 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, use } from 'react';
+import { useRouter } from 'next/navigation';
 import { Post } from '@/lib/posts-store';
 import { Comment } from '@/lib/comments-store';
+import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 
-export default function PostDetailPage({ params }: { params: { id: string } }) {
+export default function PostDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const router = useRouter();
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [author, setAuthor] = useState('');
@@ -12,10 +16,24 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    type: 'post' | 'comment';
+    id: string;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'post',
+    id: '',
+    title: '',
+    message: ''
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchPost = useCallback(async () => {
     try {
-      const response = await fetch(`/api/posts/${params.id}`);
+      const response = await fetch(`/api/posts/${id}`);
       if (!response.ok) {
         throw new Error('Post not found');
       }
@@ -24,17 +42,17 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
     } catch {
       setError('Failed to fetch post');
     }
-  }, [params.id]);
+  }, [id]);
 
   const fetchComments = useCallback(async () => {
     try {
-      const response = await fetch(`/api/comments?postId=${params.id}`);
+      const response = await fetch(`/api/comments?postId=${id}`);
       const data = await response.json();
       setComments(data.comments);
     } catch {
       setError('Failed to fetch comments');
     }
-  }, [params.id]);
+  }, [id]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -42,7 +60,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
       setLoading(false);
     };
     loadData();
-  }, [params.id, fetchPost, fetchComments]);
+  }, [id, fetchPost, fetchComments]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +72,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          postId: params.id,
+          postId: id,
           author: author.trim(), 
           content: content.trim() 
         })
@@ -74,6 +92,59 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
     }
   };
 
+  const handleDeletePost = () => {
+    setDeleteModal({
+      isOpen: true,
+      type: 'post',
+      id: id,
+      title: '포스트 삭제',
+      message: '이 포스트를 삭제하시겠습니까? 모든 댓글도 함께 삭제됩니다.'
+    });
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    setDeleteModal({
+      isOpen: true,
+      type: 'comment',
+      id: commentId,
+      title: '댓글 삭제',
+      message: '이 댓글을 삭제하시겠습니까?'
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const endpoint = deleteModal.type === 'post' 
+        ? `/api/posts/${deleteModal.id}`
+        : `/api/comments/${deleteModal.id}`;
+      
+      const response = await fetch(endpoint, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete ${deleteModal.type}`);
+      }
+
+      if (deleteModal.type === 'post') {
+        router.push('/posts');
+      } else {
+        await fetchComments();
+      }
+      
+      setDeleteModal({ isOpen: false, type: 'post', id: '', title: '', message: '' });
+    } catch {
+      setError(`Failed to delete ${deleteModal.type}`);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteModal({ isOpen: false, type: 'post', id: '', title: '', message: '' });
+  };
+
   if (loading) return <div className="flex justify-center p-8">Loading...</div>;
   if (!post) return <div className="flex justify-center p-8 text-red-500">Post not found</div>;
 
@@ -86,7 +157,16 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
       )}
 
       <div className="bg-white p-8 rounded-lg shadow-md mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">{post.title}</h1>
+        <div className="flex justify-between items-start mb-4">
+          <h1 className="text-3xl font-bold text-gray-900">{post.title}</h1>
+          <button
+            onClick={handleDeletePost}
+            className="text-red-500 hover:text-red-700 p-2 rounded-md hover:bg-red-50"
+            title="포스트 삭제"
+          >
+            🗑️
+          </button>
+        </div>
         <div className="text-sm text-gray-500 mb-6">
           {new Date(post.createdAt).toLocaleString()}
         </div>
@@ -144,11 +224,20 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
           ) : (
             comments.map((comment) => (
               <div key={comment.id} className="border-l-4 border-gray-200 pl-4 py-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="font-semibold text-gray-900">{comment.author}</span>
-                  <span className="text-sm text-gray-500">
-                    {new Date(comment.createdAt).toLocaleString()}
-                  </span>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-900">{comment.author}</span>
+                    <span className="text-sm text-gray-500">
+                      {new Date(comment.createdAt).toLocaleString()}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteComment(comment.id)}
+                    className="text-red-500 hover:text-red-700 p-1 rounded-md hover:bg-red-50"
+                    title="댓글 삭제"
+                  >
+                    🗑️
+                  </button>
                 </div>
                 <p className="text-gray-700 whitespace-pre-wrap">{comment.content}</p>
               </div>
@@ -156,6 +245,15 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
           )}
         </div>
       </div>
+
+      <DeleteConfirmModal
+        isOpen={deleteModal.isOpen}
+        title={deleteModal.title}
+        message={deleteModal.message}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }
