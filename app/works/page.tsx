@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Work, WORK_CATEGORIES, WorkCategory } from '@/lib/works-store';
 import { useAdmin } from '@/contexts/AdminContext';
+import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 
 const statusLabels = {
   'completed': '완료됨',
@@ -38,6 +39,21 @@ export default function WorksPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    type: 'work';
+    id: string;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'work',
+    id: '',
+    title: '',
+    message: ''
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [editingWork, setEditingWork] = useState<Work | null>(null);
 
   const fetchWorks = async (categoryFilter?: string) => {
     try {
@@ -133,6 +149,132 @@ export default function WorksPage() {
     }
   };
 
+  const handleDeleteWork = (work: Work) => {
+    setDeleteModal({
+      isOpen: true,
+      type: 'work',
+      id: work.id,
+      title: '작업물 삭제',
+      message: `"${work.title}" 작업물을 삭제하시겠습니까?`
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/works/${deleteModal.id}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete work');
+      }
+
+      const all = await fetchAllWorks();
+      setAllWorks(all);
+      await fetchWorks(selectedCategory || undefined);
+      setDeleteModal({ isOpen: false, type: 'work', id: '', title: '', message: '' });
+    } catch {
+      setError('Failed to delete work');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteModal({ isOpen: false, type: 'work', id: '', title: '', message: '' });
+  };
+
+  const handleEditWork = (work: Work) => {
+    setEditingWork(work);
+    setTitle(work.title);
+    setContent(work.content);
+    setCategory(work.category as WorkCategory);
+    setTechStack(work.techStack?.join(', ') || '');
+    setGithubUrl(work.githubUrl || '');
+    setDemoUrl(work.demoUrl || '');
+    setYoutubeUrl(work.youtubeUrl || '');
+    setInstagramUrl(work.instagramUrl || '');
+    setImageUrl(work.imageUrl || '');
+    setFileUrl(work.fileUrl || '');
+    setStatus(work.status);
+    setDuration(work.duration || '');
+    setShowForm(true);
+  };
+
+  const handleUpdateWork = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim() || !content.trim() || !editingWork) return;
+
+    setSubmitting(true);
+    try {
+      const techStackArray = techStack.split(',').map(tech => tech.trim()).filter(tech => tech);
+      
+      const response = await fetch(`/api/works/${editingWork.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          title: title.trim(), 
+          content: content.trim(),
+          category,
+          techStack: techStackArray,
+          githubUrl: githubUrl.trim() || undefined,
+          demoUrl: demoUrl.trim() || undefined,
+          youtubeUrl: youtubeUrl.trim() || undefined,
+          instagramUrl: instagramUrl.trim() || undefined,
+          imageUrl: imageUrl.trim() || undefined,
+          fileUrl: fileUrl.trim() || undefined,
+          status,
+          duration: duration.trim() || undefined
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update work');
+      }
+
+      setTitle('');
+      setContent('');
+      setCategory('product');
+      setTechStack('');
+      setGithubUrl('');
+      setDemoUrl('');
+      setYoutubeUrl('');
+      setInstagramUrl('');
+      setImageUrl('');
+      setFileUrl('');
+      setStatus('completed');
+      setDuration('');
+      setShowForm(false);
+      setEditingWork(null);
+      
+      const all = await fetchAllWorks();
+      setAllWorks(all);
+      await fetchWorks(selectedCategory || undefined);
+    } catch {
+      setError('Failed to update work');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setTitle('');
+    setContent('');
+    setCategory('product');
+    setTechStack('');
+    setGithubUrl('');
+    setDemoUrl('');
+    setYoutubeUrl('');
+    setInstagramUrl('');
+    setImageUrl('');
+    setFileUrl('');
+    setStatus('completed');
+    setDuration('');
+    setShowForm(false);
+    setEditingWork(null);
+  };
+
   if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
 
   return (
@@ -156,10 +298,16 @@ export default function WorksPage() {
           
           {isAdmin && (
             <button
-              onClick={() => setShowForm(!showForm)}
+              onClick={() => {
+                if (showForm && editingWork) {
+                  handleCancelEdit();
+                } else {
+                  setShowForm(!showForm);
+                }
+              }}
               className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
-              {showForm ? '폼 숨기기' : '새 작업물 추가'}
+              {showForm ? (editingWork ? '편집 취소' : '폼 숨기기') : '새 작업물 추가'}
             </button>
           )}
         </div>
@@ -211,7 +359,9 @@ export default function WorksPage() {
         <section className="px-6 pb-16">
           <div className="max-w-4xl mx-auto">
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">새 작업물 추가</h2>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                {editingWork ? '작업물 수정' : '새 작업물 추가'}
+              </h2>
               
               {error && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
@@ -219,7 +369,7 @@ export default function WorksPage() {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={editingWork ? handleUpdateWork : handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
@@ -416,7 +566,7 @@ export default function WorksPage() {
                   disabled={submitting || !title.trim() || !content.trim()}
                   className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:from-gray-400 disabled:to-gray-500 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
-                  {submitting ? '추가 중...' : '작업물 추가'}
+                  {submitting ? (editingWork ? '수정 중...' : '추가 중...') : (editingWork ? '작업물 수정' : '작업물 추가')}
                 </button>
               </form>
             </div>
@@ -479,11 +629,31 @@ export default function WorksPage() {
                           {statusLabels[work.status]}
                         </span>
                       </div>
-                      {work.duration && (
-                        <span className="text-xs text-gray-500">
-                          ⏱ {work.duration}
-                        </span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {work.duration && (
+                          <span className="text-xs text-gray-500">
+                            ⏱ {work.duration}
+                          </span>
+                        )}
+                        {isAdmin && (
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => handleEditWork(work)}
+                              className="text-blue-500 hover:text-blue-700 p-1 rounded hover:bg-blue-50 transition-colors"
+                              title="작업물 수정"
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              onClick={() => handleDeleteWork(work)}
+                              className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors"
+                              title="작업물 삭제"
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     
                     <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-600 transition-colors">
@@ -594,6 +764,15 @@ export default function WorksPage() {
           )}
         </div>
       </section>
+
+      <DeleteConfirmModal
+        isOpen={deleteModal.isOpen}
+        title={deleteModal.title}
+        message={deleteModal.message}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }
