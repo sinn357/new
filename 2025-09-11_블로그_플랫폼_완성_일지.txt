@@ -79,7 +79,7 @@ await emailjs.send(serviceId, templateId, templateParams);
 
 **Connection String:**
 ```
-postgresql://neondb_owner:npg_SnMeWN8rFs2h@ep-mute-sky-ademrrob-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+postgresql://[REDACTED_CREDENTIALS]@[REDACTED_HOST]/neondb?sslmode=require&channel_binding=require
 ```
 
 ---
