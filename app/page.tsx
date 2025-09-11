@@ -13,7 +13,18 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const response = await fetch('/api/posts');
+        
+        if (!response.ok) {
+          throw new Error(`API responded with status: ${response.status}`);
+        }
+        
         const data = await response.json();
+        console.log('API response:', data);
+        
+        if (data.error) {
+          throw new Error(`API error: ${data.error} - ${data.message || ''}`);
+        }
+        
         setPosts(data.posts.slice(0, 3)); // 최신 3개만
         
         // 각 포스트의 댓글 수를 가져오기
