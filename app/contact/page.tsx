@@ -132,7 +132,7 @@ export default function Contact() {
       if (error && typeof error === 'object') {
         console.log('에러 객체의 모든 키:', Object.keys(error));
         for (const key in error) {
-          console.log(`에러.${key}:`, error[key]);
+          console.log(`에러.${key}:`, (error as any)[key]);
         }
       }
       
