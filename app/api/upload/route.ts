@@ -7,7 +7,10 @@ import { v2 as cloudinary } from 'cloudinary';
 const isProduction = process.env.NODE_ENV === 'production';
 const hasCloudinary = process.env.CLOUDINARY_CLOUD_NAME && 
                      process.env.CLOUDINARY_API_KEY && 
-                     process.env.CLOUDINARY_API_SECRET;
+                     process.env.CLOUDINARY_API_SECRET &&
+                     process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
+                     process.env.CLOUDINARY_API_KEY !== 'your_api_key' &&
+                     process.env.CLOUDINARY_API_SECRET !== 'your_api_secret';
 
 // Configure Cloudinary if available
 if (hasCloudinary) {
@@ -32,26 +35,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File size exceeds 10MB limit.' }, { status: 400 });
     }
 
-    // Allowed file types
-    const allowedTypes = [
-      'image/jpeg',
-      'image/png',
-      'image/gif',
-      'image/webp',
-      'video/mp4',
-      'video/mov',
-      'video/avi',
-      'video/mkv',
-      'application/pdf',
-      'application/zip',
-      'application/x-zip-compressed'
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ 
-        error: 'Unsupported file type. Allowed: images, videos, PDF, ZIP' 
-      }, { status: 400 });
-    }
+    // All file types are now allowed
+    // Removed file type restrictions for maximum flexibility
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);

@@ -7,6 +7,7 @@ import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAdmin } from '@/contexts/AdminContext';
+import { isImageFile, isVideoFile, isAudioFile, isPdfFile, getFileIcon, getFileTypeLabel, getFileName } from '@/lib/file-utils';
 
 const statusLabels = {
   'completed': '완료됨',
@@ -124,17 +125,80 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
       <section className="px-6 pb-16">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12">
-            {/* Work Image */}
+            {/* Work Media */}
             {work.imageUrl && (
               <div className="order-2 lg:order-1">
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-                  <Image
-                    src={work.imageUrl}
-                    alt={work.title}
-                    width={600}
-                    height={400}
-                    className="w-full h-auto object-cover"
-                  />
+                  <div className="p-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-xl">{getFileIcon(work.imageUrl)}</span>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900">{getFileTypeLabel(work.imageUrl)}</h4>
+                        <p className="text-sm text-gray-500">{getFileName(work.imageUrl)}</p>
+                      </div>
+                      <a 
+                        href={work.imageUrl} 
+                        download
+                        className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
+                      >
+                        다운로드
+                      </a>
+                    </div>
+                    
+                    {/* Image preview */}
+                    {isImageFile(work.imageUrl) && (
+                      <Image
+                        src={work.imageUrl}
+                        alt={work.title}
+                        width={600}
+                        height={400}
+                        className="w-full h-auto object-cover rounded-lg"
+                      />
+                    )}
+                    
+                    {/* Video preview */}
+                    {isVideoFile(work.imageUrl) && (
+                      <video 
+                        controls 
+                        className="w-full rounded-lg"
+                        style={{ maxHeight: '400px' }}
+                      >
+                        <source src={work.imageUrl} />
+                        Your browser does not support the video tag.
+                      </video>
+                    )}
+                    
+                    {/* Audio preview */}
+                    {isAudioFile(work.imageUrl) && (
+                      <audio controls className="w-full">
+                        <source src={work.imageUrl} />
+                        Your browser does not support the audio tag.
+                      </audio>
+                    )}
+                    
+                    {/* PDF preview */}
+                    {isPdfFile(work.imageUrl) && (
+                      <div className="text-center py-8">
+                        <a 
+                          href={work.imageUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                        >
+                          <span>📄</span>
+                          PDF 열어보기
+                        </a>
+                      </div>
+                    )}
+                    
+                    {/* Other file types */}
+                    {!isImageFile(work.imageUrl) && !isVideoFile(work.imageUrl) && !isAudioFile(work.imageUrl) && !isPdfFile(work.imageUrl) && (
+                      <div className="text-center py-8">
+                        <div className="text-4xl mb-4">{getFileIcon(work.imageUrl)}</div>
+                        <p className="text-gray-600">파일을 다운로드하여 확인하세요</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -196,6 +260,85 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                           {tech}
                         </span>
                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* File attachment */}
+                {work.fileUrl && (
+                  <div className="mb-8">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">첨부 파일</h3>
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-2xl">{getFileIcon(work.fileUrl)}</span>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900">{getFileTypeLabel(work.fileUrl)}</h4>
+                          <p className="text-sm text-gray-500">{getFileName(work.fileUrl)}</p>
+                        </div>
+                        <a 
+                          href={work.fileUrl} 
+                          download
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                        >
+                          다운로드
+                        </a>
+                      </div>
+                      
+                      {/* Image preview */}
+                      {isImageFile(work.fileUrl) && (
+                        <a 
+                          href={work.fileUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-block"
+                        >
+                          <div className="relative max-w-full" style={{ maxHeight: '300px' }}>
+                            <Image 
+                              src={work.fileUrl} 
+                              alt="첨부 파일"
+                              width={400}
+                              height={300}
+                              className="rounded-md border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer object-contain"
+                              style={{ maxHeight: '300px', width: 'auto' }}
+                            />
+                          </div>
+                        </a>
+                      )}
+                      
+                      {/* Video preview */}
+                      {isVideoFile(work.fileUrl) && (
+                        <video 
+                          controls 
+                          className="w-full max-w-md rounded-md border border-gray-200"
+                          style={{ maxHeight: '300px' }}
+                        >
+                          <source src={work.fileUrl} />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
+                      
+                      {/* Audio preview */}
+                      {isAudioFile(work.fileUrl) && (
+                        <audio controls className="w-full max-w-md">
+                          <source src={work.fileUrl} />
+                          Your browser does not support the audio tag.
+                        </audio>
+                      )}
+                      
+                      {/* PDF preview */}
+                      {isPdfFile(work.fileUrl) && (
+                        <div className="mt-3">
+                          <a 
+                            href={work.fileUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium transition-colors"
+                          >
+                            <span>📄</span>
+                            PDF 열어보기
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

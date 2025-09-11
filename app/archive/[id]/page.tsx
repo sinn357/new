@@ -7,6 +7,7 @@ import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAdmin } from '@/contexts/AdminContext';
+import { isImageFile, isVideoFile, isAudioFile, isPdfFile, getFileIcon, getFileTypeLabel, getFileName } from '@/lib/file-utils';
 
 export default function ArchiveDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -173,48 +174,150 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
                   {archive.imageUrl && (
                     <div className="bg-gray-50 rounded-lg p-4">
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="text-2xl">🖼️</span>
+                        <span className="text-2xl">{getFileIcon(archive.imageUrl)}</span>
                         <div>
-                          <h4 className="font-medium text-gray-900">이미지</h4>
-                          <p className="text-sm text-gray-500">클릭하여 이미지 보기</p>
+                          <h4 className="font-medium text-gray-900">{getFileTypeLabel(archive.imageUrl)}</h4>
+                          <p className="text-sm text-gray-500">{getFileName(archive.imageUrl)}</p>
                         </div>
+                        <a 
+                          href={archive.imageUrl} 
+                          download
+                          className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
+                        >
+                          다운로드
+                        </a>
                       </div>
-                      <a 
-                        href={archive.imageUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-block"
-                      >
-                        <div className="relative max-w-full" style={{ maxHeight: '300px' }}>
-                          <Image 
-                            src={archive.imageUrl} 
-                            alt="첨부 이미지"
-                            width={400}
-                            height={300}
-                            className="rounded-md border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer object-contain"
-                            style={{ maxHeight: '300px', width: 'auto' }}
-                          />
+                      
+                      {/* Image preview */}
+                      {isImageFile(archive.imageUrl) && (
+                        <a 
+                          href={archive.imageUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-block"
+                        >
+                          <div className="relative max-w-full" style={{ maxHeight: '300px' }}>
+                            <Image 
+                              src={archive.imageUrl} 
+                              alt="첨부 이미지"
+                              width={400}
+                              height={300}
+                              className="rounded-md border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer object-contain"
+                              style={{ maxHeight: '300px', width: 'auto' }}
+                            />
+                          </div>
+                        </a>
+                      )}
+                      
+                      {/* Video preview */}
+                      {isVideoFile(archive.imageUrl) && (
+                        <video 
+                          controls 
+                          className="w-full max-w-md rounded-md border border-gray-200"
+                          style={{ maxHeight: '300px' }}
+                        >
+                          <source src={archive.imageUrl} />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
+                      
+                      {/* Audio preview */}
+                      {isAudioFile(archive.imageUrl) && (
+                        <audio controls className="w-full max-w-md">
+                          <source src={archive.imageUrl} />
+                          Your browser does not support the audio tag.
+                        </audio>
+                      )}
+                      
+                      {/* PDF preview */}
+                      {isPdfFile(archive.imageUrl) && (
+                        <div className="mt-3">
+                          <a 
+                            href={archive.imageUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium transition-colors"
+                          >
+                            <span>📄</span>
+                            PDF 열어보기
+                          </a>
                         </div>
-                      </a>
+                      )}
                     </div>
                   )}
+                  
                   {archive.fileUrl && (
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">📎</span>
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-2xl">{getFileIcon(archive.fileUrl)}</span>
                         <div className="flex-1">
-                          <h4 className="font-medium text-gray-900">첨부 파일</h4>
-                          <p className="text-sm text-gray-500">파일 다운로드</p>
+                          <h4 className="font-medium text-gray-900">{getFileTypeLabel(archive.fileUrl)}</h4>
+                          <p className="text-sm text-gray-500">{getFileName(archive.fileUrl)}</p>
                         </div>
                         <a 
                           href={archive.fileUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
+                          download
                           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                         >
                           다운로드
                         </a>
                       </div>
+                      
+                      {/* Image preview */}
+                      {isImageFile(archive.fileUrl) && (
+                        <a 
+                          href={archive.fileUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-block"
+                        >
+                          <div className="relative max-w-full" style={{ maxHeight: '300px' }}>
+                            <Image 
+                              src={archive.fileUrl} 
+                              alt="첨부 파일"
+                              width={400}
+                              height={300}
+                              className="rounded-md border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer object-contain"
+                              style={{ maxHeight: '300px', width: 'auto' }}
+                            />
+                          </div>
+                        </a>
+                      )}
+                      
+                      {/* Video preview */}
+                      {isVideoFile(archive.fileUrl) && (
+                        <video 
+                          controls 
+                          className="w-full max-w-md rounded-md border border-gray-200"
+                          style={{ maxHeight: '300px' }}
+                        >
+                          <source src={archive.fileUrl} />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
+                      
+                      {/* Audio preview */}
+                      {isAudioFile(archive.fileUrl) && (
+                        <audio controls className="w-full max-w-md">
+                          <source src={archive.fileUrl} />
+                          Your browser does not support the audio tag.
+                        </audio>
+                      )}
+                      
+                      {/* PDF preview */}
+                      {isPdfFile(archive.fileUrl) && (
+                        <div className="mt-3">
+                          <a 
+                            href={archive.fileUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium transition-colors"
+                          >
+                            <span>📄</span>
+                            PDF 열어보기
+                          </a>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

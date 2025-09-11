@@ -14,6 +14,7 @@ export async function GET(request: Request) {
       where,
       orderBy: { createdAt: "desc" } 
     });
+    
     return Response.json({ works });
   } catch (error) {
     console.error('Database error:', error);
