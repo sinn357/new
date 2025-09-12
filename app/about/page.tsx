@@ -83,24 +83,10 @@ export default function About() {
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [pageContent, setPageContent] = useState<PageContent | null>(null);
 
-  // Default values - will be overridden by database content
-  const defaultSkills = [
-    'JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js', 'Express',
-    'Python', 'PostgreSQL', 'MongoDB', 'Prisma', 'Git', 'Docker'
-  ];
-
-  const defaultInterests = [
-    '웹 개발', '오픈소스', '새로운 기술', '문제 해결', '팀워크', '지식 공유'
-  ];
-
-  // Get values from database or use defaults
-  const skills = pageContent?.sections?.skills || defaultSkills;
-  const interests = pageContent?.sections?.interests || defaultInterests;
-  const fullIntroText = pageContent?.sections?.fullIntroText || `안녕하세요! 웹 개발에 열정을 가진 개발자입니다. 사용자에게 가치를 제공하는 서비스를 만드는 것을 좋아하며, 새로운 기술을 배우고 적용하는 것에 즐거움을 느낍니다.
-
-특히 React와 Next.js를 활용한 모던 웹 개발에 관심이 많으며, 백엔드는 Node.js와 Python을 주로 사용합니다. 데이터베이스는 PostgreSQL과 MongoDB를 경험했습니다.
-
-개발뿐만 아니라 팀워크와 소통을 중요하게 생각하며, 지식을 공유하고 함께 성장하는 것을 좋아합니다.`;
+  // Get values from database
+  const skills = pageContent?.sections?.skills || [];
+  const interests = pageContent?.sections?.interests || [];
+  const fullIntroText = pageContent?.sections?.fullIntroText || '';
 
   // Split intro text for display (first paragraph for preview, rest for "more")
   const textParagraphs = fullIntroText.split('\n\n').filter(p => p.trim());
@@ -125,30 +111,11 @@ export default function About() {
   const websiteIcon = pageContent?.sections?.contactInfo?.websiteIcon || '🌐';
   const responseTimeIcon = pageContent?.sections?.contactInfo?.responseTimeIcon || '⏰';
   
-  const defaultExperience = [
-    { title: '웹 개발', description: '프론트엔드와 백엔드 개발 경험', tech: 'React, Next.js, Node.js', color: 'blue' },
-    { title: '프로젝트 관리', description: '개인 및 팀 프로젝트 경험', tech: 'Git, Agile', color: 'purple' },
-    { title: '지속적인 학습', description: '새로운 기술 습득과 적용', tech: '온라인 강의, 문서 학습', color: 'green' }
-  ];
+  const experience = pageContent?.sections?.experience || [];
   
-  const experience = pageContent?.sections?.experience || defaultExperience;
+  const contactCategories = pageContent?.sections?.contactCategories || [];
   
-  const defaultContactCategories = [
-    { name: '일반 문의', description: '기본적인 질문이나 안내', color: 'blue' },
-    { name: '협업 제안', description: '프로젝트나 파트너십', color: 'purple' },
-    { name: '기술 문의', description: '개발 관련 질문', color: 'green' },
-    { name: '피드백', description: '사이트 개선 제안', color: 'orange' }
-  ];
-  
-  const contactCategories = pageContent?.sections?.contactCategories || defaultContactCategories;
-  
-  const defaultPhilosophy = [
-    { icon: '🎯', title: '사용자 중심', description: '사용자의 경험을 최우선으로 생각하며, 직관적이고 편리한 인터페이스를 만들어 나갑니다.', color: 'blue' },
-    { icon: '💡', title: '지속적인 개선', description: '완벽한 코드는 없다고 생각합니다. 항상 더 나은 방법을 찾고 개선해 나갑니다.', color: 'purple' },
-    { icon: '🤝', title: '협업과 소통', description: '혼자서는 할 수 없는 일들을 팀워크로 이뤄내고, 지식을 나누며 함께 성장합니다.', color: 'green' }
-  ];
-  
-  const philosophy = pageContent?.sections?.philosophy || defaultPhilosophy;
+  const philosophy = pageContent?.sections?.philosophy || [];
 
   const fetchPageContent = async () => {
     try {

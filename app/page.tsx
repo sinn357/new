@@ -94,7 +94,7 @@ export default function Home() {
       body: JSON.stringify({
         page: 'home',
         title: newTitle,
-        content: pageContent?.content || '개발 작업물과 개인적인 글들을 공유하는 포트폴리오 & 블로그 공간입니다. 함께 성장해나가요! 🚀'
+        content: pageContent?.content || ''
       })
     });
 
@@ -146,7 +146,7 @@ export default function Home() {
           
           {isAdmin ? (
             <InlineEdit
-              text={pageContent?.content || '개발 작업물과 개인적인 글들을 공유하는 포트폴리오 & 블로그 공간입니다. 함께 성장해나가요! 🚀'}
+              text={pageContent?.content || ''}
               onSave={saveContent}
               className="mb-12 max-w-2xl mx-auto"
               textClassName="text-xl md:text-2xl text-gray-600"
@@ -155,7 +155,7 @@ export default function Home() {
             />
           ) : (
             <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto">
-              {pageContent?.content || '개발 작업물과 개인적인 글들을 공유하는 포트폴리오 & 블로그 공간입니다. 함께 성장해나가요! 🚀'}
+              {pageContent?.content || ''}
             </p>
           )}
           
@@ -265,7 +265,7 @@ export default function Home() {
             최신 아카이브
           </h2>
           <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-            다양한 주제의 글들을 만나보세요.
+            
           </p>
           
           {loading ? (
@@ -341,7 +341,7 @@ export default function Home() {
             {aboutContent?.title || 'About'}
           </h2>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            {aboutContent?.content || '안녕하세요! 개발에 대한 열정과 지식을 공유하는 블로그입니다. 새로운 기술을 배우고, 경험을 나누며, 함께 성장하는 것을 좋아합니다.'}
+            {aboutContent?.content || ''}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             {['React', 'Next.js', 'TypeScript', 'Node.js', 'Prisma', 'PostgreSQL'].map((tech) => (

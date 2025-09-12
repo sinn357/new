@@ -108,7 +108,7 @@ export default function WorkPage() {
       body: JSON.stringify({
         page: 'work',
         title: newTitle,
-        content: pageContent?.content || '프로덕트, 미디어, 포토그래피 등 다양한 작업물들을 소개합니다. 💻🎥📸'
+        content: pageContent?.content || ''
       })
     });
 
@@ -365,7 +365,7 @@ export default function WorkPage() {
           
           {isAdmin ? (
             <InlineEdit
-              text={pageContent?.content || '프로덕트, 미디어, 포토그래피 등 다양한 작업물들을 소개합니다. 💻🎥📸'}
+              text={pageContent?.content || ''}
               onSave={saveContent}
               className="mb-12 max-w-2xl mx-auto"
               textClassName="text-xl text-gray-600"
@@ -374,7 +374,7 @@ export default function WorkPage() {
             />
           ) : (
             <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-              {pageContent?.content || '프로덕트, 미디어, 포토그래피 등 다양한 작업물들을 소개합니다. 💻🎥📸'}
+              {pageContent?.content || ''}
             </p>
           )}
           

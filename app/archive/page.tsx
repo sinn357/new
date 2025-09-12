@@ -78,7 +78,7 @@ export default function ArchivePage() {
       body: JSON.stringify({
         page: 'archive',
         title: newTitle,
-        content: pageContent?.content || '자유로운 글쓰기와 다양한 리뷰들을 담아놓은 개인적인 기록 공간입니다. 📝'
+        content: pageContent?.content || ''
       })
     });
 
@@ -295,7 +295,7 @@ export default function ArchivePage() {
           
           {isAdmin ? (
             <InlineEdit
-              text={pageContent?.content || '자유로운 글쓰기와 다양한 리뷰들을 담아놓은 개인적인 기록 공간입니다. 📝'}
+              text={pageContent?.content || ''}
               onSave={saveContent}
               className="mb-12 max-w-2xl mx-auto"
               textClassName="text-xl text-gray-600"
@@ -304,7 +304,7 @@ export default function ArchivePage() {
             />
           ) : (
             <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-              {pageContent?.content || '자유로운 글쓰기와 다양한 리뷰들을 담아놓은 개인적인 기록 공간입니다. 📝'}
+              {pageContent?.content || ''}
             </p>
           )}
           
