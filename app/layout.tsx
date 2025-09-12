@@ -48,10 +48,10 @@ export default function RootLayout({
                   Archive
                 </Link>
               </div>
-              <AdminButton />
             </div>
           </nav>
           {children}
+          <AdminButton />
           <AdminLoginModal />
         </AdminProvider>
       </body>
