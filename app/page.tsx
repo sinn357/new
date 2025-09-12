@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Work } from '@/lib/work-store';
+import { Archive } from '@/lib/archive-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import InlineEdit from '@/components/InlineEdit';
 
@@ -15,6 +16,7 @@ interface PageContent {
 export default function Home() {
   const { isAdmin } = useAdmin();
   const [works, setWorks] = useState<Work[]>([]);
+  const [archives, setArchives] = useState<Archive[]>([]);
   const [totalWorks, setTotalWorks] = useState(0);
   const [loading, setLoading] = useState(true);
   const [pageContent, setPageContent] = useState<PageContent | null>(null);
@@ -37,6 +39,20 @@ export default function Home() {
       setAboutContent(data.content);
     } catch (error) {
       console.error('Failed to fetch about content:', error);
+    }
+  };
+
+  const fetchArchives = async () => {
+    try {
+      const response = await fetch('/api/archive');
+      if (!response.ok) {
+        throw new Error(`API responded with status: ${response.status}`);
+      }
+      const data = await response.json();
+      const latestArchives = data.archives.slice(0, 3);
+      setArchives(latestArchives);
+    } catch (error) {
+      console.error('Failed to fetch archives:', error);
     }
   };
 
@@ -68,6 +84,7 @@ export default function Home() {
     fetchData();
     fetchPageContent();
     fetchAboutContent();
+    fetchArchives();
   }, []);
 
   const saveTitle = async (newTitle: string) => {
@@ -232,6 +249,82 @@ export default function Home() {
                 className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
               >
                 모든 작업물 보기
+                <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Archive Section */}
+      <section className="px-6 py-16 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-gray-800 text-center">
+            최신 아카이브
+          </h2>
+          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+            다양한 주제의 글들을 만나보세요.
+          </p>
+          
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+            </div>
+          ) : archives.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">아직 아카이브 글이 없습니다.</p>
+              <Link
+                href="/archive"
+                className="inline-block mt-4 text-purple-500 hover:text-purple-600 font-medium"
+              >
+                첫 번째 글 작성하기 →
+              </Link>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-8">
+              {archives.map((archive) => (
+                <article
+                  key={archive.id}
+                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100"
+                >
+                  <div className="p-8">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="px-3 py-1 bg-purple-100 text-purple-600 text-sm font-medium rounded-full">
+                        {archive.category}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-semibold mb-3 group-hover:text-purple-600 transition-colors line-clamp-2">
+                      {archive.title}
+                    </h3>
+                    <p className="text-gray-600 mb-4 line-clamp-3">
+                      {archive.content}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-400">
+                        {new Date(archive.createdAt).toLocaleDateString('ko-KR')}
+                      </span>
+                      <Link
+                        href={`/archive/${archive.id}`}
+                        className="text-purple-500 hover:text-purple-600 font-medium text-sm"
+                      >
+                        자세히 보기 →
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+          
+          {archives.length > 0 && (
+            <div className="text-center mt-12">
+              <Link
+                href="/archive"
+                className="inline-flex items-center text-purple-600 hover:text-purple-700 font-medium"
+              >
+                모든 아카이브 보기
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>

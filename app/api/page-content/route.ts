@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { page, title, content } = body;
+    const { page, title, content, sections } = body;
 
     if (!page || !title || !content) {
       return Response.json(
@@ -58,6 +58,7 @@ export async function POST(request: Request) {
         page,
         title,
         content,
+        ...(sections && { sections }),
       }
     });
 
@@ -84,7 +85,7 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    const { page, title, content } = body;
+    const { page, title, content, sections } = body;
 
     if (!page || !title || !content) {
       return Response.json(
@@ -99,11 +100,13 @@ export async function PUT(request: Request) {
       update: {
         title,
         content,
+        ...(sections && { sections }),
       },
       create: {
         page,
         title,
         content,
+        ...(sections && { sections }),
       }
     });
 

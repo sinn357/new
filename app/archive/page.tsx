@@ -7,6 +7,7 @@ import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import FileUpload from '@/components/FileUpload';
 import InlineEdit from '@/components/InlineEdit';
+import MarkdownEditor from '@/components/MarkdownEditor';
 
 interface PageContent {
   page: string;
@@ -414,17 +415,14 @@ export default function ArchivePage() {
                 </div>
 
                 <div>
-                  <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-                    내용 *
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    내용 * (마크다운 지원)
                   </label>
-                  <textarea
-                    id="content"
+                  <MarkdownEditor
                     value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    rows={8}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="자유롭게 글을 작성해보세요..."
-                    required
+                    onChange={setContent}
+                    placeholder="자유롭게 마크다운으로 글을 작성해보세요..."
+                    rows={10}
                   />
                 </div>
 

@@ -8,6 +8,7 @@ import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import FileUpload from '@/components/FileUpload';
 import InlineEdit from '@/components/InlineEdit';
+import MarkdownEditor from '@/components/MarkdownEditor';
 
 const statusLabels = {
   'completed': '완료됨',
@@ -501,17 +502,14 @@ export default function WorkPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-                    설명 *
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    설명 * (마크다운 지원)
                   </label>
-                  <textarea
-                    id="content"
+                  <MarkdownEditor
                     value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    rows={4}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="프로젝트에 대한 상세 설명을 입력하세요"
-                    required
+                    onChange={setContent}
+                    placeholder="프로젝트에 대한 상세 설명을 마크다운으로 작성하세요..."
+                    rows={8}
                   />
                 </div>
 
