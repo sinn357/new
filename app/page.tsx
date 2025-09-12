@@ -18,6 +18,7 @@ export default function Home() {
   const [totalWorks, setTotalWorks] = useState(0);
   const [loading, setLoading] = useState(true);
   const [pageContent, setPageContent] = useState<PageContent | null>(null);
+  const [aboutContent, setAboutContent] = useState<PageContent | null>(null);
 
   const fetchPageContent = async () => {
     try {
@@ -26,6 +27,16 @@ export default function Home() {
       setPageContent(data.content);
     } catch (error) {
       console.error('Failed to fetch page content:', error);
+    }
+  };
+
+  const fetchAboutContent = async () => {
+    try {
+      const response = await fetch('/api/page-content?page=about');
+      const data = await response.json();
+      setAboutContent(data.content);
+    } catch (error) {
+      console.error('Failed to fetch about content:', error);
     }
   };
 
@@ -56,6 +67,7 @@ export default function Home() {
 
     fetchData();
     fetchPageContent();
+    fetchAboutContent();
   }, []);
 
   const saveTitle = async (newTitle: string) => {
@@ -232,10 +244,11 @@ export default function Home() {
       {/* About Section */}
       <section className="px-6 py-16 bg-white/50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-8 text-gray-800">About</h2>
+          <h2 className="text-3xl font-bold mb-8 text-gray-800">
+            {aboutContent?.title || 'About'}
+          </h2>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            안녕하세요! 개발에 대한 열정과 지식을 공유하는 블로그입니다. 
-            새로운 기술을 배우고, 경험을 나누며, 함께 성장하는 것을 좋아합니다.
+            {aboutContent?.content || '안녕하세요! 개발에 대한 열정과 지식을 공유하는 블로그입니다. 새로운 기술을 배우고, 경험을 나누며, 함께 성장하는 것을 좋아합니다.'}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             {['React', 'Next.js', 'TypeScript', 'Node.js', 'Prisma', 'PostgreSQL'].map((tech) => (

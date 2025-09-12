@@ -75,7 +75,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
   const handleConfirmDelete = async () => {
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/works/${deleteModal.id}`, {
+      const response = await fetch(`/api/work/${deleteModal.id}`, {
         method: 'DELETE'
       });
 
@@ -83,7 +83,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
         throw new Error('Failed to delete work');
       }
 
-      router.push('/works');
+      router.push('/work');
       setDeleteModal({ isOpen: false, type: 'work', id: '', title: '', message: '' });
     } catch {
       setError('Failed to delete work');
@@ -105,7 +105,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
       <section className="px-6 py-8">
         <div className="max-w-6xl mx-auto">
           <Link 
-            href="/works" 
+            href="/work" 
             className="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors"
           >
             ← 작업물 목록으로 돌아가기
