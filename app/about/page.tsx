@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
+import { useAdmin } from '@/contexts/AdminContext';
+import InlineEdit from '@/components/InlineEdit';
 
 interface FormData {
   name: string;
@@ -19,7 +21,14 @@ interface FormErrors {
   message?: string;
 }
 
+interface PageContent {
+  page: string;
+  title: string;
+  content: string;
+}
+
 export default function About() {
+  const { isAdmin } = useAdmin();
   const [showMore, setShowMore] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -31,6 +40,7 @@ export default function About() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [pageContent, setPageContent] = useState<PageContent | null>(null);
 
   const skills = [
     'JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js', 'Express',
@@ -40,6 +50,58 @@ export default function About() {
   const interests = [
     '웹 개발', '오픈소스', '새로운 기술', '문제 해결', '팀워크', '지식 공유'
   ];
+
+  const fetchPageContent = async () => {
+    try {
+      const response = await fetch('/api/page-content?page=about');
+      const data = await response.json();
+      setPageContent(data.content);
+    } catch (error) {
+      console.error('Failed to fetch page content:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPageContent();
+  }, []);
+
+  const saveTitle = async (newTitle: string) => {
+    const response = await fetch('/api/page-content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'about',
+        title: newTitle,
+        content: pageContent?.content || '안녕하세요! 개발과 지식 공유를 사랑하는 개발자입니다. 🚀'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save title');
+    }
+
+    const result = await response.json();
+    setPageContent(result.pageContent);
+  };
+
+  const saveContent = async (newContent: string) => {
+    const response = await fetch('/api/page-content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'about',
+        title: pageContent?.title || 'About Me',
+        content: newContent
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save content');
+    }
+
+    const result = await response.json();
+    setPageContent(result.pageContent);
+  };
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -155,12 +217,34 @@ export default function About() {
             ← 홈으로 돌아가기
           </Link>
           
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
-            About Me
-          </h1>
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            안녕하세요! 개발과 지식 공유를 사랑하는 개발자입니다. 🚀
-          </p>
+          {isAdmin ? (
+            <InlineEdit
+              text={pageContent?.title || 'About Me'}
+              onSave={saveTitle}
+              className="mb-6"
+              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+              placeholder="제목을 입력하세요"
+            />
+          ) : (
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
+              {pageContent?.title || 'About Me'}
+            </h1>
+          )}
+          
+          {isAdmin ? (
+            <InlineEdit
+              text={pageContent?.content || '안녕하세요! 개발과 지식 공유를 사랑하는 개발자입니다. 🚀'}
+              onSave={saveContent}
+              className="mb-12 max-w-2xl mx-auto"
+              textClassName="text-xl text-gray-600"
+              isTextarea={true}
+              placeholder="내용을 입력하세요"
+            />
+          ) : (
+            <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+              {pageContent?.content || '안녕하세요! 개발과 지식 공유를 사랑하는 개발자입니다. 🚀'}
+            </p>
+          )}
         </div>
       </section>
 
@@ -306,7 +390,7 @@ export default function About() {
               </div>
               
               <Link
-                href="/works"
+                href="/work"
                 className="w-full block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
               >
                 작업물 보기
@@ -504,6 +588,7 @@ export default function About() {
           </form>
         </div>
       </div>
+
     </div>
   );
 }

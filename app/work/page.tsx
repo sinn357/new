@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Work, WORK_CATEGORIES, WorkCategory } from '@/lib/works-store';
+import { Work, WORK_CATEGORIES, WorkCategory } from '@/lib/work-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import FileUpload from '@/components/FileUpload';
+import InlineEdit from '@/components/InlineEdit';
 
 const statusLabels = {
   'completed': '완료됨',
@@ -20,7 +21,13 @@ const statusColors = {
   'planned': 'bg-yellow-100 text-yellow-800'
 };
 
-export default function WorksPage() {
+interface PageContent {
+  page: string;
+  title: string;
+  content: string;
+}
+
+export default function WorkPage() {
   const { isAdmin } = useAdmin();
   const [works, setWorks] = useState<Work[]>([]);
   const [allWorks, setAllWorks] = useState<Work[]>([]);
@@ -56,12 +63,13 @@ export default function WorksPage() {
   });
   const [isDeleting, setIsDeleting] = useState(false);
   const [editingWork, setEditingWork] = useState<Work | null>(null);
+  const [pageContent, setPageContent] = useState<PageContent | null>(null);
 
   const fetchWorks = async (categoryFilter?: string) => {
     try {
       const url = categoryFilter 
-        ? `/api/works?category=${categoryFilter}`
-        : '/api/works';
+        ? `/api/work?category=${categoryFilter}`
+        : '/api/work';
       const response = await fetch(url);
       const data = await response.json();
       setWorks(data.works || []);
@@ -74,12 +82,60 @@ export default function WorksPage() {
 
   const fetchAllWorks = async () => {
     try {
-      const response = await fetch('/api/works');
+      const response = await fetch('/api/work');
       const data = await response.json();
       return data.works || [];
     } catch {
       return [];
     }
+  };
+
+  const fetchPageContent = async () => {
+    try {
+      const response = await fetch('/api/page-content?page=work');
+      const data = await response.json();
+      setPageContent(data.content);
+    } catch (error) {
+      console.error('Failed to fetch page content:', error);
+    }
+  };
+
+  const saveTitle = async (newTitle: string) => {
+    const response = await fetch('/api/page-content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'work',
+        title: newTitle,
+        content: pageContent?.content || '프로덕트, 미디어, 포토그래피 등 다양한 작업물들을 소개합니다. 💻🎥📸'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save title');
+    }
+
+    const result = await response.json();
+    setPageContent(result.pageContent);
+  };
+
+  const saveContent = async (newContent: string) => {
+    const response = await fetch('/api/page-content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'work',
+        title: pageContent?.title || 'My Work',
+        content: newContent
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save content');
+    }
+
+    const result = await response.json();
+    setPageContent(result.pageContent);
   };
 
   useEffect(() => {
@@ -89,6 +145,7 @@ export default function WorksPage() {
       fetchWorks(selectedCategory || undefined);
     };
     loadWorks();
+    fetchPageContent();
   }, [selectedCategory]);
 
   useEffect(() => {
@@ -103,7 +160,7 @@ export default function WorksPage() {
     try {
       const techStackArray = techStack.split(',').map(tech => tech.trim()).filter(tech => tech);
       
-      const response = await fetch('/api/works', {
+      const response = await fetch('/api/work', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -164,7 +221,7 @@ export default function WorksPage() {
   const handleConfirmDelete = async () => {
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/works/${deleteModal.id}`, {
+      const response = await fetch(`/api/work/${deleteModal.id}`, {
         method: 'DELETE'
       });
 
@@ -212,7 +269,7 @@ export default function WorksPage() {
     try {
       const techStackArray = techStack.split(',').map(tech => tech.trim()).filter(tech => tech);
       
-      const response = await fetch(`/api/works/${editingWork.id}`, {
+      const response = await fetch(`/api/work/${editingWork.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -291,12 +348,34 @@ export default function WorksPage() {
             ← 홈으로 돌아가기
           </Link>
           
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
-            My Works
-          </h1>
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            프로덕트, 미디어, 포토그래피 등 다양한 작업물들을 소개합니다. 💻🎥📸
-          </p>
+          {isAdmin ? (
+            <InlineEdit
+              text={pageContent?.title || 'My Work'}
+              onSave={saveTitle}
+              className="mb-6"
+              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+              placeholder="제목을 입력하세요"
+            />
+          ) : (
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
+              {pageContent?.title || 'My Work'}
+            </h1>
+          )}
+          
+          {isAdmin ? (
+            <InlineEdit
+              text={pageContent?.content || '프로덕트, 미디어, 포토그래피 등 다양한 작업물들을 소개합니다. 💻🎥📸'}
+              onSave={saveContent}
+              className="mb-12 max-w-2xl mx-auto"
+              textClassName="text-xl text-gray-600"
+              isTextarea={true}
+              placeholder="내용을 입력하세요"
+            />
+          ) : (
+            <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+              {pageContent?.content || '프로덕트, 미디어, 포토그래피 등 다양한 작업물들을 소개합니다. 💻🎥📸'}
+            </p>
+          )}
           
           {isAdmin && (
             <button
@@ -657,7 +736,7 @@ export default function WorksPage() {
                     </div>
                     
                     <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-600 transition-colors">
-                      <Link href={`/works/${work.id}`}>
+                      <Link href={`/work/${work.id}`}>
                         {work.title}
                       </Link>
                     </h3>
@@ -773,6 +852,7 @@ export default function WorksPage() {
         onCancel={handleCancelDelete}
         isDeleting={isDeleting}
       />
+
     </div>
   );
 }

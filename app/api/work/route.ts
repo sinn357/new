@@ -32,7 +32,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    console.log('POST /api/works - Start');
+    console.log('POST /api/work - Start');
     
     const body = await request.json();
     console.log('Request body:', body);
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
     console.log('Work created successfully:', work.id);
     return Response.json({ work }, { status: 201 });
   } catch (error) {
-    console.error('POST /api/works error:', error);
+    console.error('POST /api/work error:', error);
     console.error('Error type:', typeof error);
     console.error('Error message:', error instanceof Error ? error.message : 'Unknown error');
     

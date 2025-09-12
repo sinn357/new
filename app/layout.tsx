@@ -41,8 +41,8 @@ export default function RootLayout({
                 <Link href="/about" className="text-blue-600 hover:underline">
                   About
                 </Link>
-                <Link href="/works" className="text-blue-600 hover:underline">
-                  Works
+                <Link href="/work" className="text-blue-600 hover:underline">
+                  Work
                 </Link>
                 <Link href="/archive" className="text-blue-600 hover:underline">
                   Archive

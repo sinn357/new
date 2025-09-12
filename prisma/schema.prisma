@@ -34,3 +34,13 @@ model Archive {
   fileUrl   String?   // Optional file attachment
   createdAt DateTime  @default(now())
 }
+
+model PageContent {
+  id        String    @id @default(cuid())
+  page      String    @unique // "home", "about", "work", "archive"
+  title     String
+  subtitle  String?   // Optional subtitle
+  content   String    // Main content/description
+  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now())
+}

@@ -2,17 +2,37 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Work } from '@/lib/works-store';
+import { Work } from '@/lib/work-store';
+import { useAdmin } from '@/contexts/AdminContext';
+import InlineEdit from '@/components/InlineEdit';
+
+interface PageContent {
+  page: string;
+  title: string;
+  content: string;
+}
 
 export default function Home() {
+  const { isAdmin } = useAdmin();
   const [works, setWorks] = useState<Work[]>([]);
   const [totalWorks, setTotalWorks] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [pageContent, setPageContent] = useState<PageContent | null>(null);
+
+  const fetchPageContent = async () => {
+    try {
+      const response = await fetch('/api/page-content?page=home');
+      const data = await response.json();
+      setPageContent(data.content);
+    } catch (error) {
+      console.error('Failed to fetch page content:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/works');
+        const response = await fetch('/api/work');
         
         if (!response.ok) {
           throw new Error(`API responded with status: ${response.status}`);
@@ -35,19 +55,80 @@ export default function Home() {
     };
 
     fetchData();
+    fetchPageContent();
   }, []);
+
+  const saveTitle = async (newTitle: string) => {
+    const response = await fetch('/api/page-content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'home',
+        title: newTitle,
+        content: pageContent?.content || '개발 작업물과 개인적인 글들을 공유하는 포트폴리오 & 블로그 공간입니다. 함께 성장해나가요! 🚀'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save title');
+    }
+
+    const result = await response.json();
+    setPageContent(result.pageContent);
+  };
+
+  const saveContent = async (newContent: string) => {
+    const response = await fetch('/api/page-content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'home',
+        title: pageContent?.title || 'Welcome to My Blog',
+        content: newContent
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save content');
+    }
+
+    const result = await response.json();
+    setPageContent(result.pageContent);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Hero Section */}
-      <section className="relative px-6 py-20 text-center">
+      <section className="px-6 py-20 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
-            Welcome to My Blog
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            개발 작업물과 개인적인 글들을 공유하는 포트폴리오 & 블로그 공간입니다. 함께 성장해나가요! 🚀
-          </p>
+          {isAdmin ? (
+            <InlineEdit
+              text={pageContent?.title || 'Welcome to My Blog'}
+              onSave={saveTitle}
+              className="mb-6"
+              textClassName="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+              placeholder="제목을 입력하세요"
+            />
+          ) : (
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
+              {pageContent?.title || 'Welcome to My Blog'}
+            </h1>
+          )}
+          
+          {isAdmin ? (
+            <InlineEdit
+              text={pageContent?.content || '개발 작업물과 개인적인 글들을 공유하는 포트폴리오 & 블로그 공간입니다. 함께 성장해나가요! 🚀'}
+              onSave={saveContent}
+              className="mb-12 max-w-2xl mx-auto"
+              textClassName="text-xl md:text-2xl text-gray-600"
+              isTextarea={true}
+              placeholder="내용을 입력하세요"
+            />
+          ) : (
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto">
+              {pageContent?.content || '개발 작업물과 개인적인 글들을 공유하는 포트폴리오 & 블로그 공간입니다. 함께 성장해나가요! 🚀'}
+            </p>
+          )}
           
           {/* Stats */}
           <div className="flex justify-center gap-8 mb-12">
@@ -59,7 +140,7 @@ export default function Home() {
 
           <div className="flex gap-4 justify-center">
             <Link
-              href="/works"
+              href="/work"
               className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               작업물 보기
@@ -95,7 +176,7 @@ export default function Home() {
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">아직 작업물이 없습니다.</p>
               <Link
-                href="/works"
+                href="/work"
                 className="inline-block mt-4 text-blue-500 hover:text-blue-600 font-medium"
               >
                 첫 번째 작업물 추가하기 →
@@ -120,7 +201,7 @@ export default function Home() {
                         {new Date(work.createdAt).toLocaleDateString('ko-KR')}
                       </span>
                       <Link
-                        href={`/works/${work.id}`}
+                        href={`/work/${work.id}`}
                         className="text-blue-500 hover:text-blue-600 font-medium text-sm"
                       >
                         자세히 보기 →
@@ -135,7 +216,7 @@ export default function Home() {
           {works.length > 0 && (
             <div className="text-center mt-12">
               <Link
-                href="/works"
+                href="/work"
                 className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
               >
                 모든 작업물 보기
@@ -168,6 +249,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
     </div>
   );
 }

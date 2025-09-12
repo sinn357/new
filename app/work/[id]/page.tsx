@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { Work } from '@/lib/works-store';
+import { Work } from '@/lib/work-store';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -45,7 +45,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
 
   const fetchWork = useCallback(async () => {
     try {
-      const response = await fetch(`/api/works/${id}`);
+      const response = await fetch(`/api/work/${id}`);
       if (!response.ok) {
         throw new Error('Work not found');
       }

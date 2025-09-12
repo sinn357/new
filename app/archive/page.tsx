@@ -6,6 +6,13 @@ import { Archive, ARCHIVE_CATEGORIES, ArchiveCategory } from '@/lib/archive-stor
 import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import FileUpload from '@/components/FileUpload';
+import InlineEdit from '@/components/InlineEdit';
+
+interface PageContent {
+  page: string;
+  title: string;
+  content: string;
+}
 
 export default function ArchivePage() {
   const { isAdmin } = useAdmin();
@@ -36,6 +43,7 @@ export default function ArchivePage() {
   const [editingArchive, setEditingArchive] = useState<Archive | null>(null);
   const [imageUrl, setImageUrl] = useState('');
   const [fileUrl, setFileUrl] = useState('');
+  const [pageContent, setPageContent] = useState<PageContent | null>(null);
 
   const fetchArchives = async (categoryFilter?: string) => {
     try {
@@ -52,9 +60,60 @@ export default function ArchivePage() {
     }
   };
 
+  const fetchPageContent = async () => {
+    try {
+      const response = await fetch('/api/page-content?page=archive');
+      const data = await response.json();
+      setPageContent(data.content);
+    } catch (error) {
+      console.error('Failed to fetch page content:', error);
+    }
+  };
+
+  const saveTitle = async (newTitle: string) => {
+    const response = await fetch('/api/page-content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'archive',
+        title: newTitle,
+        content: pageContent?.content || '자유로운 글쓰기와 다양한 리뷰들을 담아놓은 개인적인 기록 공간입니다. 📝'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save title');
+    }
+
+    const result = await response.json();
+    setPageContent(result.pageContent);
+  };
+
+  const saveContent = async (newContent: string) => {
+    const response = await fetch('/api/page-content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'archive',
+        title: pageContent?.title || 'Archive',
+        content: newContent
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save content');
+    }
+
+    const result = await response.json();
+    setPageContent(result.pageContent);
+  };
+
   useEffect(() => {
     fetchArchives(selectedCategory || undefined);
-  }, [selectedCategory]);
+    if (!pageContent) {
+      fetchPageContent();
+    }
+  }, [selectedCategory, pageContent]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -219,12 +278,34 @@ export default function ArchivePage() {
             ← 홈으로 돌아가기
           </Link>
           
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
-            Archive
-          </h1>
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            자유로운 글쓰기와 다양한 리뷰들을 담아놓은 개인적인 기록 공간입니다. 📝
-          </p>
+          {isAdmin ? (
+            <InlineEdit
+              text={pageContent?.title || 'Archive'}
+              onSave={saveTitle}
+              className="mb-6"
+              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+              placeholder="제목을 입력하세요"
+            />
+          ) : (
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
+              {pageContent?.title || 'Archive'}
+            </h1>
+          )}
+          
+          {isAdmin ? (
+            <InlineEdit
+              text={pageContent?.content || '자유로운 글쓰기와 다양한 리뷰들을 담아놓은 개인적인 기록 공간입니다. 📝'}
+              onSave={saveContent}
+              className="mb-12 max-w-2xl mx-auto"
+              textClassName="text-xl text-gray-600"
+              isTextarea={true}
+              placeholder="내용을 입력하세요"
+            />
+          ) : (
+            <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+              {pageContent?.content || '자유로운 글쓰기와 다양한 리뷰들을 담아놓은 개인적인 기록 공간입니다. 📝'}
+            </p>
+          )}
           
           {isAdmin && (
             <button
@@ -530,6 +611,7 @@ export default function ArchivePage() {
         onCancel={handleCancelDelete}
         isDeleting={isDeleting}
       />
+
     </div>
   );
 }
