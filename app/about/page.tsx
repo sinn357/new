@@ -203,7 +203,7 @@ export default function About() {
     setPageContent(result.pageContent);
   };
 
-  const saveSectionData = async (sectionKey: string, newValue: any) => {
+  const saveSectionData = async (sectionKey: string, newValue: unknown) => {
     const updatedSections = {
       ...pageContent?.sections,
       [sectionKey]: newValue
@@ -550,7 +550,7 @@ export default function About() {
                     isTextarea={true}
                     placeholder="전체 소개 텍스트를 입력하세요 (단락은 빈 줄로 구분하세요)"
                   />
-                  <p className="text-xs text-gray-400 mt-2">첫 번째 단락은 미리보기로, 나머지는 "더 보기"에 표시됩니다. 단락은 빈 줄로 구분하세요.</p>
+                  <p className="text-xs text-gray-400 mt-2">첫 번째 단락은 미리보기로, 나머지는 &quot;더 보기&quot;에 표시됩니다. 단락은 빈 줄로 구분하세요.</p>
                 </div>
               ) : (
                 <>

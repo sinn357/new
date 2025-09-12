@@ -247,7 +247,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                 <div className="prose prose-lg max-w-none mb-8">
                   <ReactMarkdown
                     components={{
-                      code({ node, inline, className, children, ...props }) {
+                      code({ inline, className, children, ...props }: any) {
                         const match = /language-(\w+)/.exec(className || '');
                         const language = match ? match[1] : '';
                         
@@ -314,7 +314,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                           {children}
                         </a>
                       ),
-                      img: ({ src, alt }) => (
+                      img: ({ src, alt }: any) => (
                         <img 
                           src={src} 
                           alt={alt}

@@ -150,7 +150,7 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
             <div className="prose prose-lg max-w-none">
               <ReactMarkdown
                 components={{
-                  code({ node, inline, className, children, ...props }) {
+                  code({ inline, className, children, ...props }: any) {
                     const match = /language-(\w+)/.exec(className || '');
                     const language = match ? match[1] : '';
                     
@@ -217,7 +217,7 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
                       {children}
                     </a>
                   ),
-                  img: ({ src, alt }) => (
+                  img: ({ src, alt }: any) => (
                     <img 
                       src={src} 
                       alt={alt}

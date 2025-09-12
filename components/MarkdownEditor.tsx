@@ -70,7 +70,7 @@ export default function MarkdownEditor({
               <div className="prose max-w-none">
                 <ReactMarkdown
                   components={{
-                    code({ node, inline, className, children, ...props }) {
+                    code({ inline, className, children, ...props }: any) {
                       const match = /language-(\w+)/.exec(className || '');
                       const language = match ? match[1] : '';
                       
@@ -137,7 +137,7 @@ export default function MarkdownEditor({
                         {children}
                       </a>
                     ),
-                    img: ({ src, alt }) => (
+                    img: ({ src, alt }: any) => (
                       <img 
                         src={src} 
                         alt={alt}
