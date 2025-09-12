@@ -55,12 +55,21 @@ export function generateAdminToken(): string {
 }
 
 /**
+ * JWT payload 타입 정의
+ */
+interface JWTPayload {
+  role: string;
+  iat: number;
+  exp: number;
+}
+
+/**
  * JWT 토큰을 검증하고 payload를 반환합니다
  */
 export function verifyToken(token: string): { role: string; iat: number } | null {
   try {
-    const decoded = jwt.verify(token, getJWTSecret()) as any;
-    return decoded;
+    const decoded = jwt.verify(token, getJWTSecret()) as JWTPayload;
+    return { role: decoded.role, iat: decoded.iat };
   } catch (error) {
     console.error('Token verification failed:', error);
     return null;
