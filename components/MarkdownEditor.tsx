@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import FileUpload from './FileUpload';
 
 interface MarkdownEditorProps {
   value: string;
@@ -12,13 +13,63 @@ interface MarkdownEditorProps {
   rows?: number;
 }
 
-export default function MarkdownEditor({ 
-  value, 
-  onChange, 
+export default function MarkdownEditor({
+  value,
+  onChange,
   placeholder = "마크다운으로 내용을 작성해보세요...",
-  rows = 10 
+  rows = 10
 }: MarkdownEditorProps) {
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
+  const [showMediaUpload, setShowMediaUpload] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const insertText = (text: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const newValue = value.substring(0, start) + text + value.substring(end);
+
+    onChange(newValue);
+
+    // 커서 위치를 삽입된 텍스트 뒤로 이동
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + text.length, start + text.length);
+    }, 0);
+  };
+
+  const handleMediaUpload = (url: string) => {
+    const fileExtension = url.split('.').pop()?.toLowerCase();
+    const isVideo = ['mp4', 'webm', 'ogg', 'mov', 'avi'].includes(fileExtension || '');
+
+    if (isVideo) {
+      insertText(`\n![동영상](${url})\n\n`);
+    } else {
+      insertText(`\n![이미지](${url})\n\n`);
+    }
+
+    setShowMediaUpload(false);
+  };
+
+  const insertMarkdownSyntax = (syntax: string, placeholder: string = '') => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = value.substring(start, end);
+
+    let insertedText;
+    if (selectedText) {
+      insertedText = syntax.replace(placeholder, selectedText);
+    } else {
+      insertedText = syntax;
+    }
+
+    insertText(insertedText);
+  };
 
   return (
     <div className="w-full">
@@ -48,11 +99,84 @@ export default function MarkdownEditor({
         </button>
       </div>
 
+      {/* Toolbar for Edit Mode */}
+      {activeTab === 'edit' && (
+        <div className="border-l border-r border-gray-300 bg-gray-50 px-3 py-2 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => insertMarkdownSyntax('**텍스트**', '텍스트')}
+            className="px-2 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+            title="굵게"
+          >
+            <strong>B</strong>
+          </button>
+          <button
+            type="button"
+            onClick={() => insertMarkdownSyntax('*텍스트*', '텍스트')}
+            className="px-2 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+            title="기울임"
+          >
+            <em>I</em>
+          </button>
+          <div className="h-4 w-px bg-gray-300"></div>
+          <button
+            type="button"
+            onClick={() => insertMarkdownSyntax('## 제목', '제목')}
+            className="px-2 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+            title="제목"
+          >
+            H2
+          </button>
+          <button
+            type="button"
+            onClick={() => insertMarkdownSyntax('[링크텍스트](URL)', '링크텍스트')}
+            className="px-2 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+            title="링크"
+          >
+            🔗
+          </button>
+          <div className="h-4 w-px bg-gray-300"></div>
+          <button
+            type="button"
+            onClick={() => setShowMediaUpload(!showMediaUpload)}
+            className="px-3 py-1 text-xs bg-blue-500 text-white border border-blue-500 rounded hover:bg-blue-600 transition-colors"
+            title="미디어 삽입"
+          >
+            📷 미디어
+          </button>
+        </div>
+      )}
+
+      {/* Media Upload Panel */}
+      {activeTab === 'edit' && showMediaUpload && (
+        <div className="border-l border-r border-gray-300 bg-blue-50 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-medium text-gray-700">미디어 파일 업로드</h4>
+            <button
+              type="button"
+              onClick={() => setShowMediaUpload(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          </div>
+          <FileUpload
+            onFileUpload={handleMediaUpload}
+            accept="image/*,video/*"
+            label="이미지 또는 동영상 선택"
+          />
+          <p className="text-xs text-gray-500 mt-2">
+            이미지: JPG, PNG, GIF, WebP 등 | 동영상: MP4, WebM, MOV 등
+          </p>
+        </div>
+      )}
+
       {/* Content Area */}
       <div className="min-h-[300px] border border-t-0 border-gray-300 rounded-b-lg">
         {activeTab === 'edit' ? (
           <div className="relative">
             <textarea
+              ref={textareaRef}
               value={value}
               onChange={(e) => onChange(e.target.value)}
               placeholder={placeholder}
@@ -137,13 +261,33 @@ export default function MarkdownEditor({
                         {children}
                       </a>
                     ),
-                    img: ({ src, alt }: any) => (
-                      <img 
-                        src={src} 
-                        alt={alt}
-                        className="max-w-full h-auto rounded-lg shadow-md mb-4"
-                      />
-                    ),
+                    img: ({ src, alt }: any) => {
+                      // 비디오 파일 확장자 체크
+                      const videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi'];
+                      const fileExtension = src?.split('.').pop()?.toLowerCase();
+                      const isVideo = videoExtensions.includes(fileExtension || '');
+
+                      if (isVideo) {
+                        return (
+                          <video
+                            controls
+                            className="max-w-full h-auto rounded-lg shadow-md mb-4"
+                            style={{ maxWidth: '600px', width: '100%' }}
+                          >
+                            <source src={src} type={`video/${fileExtension}`} />
+                            동영상을 재생할 수 없습니다.
+                          </video>
+                        );
+                      }
+
+                      return (
+                        <img
+                          src={src}
+                          alt={alt}
+                          className="max-w-full h-auto rounded-lg shadow-md mb-4"
+                        />
+                      );
+                    },
                     table: ({ children }) => (
                       <div className="overflow-x-auto mb-4">
                         <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
@@ -191,9 +335,11 @@ export default function MarkdownEditor({
               <div><strong>강조:</strong> **굵게**, *기울임*</div>
               <div><strong>링크:</strong> [텍스트](URL)</div>
               <div><strong>이미지:</strong> ![alt텍스트](이미지URL)</div>
+              <div><strong>동영상:</strong> ![동영상](동영상URL) - mp4, webm, mov 등 지원</div>
               <div><strong>목록:</strong> - 또는 1. 사용</div>
               <div><strong>인용:</strong> &gt; 인용문</div>
               <div><strong>코드:</strong> `인라인코드` 또는 ```언어명</div>
+              <div><strong>미디어 업로드:</strong> 📷 미디어 버튼으로 파일 업로드 후 자동 삽입</div>
             </div>
           </details>
         </div>
