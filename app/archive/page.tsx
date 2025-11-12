@@ -511,14 +511,14 @@ export default function ArchivePage() {
                 return (
                   <article
                     key={archive.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-gray-100 group"
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-gray-100 dark:border-gray-700 group"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${categoryInfo?.color || 'bg-gray-100 text-gray-800'}`}>
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${categoryInfo?.color || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}>
                           {categoryInfo?.icon} {categoryInfo?.label || archive.category}
                         </span>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
                           {new Date(archive.createdAt).toLocaleDateString('ko-KR', {
                             month: 'short',
                             day: 'numeric',
@@ -530,14 +530,14 @@ export default function ArchivePage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleEditArchive(archive)}
-                            className="text-blue-500 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50 transition-colors"
+                            className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors"
                             title="글 수정"
                           >
                             ✏️
                           </button>
                           <button
                             onClick={() => handleDeleteArchive(archive)}
-                            className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                            className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
                             title="글 삭제"
                           >
                             🗑️
@@ -545,23 +545,23 @@ export default function ArchivePage() {
                         </div>
                       )}
                     </div>
-                    
+
                     <Link href={`/archive/${archive.id}`}>
-                      <h2 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors cursor-pointer">
+                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors cursor-pointer">
                         {archive.title}
                       </h2>
                     </Link>
                     
-                    <p className="text-gray-700 leading-relaxed mb-4 line-clamp-3">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 line-clamp-3">
                       {archive.content}
                     </p>
-                    
+
                     {archive.tags && archive.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-4">
                         {archive.tags.map((tag, index) => (
                           <span
                             key={index}
-                            className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md"
+                            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded-md"
                           >
                             #{tag}
                           </span>

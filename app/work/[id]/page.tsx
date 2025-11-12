@@ -19,9 +19,9 @@ const statusLabels = {
 };
 
 const statusColors = {
-  'completed': 'bg-green-100 text-green-800',
-  'in-progress': 'bg-blue-100 text-blue-800', 
-  'planned': 'bg-yellow-100 text-yellow-800'
+  'completed': 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200',
+  'in-progress': 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200', 
+  'planned': 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
 };
 
 export default function WorkDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -100,16 +100,16 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
   };
 
   if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
-  if (!work) return <div className="flex justify-center p-8 text-red-500">Work not found</div>;
+  if (!work) return <div className="flex justify-center p-8 text-red-500 dark:text-red-400">Work not found</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Navigation */}
       <section className="px-6 py-8">
         <div className="max-w-6xl mx-auto">
           <Link 
             href="/work" 
-            className="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors"
+            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
           >
             ← 작업물 목록으로 돌아가기
           </Link>
@@ -118,7 +118,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
 
       {error && (
         <div className="max-w-6xl mx-auto px-6 mb-6">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded">
             {error}
           </div>
         </div>
@@ -131,18 +131,18 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
             {/* Work Media */}
             {work.imageUrl && (
               <div className="order-2 lg:order-1">
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700">
                   <div className="p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <span className="text-xl">{getFileIcon(work.imageUrl)}</span>
                       <div className="flex-1">
-                        <h4 className="font-medium text-gray-900">{getFileTypeLabel(work.imageUrl)}</h4>
-                        <p className="text-sm text-gray-500">{getFileName(work.imageUrl)}</p>
+                        <h4 className="font-medium text-gray-900 dark:text-white">{getFileTypeLabel(work.imageUrl)}</h4>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{getFileName(work.imageUrl)}</p>
                       </div>
                       <a 
                         href={work.imageUrl} 
                         download
-                        className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
+                        className="bg-gray-600 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
                       >
                         다운로드
                       </a>
@@ -198,7 +198,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                     {!isImageFile(work.imageUrl) && !isVideoFile(work.imageUrl) && !isAudioFile(work.imageUrl) && !isPdfFile(work.imageUrl) && (
                       <div className="text-center py-8">
                         <div className="text-4xl mb-4">{getFileIcon(work.imageUrl)}</div>
-                        <p className="text-gray-600">파일을 다운로드하여 확인하세요</p>
+                        <p className="text-gray-600 dark:text-gray-300">파일을 다운로드하여 확인하세요</p>
                       </div>
                     )}
                   </div>
@@ -208,7 +208,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
             
             {/* Work Info */}
             <div className={`order-1 ${work.imageUrl ? 'lg:order-2' : 'lg:col-span-2'}`}>
-              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-gray-700">
                 <div className="flex justify-between items-start mb-6">
                   <div className="flex items-center gap-4">
                     <span className={`px-4 py-2 rounded-full text-sm font-medium ${statusColors[work.status]}`}>
@@ -307,7 +307,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                       a: ({ href, children }) => (
                         <a 
                           href={href} 
-                          className="text-blue-600 hover:text-blue-700 underline"
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -352,8 +352,8 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-2xl">{getFileIcon(work.fileUrl)}</span>
                         <div className="flex-1">
-                          <h4 className="font-medium text-gray-900">{getFileTypeLabel(work.fileUrl)}</h4>
-                          <p className="text-sm text-gray-500">{getFileName(work.fileUrl)}</p>
+                          <h4 className="font-medium text-gray-900 dark:text-white">{getFileTypeLabel(work.fileUrl)}</h4>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{getFileName(work.fileUrl)}</p>
                         </div>
                         <a 
                           href={work.fileUrl} 

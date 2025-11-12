@@ -470,7 +470,7 @@ export default function About() {
         <div className="grid md:grid-cols-2 gap-12">
           {/* 소개 섹션 */}
           <div className="space-y-8">
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                   {isAdmin ? (
@@ -545,7 +545,7 @@ export default function About() {
               )}
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
               {isAdmin ? (
                 <InlineEdit
                   text={experienceTitle}
@@ -555,7 +555,7 @@ export default function About() {
                   placeholder="섹션 제목을 입력하세요"
                 />
               ) : (
-                <h3 className="text-xl font-bold text-gray-800 mb-6">{experienceTitle}</h3>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6">{experienceTitle}</h3>
               )}
               {isAdmin ? (
                 <div className="mb-4">
@@ -583,7 +583,7 @@ export default function About() {
 
           {/* 스킬 & 관심사 섹션 */}
           <div className="space-y-8">
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
               {isAdmin ? (
                 <InlineEdit
                   text={skillsTitle}
@@ -593,7 +593,7 @@ export default function About() {
                   placeholder="섹션 제목을 입력하세요"
                 />
               ) : (
-                <h3 className="text-xl font-bold text-gray-800 mb-6">{skillsTitle}</h3>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6">{skillsTitle}</h3>
               )}
               {isAdmin ? (
                 <div className="mb-4">
@@ -625,7 +625,7 @@ export default function About() {
               </div>
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
               {isAdmin ? (
                 <InlineEdit
                   text={interestsTitle}
@@ -635,7 +635,7 @@ export default function About() {
                   placeholder="섹션 제목을 입력하세요"
                 />
               ) : (
-                <h3 className="text-xl font-bold text-gray-800 mb-6">{interestsTitle}</h3>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6">{interestsTitle}</h3>
               )}
               {isAdmin ? (
                 <div className="mb-4">
@@ -664,7 +664,7 @@ export default function About() {
             </div>
 
             {/* 연락처 정보 섹션 */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
               {isAdmin ? (
                 <InlineEdit
                   text={contactInfoTitle}
@@ -674,7 +674,7 @@ export default function About() {
                   placeholder="섹션 제목을 입력하세요"
                 />
               ) : (
-                <h3 className="text-xl font-bold text-gray-800 mb-6">{contactInfoTitle}</h3>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6">{contactInfoTitle}</h3>
               )}
               
               <div className="space-y-4 mb-6">
@@ -772,7 +772,7 @@ export default function About() {
             </div>
             
             {/* 연락 카테고리 정보 */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
               {isAdmin ? (
                 <InlineEdit
                   text={contactCategoryTitle}
@@ -782,7 +782,7 @@ export default function About() {
                   placeholder="섹션 제목을 입력하세요"
                 />
               ) : (
-                <h4 className="text-lg font-bold text-gray-800 mb-4">{contactCategoryTitle}</h4>
+                <h4 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">{contactCategoryTitle}</h4>
               )}
               {isAdmin ? (
                 <div className="mb-4">
@@ -821,7 +821,7 @@ export default function About() {
               placeholder="섹션 제목을 입력하세요"
             />
           ) : (
-            <h3 className="text-2xl font-bold text-center text-gray-800 mb-8">{philosophyTitle}</h3>
+            <h3 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">{philosophyTitle}</h3>
           )}
           {isAdmin ? (
             <div className="mb-6">
@@ -841,7 +841,7 @@ export default function About() {
                 <div className={`w-16 h-16 bg-${item.color}-100 rounded-full flex items-center justify-center mx-auto mb-4`}>
                   {item.icon}
                 </div>
-                <h4 className="text-lg font-semibold text-gray-800 mb-2">{item.title}</h4>
+                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">{item.title}</h4>
                 <p className="text-gray-600 text-sm">
                   {item.description}
                 </p>
@@ -852,7 +852,7 @@ export default function About() {
 
         {/* Contact Form Section */}
         <div className="mt-12 bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-          <h3 className="text-2xl font-bold text-center text-gray-800 mb-8">연락하기</h3>
+          <h3 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">연락하기</h3>
           
           {status === 'success' && (
             <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">

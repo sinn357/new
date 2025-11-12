@@ -93,13 +93,13 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
   const categoryInfo = ARCHIVE_CATEGORIES[archive.category as ArchiveCategory];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Navigation */}
       <section className="px-6 py-8">
         <div className="max-w-4xl mx-auto">
           <Link 
             href="/archive" 
-            className="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors"
+            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
           >
             ← 아카이브 목록으로 돌아가기
           </Link>
@@ -117,7 +117,7 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
       {/* Archive Content */}
       <section className="px-6 pb-16">
         <div className="max-w-4xl mx-auto">
-          <article className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-8">
+          <article className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-gray-700 mb-8">
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
                 <span className={`px-4 py-2 rounded-full text-sm font-medium ${categoryInfo?.color || 'bg-gray-100 text-gray-800'}`}>
@@ -237,7 +237,7 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
                   {archive.tags.map((tag, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full"
+                      className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-full"
                     >
                       #{tag}
                     </span>
@@ -256,8 +256,8 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-2xl">{getFileIcon(archive.imageUrl)}</span>
                         <div>
-                          <h4 className="font-medium text-gray-900">{getFileTypeLabel(archive.imageUrl)}</h4>
-                          <p className="text-sm text-gray-500">{getFileName(archive.imageUrl)}</p>
+                          <h4 className="font-medium text-gray-900 dark:text-white">{getFileTypeLabel(archive.imageUrl)}</h4>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{getFileName(archive.imageUrl)}</p>
                         </div>
                         <a 
                           href={archive.imageUrl} 
@@ -331,8 +331,8 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-2xl">{getFileIcon(archive.fileUrl)}</span>
                         <div className="flex-1">
-                          <h4 className="font-medium text-gray-900">{getFileTypeLabel(archive.fileUrl)}</h4>
-                          <p className="text-sm text-gray-500">{getFileName(archive.fileUrl)}</p>
+                          <h4 className="font-medium text-gray-900 dark:text-white">{getFileTypeLabel(archive.fileUrl)}</h4>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{getFileName(archive.fileUrl)}</p>
                         </div>
                         <a 
                           href={archive.fileUrl} 
