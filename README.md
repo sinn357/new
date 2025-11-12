@@ -1,17 +1,27 @@
-# My Site - Blog Platform
+# My Site - Personal Blog Platform
 
-A modern blog platform built with Next.js 15, Prisma, and PostgreSQL.
+A modern personal blog platform built with Next.js 15, featuring portfolio management and content archiving capabilities.
 
 ## Features
 
-- ✅ Create and view blog posts
-- ✅ Add comments to posts
-- ✅ Delete posts and comments
-- ✅ Contact form with email sending
-- ✅ Persistent data storage with PostgreSQL
-- ✅ Server-side rendering
-- ✅ Type-safe API routes
-- ✅ Responsive design
+### ✅ Completed
+- **블로그 포스트 관리**: 작성, 조회, 삭제
+- **댓글 시스템**: 포스트별 댓글 기능
+- **포트폴리오 섹션**: Work 페이지를 통한 프로젝트 관리
+- **아카이브 시스템**: 카테고리별 콘텐츠 분류
+- **연락 기능**: EmailJS 기반 연락 폼
+- **관리자 모드**: AdminContext 기반 권한 관리
+- **미디어 삽입**: 이미지/동영상 업로드 및 마크다운 편집
+- **반응형 디자인**: 모바일/데스크톱 최적화
+- **데이터 지속성**: PostgreSQL 기반 안전한 저장
+
+### 🚀 최신 업데이트 (2025-09-29)
+- **사이트 제목 변경**: "Create Next App" → "Blog Testing"
+- **미디어 삽입 기능**: MarkdownEditor에 통합된 이미지/동영상 업로드
+  - 📷 툴바 버튼으로 쉬운 미디어 삽입
+  - 자동 마크다운 문법 변환
+  - 비디오 파일 자동 감지 및 재생
+  - 커서 위치 자동 관리
 
 ## Tech Stack
 
@@ -135,13 +145,40 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## 📁 프로젝트 구조
+
+### 문서화
+- `CLAUDE.md` - 프로젝트 컨텍스트 및 세션 관리
+- `docs/` - 기술 문서 폴더
+  - `MEDIA_INSERTION_IMPLEMENTATION.md` - 미디어 삽입 기능 구현 가이드
+  - `BLOG_PLATFORM_*_IMPLEMENTATION.md` - 블로그 플랫폼 구현 히스토리
+  - `PROJECT_SUMMARY_*.md` - 날짜별 프로젝트 요약
+
+### 주요 디렉토리
+```
+my-site/
+├── app/                    # Next.js App Router
+│   ├── layout.tsx         # 루트 레이아웃
+│   ├── work/              # 포트폴리오 섹션
+│   ├── archive/           # 아카이브 섹션
+│   └── api/               # API 라우트
+├── components/            # 재사용 컴포넌트
+│   ├── MarkdownEditor.tsx # 미디어 삽입 지원 에디터
+│   └── FileUpload.tsx     # 파일 업로드
+├── contexts/              # React Contexts
+├── lib/                   # 유틸리티 함수
+├── prisma/                # 데이터베이스 스키마
+└── docs/                  # 프로젝트 문서
+```
+
 ## Deployment Status
 
-✅ **Local Database**: SQLite/PostgreSQL setup complete
+✅ **Local Database**: PostgreSQL setup complete
 ✅ **API Routes**: All endpoints working
-✅ **Frontend**: Post creation/viewing functional  
+✅ **Frontend**: Post creation/viewing functional
 ✅ **Comments**: Comment system working
-🔄 **Cloud Database**: Ready for deployment with environment variables
+✅ **Media Upload**: Image/video insertion working
+✅ **GitHub**: Code versioned at https://github.com/sinn357/new.git
 🔄 **Production**: Ready for Vercel deployment
 
 ## Deploy on Vercel

@@ -6,6 +6,7 @@ import AdminLoginModal from "@/components/AdminLoginModal";
 import AdminButton from "@/components/AdminButton";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,17 +29,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AdminProvider>
-          <Navigation />
-          <main className="pt-24">{children}</main>
-          <Footer />
-          <AdminButton />
-          <AdminLoginModal />
-        </AdminProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AdminProvider>
+            <Navigation />
+            <main className="pt-24">{children}</main>
+            <Footer />
+            <AdminButton />
+            <AdminLoginModal />
+          </AdminProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

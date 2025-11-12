@@ -126,7 +126,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
       <section className="px-6 py-20 text-center">
         <div className="max-w-4xl mx-auto">
@@ -139,7 +139,7 @@ export default function Home() {
               placeholder="제목을 입력하세요"
             />
           ) : (
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
               {pageContent?.title || 'Welcome to My Blog'}
             </h1>
           )}
@@ -154,7 +154,7 @@ export default function Home() {
               placeholder="내용을 입력하세요"
             />
           ) : (
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto">
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
               {pageContent?.content || ''}
             </p>
           )}
@@ -193,7 +193,7 @@ export default function Home() {
       {/* Latest Works Section */}
       <section className="px-6 py-16">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
             최신 작업물
           </h2>
           
