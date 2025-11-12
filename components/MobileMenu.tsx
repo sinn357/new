@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -11,11 +11,15 @@ interface MobileMenuProps {
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const pathname = usePathname()
+  const prevPathname = useRef(pathname)
 
-  // 라우트 변경 시 메뉴 닫기
+  // 라우트 변경 시 메뉴 닫기 (실제로 경로가 변경되었을 때만)
   useEffect(() => {
-    onClose()
-  }, [pathname, onClose])
+    if (prevPathname.current !== pathname && isOpen) {
+      onClose()
+      prevPathname.current = pathname
+    }
+  }, [pathname, isOpen, onClose])
 
   // ESC 키로 닫기 + 스크롤 방지
   useEffect(() => {

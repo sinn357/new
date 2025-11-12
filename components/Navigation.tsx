@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import MobileMenu from './MobileMenu'
 
@@ -12,6 +12,10 @@ export default function Navigation() {
     const handleScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const handleCloseMenu = useCallback(() => {
+    setMobileMenuOpen(false)
   }, [])
 
   return (
@@ -74,7 +78,7 @@ export default function Navigation() {
     {/* 모바일 메뉴 */}
     <MobileMenu
       isOpen={mobileMenuOpen}
-      onClose={() => setMobileMenuOpen(false)}
+      onClose={handleCloseMenu}
     />
   </>
   )
