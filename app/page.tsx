@@ -6,6 +6,8 @@ import { Work } from '@/lib/work-store';
 import { Archive } from '@/lib/archive-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import InlineEdit from '@/components/InlineEdit';
+import AnimatedCard from '@/components/AnimatedCard';
+import AnimatedHero from '@/components/AnimatedHero';
 
 interface PageContent {
   page: string;
@@ -129,7 +131,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
       <section className="px-6 py-20 text-center">
-        <div className="max-w-4xl mx-auto">
+        <AnimatedHero className="max-w-4xl mx-auto">
           {isAdmin ? (
             <InlineEdit
               text={pageContent?.title || 'Welcome to My Blog'}
@@ -187,7 +189,7 @@ export default function Home() {
               소개 및 연락
             </Link>
           </div>
-        </div>
+        </AnimatedHero>
       </section>
 
       {/* Latest Works Section */}
@@ -213,31 +215,32 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid md:grid-cols-3 gap-8">
-              {works.map((work) => (
-                <article
-                  key={work.id}
-                  className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
-                >
-                  <div className="p-8">
-                    <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
-                      {work.title}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                      {work.content}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-400 dark:text-gray-500">
-                        {new Date(work.createdAt).toLocaleDateString('ko-KR')}
-                      </span>
-                      <Link
-                        href={`/work/${work.id}`}
-                        className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 font-medium text-sm"
-                      >
-                        자세히 보기 →
-                      </Link>
+              {works.map((work, index) => (
+                <AnimatedCard key={work.id} delay={index * 0.1}>
+                  <article
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
+                  >
+                    <div className="p-8">
+                      <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                        {work.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                        {work.content}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-400 dark:text-gray-500">
+                          {new Date(work.createdAt).toLocaleDateString('ko-KR')}
+                        </span>
+                        <Link
+                          href={`/work/${work.id}`}
+                          className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 font-medium text-sm"
+                        >
+                          자세히 보기 →
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                </article>
+                  </article>
+                </AnimatedCard>
               ))}
             </div>
           )}
@@ -284,36 +287,37 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid md:grid-cols-3 gap-8">
-              {archives.map((archive) => (
-                <article
-                  key={archive.id}
-                  className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
-                >
-                  <div className="p-8">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 text-sm font-medium rounded-full">
-                        {archive.category}
-                      </span>
+              {archives.map((archive, index) => (
+                <AnimatedCard key={archive.id} delay={index * 0.1}>
+                  <article
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
+                  >
+                    <div className="p-8">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 text-sm font-medium rounded-full">
+                          {archive.category}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-2">
+                        {archive.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                        {archive.content}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-400 dark:text-gray-500">
+                          {new Date(archive.createdAt).toLocaleDateString('ko-KR')}
+                        </span>
+                        <Link
+                          href={`/archive/${archive.id}`}
+                          className="text-purple-500 dark:text-purple-400 hover:text-purple-600 dark:hover:text-purple-300 font-medium text-sm"
+                        >
+                          자세히 보기 →
+                        </Link>
+                      </div>
                     </div>
-                    <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-2">
-                      {archive.title}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                      {archive.content}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-400 dark:text-gray-500">
-                        {new Date(archive.createdAt).toLocaleDateString('ko-KR')}
-                      </span>
-                      <Link
-                        href={`/archive/${archive.id}`}
-                        className="text-purple-500 dark:text-purple-400 hover:text-purple-600 dark:hover:text-purple-300 font-medium text-sm"
-                      >
-                        자세히 보기 →
-                      </Link>
-                    </div>
-                  </div>
-                </article>
+                  </article>
+                </AnimatedCard>
               ))}
             </div>
           )}

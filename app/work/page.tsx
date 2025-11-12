@@ -9,6 +9,7 @@ import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import FileUpload from '@/components/FileUpload';
 import InlineEdit from '@/components/InlineEdit';
 import MarkdownEditor from '@/components/MarkdownEditor';
+import AnimatedCard from '@/components/AnimatedCard';
 
 const statusLabels = {
   'completed': '완료됨',
@@ -679,11 +680,11 @@ export default function WorkPage() {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {works.map((work) => (
-                <article
-                  key={work.id}
-                  className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
-                >
+              {works.map((work, index) => (
+                <AnimatedCard key={work.id} delay={index * 0.1}>
+                  <article
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
+                  >
                   {work.imageUrl && (
                     <div className="h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
                       <Image
@@ -836,6 +837,7 @@ export default function WorkPage() {
                     </div>
                   </div>
                 </article>
+                </AnimatedCard>
               ))}
             </div>
           )}

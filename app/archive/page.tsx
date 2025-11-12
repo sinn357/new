@@ -8,6 +8,7 @@ import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import FileUpload from '@/components/FileUpload';
 import InlineEdit from '@/components/InlineEdit';
 import MarkdownEditor from '@/components/MarkdownEditor';
+import AnimatedCard from '@/components/AnimatedCard';
 
 interface PageContent {
   page: string;
@@ -506,13 +507,13 @@ export default function ArchivePage() {
             </div>
           ) : (
             <div className="space-y-6">
-              {archives.map((archive) => {
+              {archives.map((archive, index) => {
                 const categoryInfo = ARCHIVE_CATEGORIES[archive.category as ArchiveCategory];
                 return (
-                  <article
-                    key={archive.id}
-                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-gray-100 dark:border-gray-700 group"
-                  >
+                  <AnimatedCard key={archive.id} delay={index * 0.1}>
+                    <article
+                      className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-gray-100 dark:border-gray-700 group"
+                    >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${categoryInfo?.color || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}>
@@ -594,6 +595,7 @@ export default function ArchivePage() {
                       더 읽기 →
                     </Link>
                   </article>
+                  </AnimatedCard>
                 );
               })}
             </div>

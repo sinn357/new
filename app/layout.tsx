@@ -7,6 +7,7 @@ import AdminButton from "@/components/AdminButton";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import ScrollProgress from "@/components/ScrollProgress";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ScrollProgress />
           <AdminProvider>
             <Navigation />
             <main className="pt-24">{children}</main>
