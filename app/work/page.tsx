@@ -335,16 +335,16 @@ export default function WorkPage() {
     setEditingWork(null);
   };
 
-  if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+  if (loading) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
       <section className="px-6 py-16 text-center">
         <div className="max-w-4xl mx-auto">
-          <Link 
-            href="/" 
-            className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-8 transition-colors"
+          <Link
+            href="/"
+            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mb-8 transition-colors"
           >
             ← 홈으로 돌아가기
           </Link>
@@ -354,26 +354,26 @@ export default function WorkPage() {
               text={pageContent?.title || 'My Work'}
               onSave={saveTitle}
               className="mb-6"
-              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent"
               placeholder="제목을 입력하세요"
             />
           ) : (
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
               {pageContent?.title || 'My Work'}
             </h1>
           )}
-          
+
           {isAdmin ? (
             <InlineEdit
               text={pageContent?.content || ''}
               onSave={saveContent}
               className="mb-12 max-w-2xl mx-auto"
-              textClassName="text-xl text-gray-600"
+              textClassName="text-xl text-gray-600 dark:text-gray-300"
               isTextarea={true}
               placeholder="내용을 입력하세요"
             />
           ) : (
-            <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
               {pageContent?.content || ''}
             </p>
           )}
@@ -398,15 +398,15 @@ export default function WorkPage() {
       {/* Category Filter */}
       <section className="px-6 pb-8">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">카테고리</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-gray-700">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">카테고리</h3>
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setSelectedCategory('')}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${ 
-                  selectedCategory === '' 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  selectedCategory === ''
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 전체 ({allWorks.length})
@@ -440,13 +440,13 @@ export default function WorkPage() {
       {isAdmin && showForm && (
         <section className="px-6 pb-16">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-8">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">
                 {editingWork ? '작업물 수정' : '새 작업물 추가'}
               </h2>
-              
+
               {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-6">
                   {error}
                 </div>
               )}
@@ -454,7 +454,7 @@ export default function WorkPage() {
               <form onSubmit={editingWork ? handleUpdateWork : handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       제목 *
                     </label>
                     <input
@@ -462,14 +462,14 @@ export default function WorkPage() {
                       id="title"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="프로젝트 제목을 입력하세요"
                       required
                     />
                   </div>
-                  
+
                   <div>
-                    <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="duration" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       작업 기간
                     </label>
                     <input
@@ -477,21 +477,21 @@ export default function WorkPage() {
                       id="duration"
                       value={duration}
                       onChange={(e) => setDuration(e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="예: 2주, 1개월"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     카테고리 *
                   </label>
                   <select
                     id="category"
                     value={category}
                     onChange={(e) => setCategory(e.target.value as WorkCategory)}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     {Object.entries(WORK_CATEGORIES).map(([key, info]) => (
                       <option key={key} value={key}>
@@ -502,7 +502,7 @@ export default function WorkPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     설명 * (마크다운 지원)
                   </label>
                   <MarkdownEditor
@@ -514,7 +514,7 @@ export default function WorkPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="techStack" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="techStack" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     기술 스택
                   </label>
                   <input
@@ -522,7 +522,7 @@ export default function WorkPage() {
                     id="techStack"
                     value={techStack}
                     onChange={(e) => setTechStack(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="React, Node.js, TypeScript (쉼표로 구분)"
                   />
                 </div>
@@ -532,7 +532,7 @@ export default function WorkPage() {
                   {category === 'product' && (
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
-                        <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                           GitHub URL
                         </label>
                         <input
@@ -540,13 +540,13 @@ export default function WorkPage() {
                           id="githubUrl"
                           value={githubUrl}
                           onChange={(e) => setGithubUrl(e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="https://github.com/username/repo"
                         />
                       </div>
-                      
+
                       <div>
-                        <label htmlFor="demoUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="demoUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                           데모 URL
                         </label>
                         <input
@@ -554,7 +554,7 @@ export default function WorkPage() {
                           id="demoUrl"
                           value={demoUrl}
                           onChange={(e) => setDemoUrl(e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="https://your-demo.com"
                         />
                       </div>
@@ -563,7 +563,7 @@ export default function WorkPage() {
 
                   {category === 'media' && (
                     <div>
-                      <label htmlFor="youtubeUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="youtubeUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                         YouTube URL
                       </label>
                       <input
@@ -571,7 +571,7 @@ export default function WorkPage() {
                         id="youtubeUrl"
                         value={youtubeUrl}
                         onChange={(e) => setYoutubeUrl(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="https://www.youtube.com/watch?v=..."
                       />
                     </div>
@@ -579,7 +579,7 @@ export default function WorkPage() {
 
                   {category === 'photography' && (
                     <div>
-                      <label htmlFor="instagramUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="instagramUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                         Instagram URL
                       </label>
                       <input
@@ -587,7 +587,7 @@ export default function WorkPage() {
                         id="instagramUrl"
                         value={instagramUrl}
                         onChange={(e) => setInstagramUrl(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="https://www.instagram.com/p/..."
                       />
                     </div>
@@ -596,38 +596,38 @@ export default function WorkPage() {
 
                 <div className="grid md:grid-cols-3 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       대표 이미지
                     </label>
-                    <FileUpload 
+                    <FileUpload
                       onFileUpload={setImageUrl}
                       accept="image/*"
                       label="이미지 선택"
                       currentUrl={imageUrl}
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       첨부 파일
                     </label>
-                    <FileUpload 
+                    <FileUpload
                       onFileUpload={setFileUrl}
                       accept="*/*"
                       label="파일 선택"
                       currentUrl={fileUrl}
                     />
                   </div>
-                  
+
                   <div>
-                    <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       상태
                     </label>
                     <select
                       id="status"
                       value={status}
                       onChange={(e) => setStatus(e.target.value as 'completed' | 'in-progress' | 'planned')}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="completed">완료됨</option>
                       <option value="in-progress">진행중</option>
@@ -655,11 +655,11 @@ export default function WorkPage() {
           {works.length === 0 ? (
             <div className="text-center py-16">
               <div className="max-w-md mx-auto">
-                <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
                   💼
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">아직 작업물이 없습니다</h3>
-                <p className="text-gray-600 mb-6">
+                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">아직 작업물이 없습니다</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
                   첫 번째 프로젝트를 추가해서 포트폴리오를 시작해보세요!
                 </p>
                 {isAdmin && (
@@ -671,7 +671,7 @@ export default function WorkPage() {
                   </button>
                 )}
                 {!isAdmin && (
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
                     관리자만 작업물을 추가할 수 있습니다.
                   </p>
                 )}
@@ -682,10 +682,10 @@ export default function WorkPage() {
               {works.map((work) => (
                 <article
                   key={work.id}
-                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100"
+                  className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
                 >
                   {work.imageUrl && (
-                    <div className="h-48 bg-gray-100 overflow-hidden">
+                    <div className="h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
                       <Image
                         src={work.imageUrl}
                         alt={work.title}
@@ -733,36 +733,36 @@ export default function WorkPage() {
                       </div>
                     </div>
                     
-                    <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       <Link href={`/work/${work.id}`}>
                         {work.title}
                       </Link>
                     </h3>
-                    
-                    <p className="text-gray-600 mb-4 line-clamp-3">
+
+                    <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
                       {work.content}
                     </p>
-                    
+
                     {work.techStack && work.techStack.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-4">
                         {work.techStack.slice(0, 3).map((tech, index) => (
                           <span
                             key={index}
-                            className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-md"
+                            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs rounded-md"
                           >
                             {tech}
                           </span>
                         ))}
                         {work.techStack.length > 3 && (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-500 text-xs rounded-md">
+                          <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded-md">
                             +{work.techStack.length - 3}
                           </span>
                         )}
                       </div>
                     )}
-                    
+
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-400">
+                      <span className="text-sm text-gray-400 dark:text-gray-500">
                         {new Date(work.createdAt).toLocaleDateString('ko-KR')}
                       </span>
                       
@@ -772,7 +772,7 @@ export default function WorkPage() {
                             href={work.githubUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 text-gray-600 hover:text-blue-600 transition-colors"
+                            className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                             title="GitHub"
                           >
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -785,7 +785,7 @@ export default function WorkPage() {
                             href={work.demoUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 text-gray-600 hover:text-green-600 transition-colors"
+                            className="p-2 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
                             title="Live Demo"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -798,7 +798,7 @@ export default function WorkPage() {
                             href={work.youtubeUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 text-gray-600 hover:text-red-600 transition-colors"
+                            className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                             title="YouTube"
                           >
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -811,7 +811,7 @@ export default function WorkPage() {
                             href={work.instagramUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 text-gray-600 hover:text-pink-600 transition-colors"
+                            className="p-2 text-gray-600 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors"
                             title="Instagram"
                           >
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -824,7 +824,7 @@ export default function WorkPage() {
                             href={work.fileUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 text-gray-600 hover:text-purple-600 transition-colors"
+                            className="p-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                             title="File"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

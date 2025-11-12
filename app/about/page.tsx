@@ -424,13 +424,13 @@ export default function About() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
       <section className="px-6 py-16 text-center">
         <div className="max-w-4xl mx-auto">
           <Link 
             href="/" 
-            className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-8 transition-colors"
+            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mb-8 transition-colors"
           >
             ← 홈으로 돌아가기
           </Link>
@@ -440,11 +440,11 @@ export default function About() {
               text={pageContent?.title || 'About Me'}
               onSave={saveTitle}
               className="mb-6"
-              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent"
               placeholder="제목을 입력하세요"
             />
           ) : (
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
               {pageContent?.title || 'About Me'}
             </h1>
           )}
@@ -454,12 +454,12 @@ export default function About() {
               text={pageContent?.content || '안녕하세요! 개발과 지식 공유를 사랑하는 개발자입니다. 🚀'}
               onSave={saveContent}
               className="mb-12 max-w-2xl mx-auto"
-              textClassName="text-xl text-gray-600"
+              textClassName="text-xl text-gray-600 dark:text-gray-300"
               isTextarea={true}
               placeholder="내용을 입력하세요"
             />
           ) : (
-            <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
               {pageContent?.content || '안녕하세요! 개발과 지식 공유를 사랑하는 개발자입니다. 🚀'}
             </p>
           )}
@@ -489,11 +489,11 @@ export default function About() {
                     <InlineEdit
                       text={mainTitle}
                       onSave={saveMainTitle}
-                      textClassName="text-2xl font-bold text-gray-800 mb-1"
+                      textClassName="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-1"
                       placeholder="메인 타이틀을 입력하세요"
                     />
                   ) : (
-                    <h2 className="text-2xl font-bold text-gray-800 mb-1">{mainTitle}</h2>
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-1">{mainTitle}</h2>
                   )}
                   {isAdmin ? (
                     <InlineEdit
@@ -538,7 +538,7 @@ export default function About() {
               {!isAdmin && moreContent && (
                 <button
                   onClick={() => setShowMore(!showMore)}
-                  className="mt-4 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                  className="mt-4 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
                 >
                   {showMore ? '접기' : '더 보기'} {showMore ? '↑' : '↓'}
                 </button>
@@ -869,7 +869,7 @@ export default function About() {
           <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   이름 *
                 </label>
                 <input
@@ -887,7 +887,7 @@ export default function About() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   이메일 *
                 </label>
                 <input
@@ -907,7 +907,7 @@ export default function About() {
 
             <div className="grid md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   카테고리
                 </label>
                 <select
@@ -925,7 +925,7 @@ export default function About() {
               </div>
 
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   제목 *
                 </label>
                 <input
@@ -944,7 +944,7 @@ export default function About() {
             </div>
 
             <div className="mb-6">
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 메시지 *
               </label>
               <textarea

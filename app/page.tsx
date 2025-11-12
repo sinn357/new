@@ -182,7 +182,7 @@ export default function Home() {
             </Link>
             <Link
               href="/about"
-              className="border-2 border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-3 rounded-full font-medium transition-all duration-300 hover:bg-gray-50"
+              className="border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-200 px-8 py-3 rounded-full font-medium transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800"
             >
               소개 및 연락
             </Link>
@@ -203,10 +203,10 @@ export default function Home() {
             </div>
           ) : works.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">아직 작업물이 없습니다.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">아직 작업물이 없습니다.</p>
               <Link
                 href="/work"
-                className="inline-block mt-4 text-blue-500 hover:text-blue-600 font-medium"
+                className="inline-block mt-4 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 font-medium"
               >
                 첫 번째 작업물 추가하기 →
               </Link>
@@ -216,22 +216,22 @@ export default function Home() {
               {works.map((work) => (
                 <article
                   key={work.id}
-                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100"
+                  className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
                 >
                   <div className="p-8">
-                    <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+                    <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
                       {work.title}
                     </h3>
-                    <p className="text-gray-600 mb-4 line-clamp-3">
+                    <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
                       {work.content}
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-400">
+                      <span className="text-sm text-gray-400 dark:text-gray-500">
                         {new Date(work.createdAt).toLocaleDateString('ko-KR')}
                       </span>
                       <Link
                         href={`/work/${work.id}`}
-                        className="text-blue-500 hover:text-blue-600 font-medium text-sm"
+                        className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 font-medium text-sm"
                       >
                         자세히 보기 →
                       </Link>
@@ -246,7 +246,7 @@ export default function Home() {
             <div className="text-center mt-12">
               <Link
                 href="/work"
-                className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
+                className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
               >
                 모든 작업물 보기
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -259,12 +259,12 @@ export default function Home() {
       </section>
 
       {/* Archive Section */}
-      <section className="px-6 py-16 bg-gray-50">
+      <section className="px-6 py-16 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 text-gray-800 text-center">
+          <h2 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">
             최신 아카이브
           </h2>
-          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-gray-300 text-center mb-12 max-w-2xl mx-auto">
             
           </p>
           
@@ -274,10 +274,10 @@ export default function Home() {
             </div>
           ) : archives.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">아직 아카이브 글이 없습니다.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">아직 아카이브 글이 없습니다.</p>
               <Link
                 href="/archive"
-                className="inline-block mt-4 text-purple-500 hover:text-purple-600 font-medium"
+                className="inline-block mt-4 text-purple-500 dark:text-purple-400 hover:text-purple-600 dark:hover:text-purple-300 font-medium"
               >
                 첫 번째 글 작성하기 →
               </Link>
@@ -287,27 +287,27 @@ export default function Home() {
               {archives.map((archive) => (
                 <article
                   key={archive.id}
-                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100"
+                  className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
                 >
                   <div className="p-8">
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="px-3 py-1 bg-purple-100 text-purple-600 text-sm font-medium rounded-full">
+                      <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 text-sm font-medium rounded-full">
                         {archive.category}
                       </span>
                     </div>
-                    <h3 className="text-xl font-semibold mb-3 group-hover:text-purple-600 transition-colors line-clamp-2">
+                    <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-2">
                       {archive.title}
                     </h3>
-                    <p className="text-gray-600 mb-4 line-clamp-3">
+                    <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
                       {archive.content}
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-400">
+                      <span className="text-sm text-gray-400 dark:text-gray-500">
                         {new Date(archive.createdAt).toLocaleDateString('ko-KR')}
                       </span>
                       <Link
                         href={`/archive/${archive.id}`}
-                        className="text-purple-500 hover:text-purple-600 font-medium text-sm"
+                        className="text-purple-500 dark:text-purple-400 hover:text-purple-600 dark:hover:text-purple-300 font-medium text-sm"
                       >
                         자세히 보기 →
                       </Link>
@@ -322,7 +322,7 @@ export default function Home() {
             <div className="text-center mt-12">
               <Link
                 href="/archive"
-                className="inline-flex items-center text-purple-600 hover:text-purple-700 font-medium"
+                className="inline-flex items-center text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium"
               >
                 모든 아카이브 보기
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -335,19 +335,19 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section className="px-6 py-16 bg-white/50">
+      <section className="px-6 py-16 bg-white/50 dark:bg-gray-900/50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-8 text-gray-800">
+          <h2 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100">
             {aboutContent?.title || 'About'}
           </h2>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
             {aboutContent?.content || ''}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             {['React', 'Next.js', 'TypeScript', 'Node.js', 'Prisma', 'PostgreSQL'].map((tech) => (
               <span
                 key={tech}
-                className="px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 text-gray-700 rounded-full text-sm font-medium"
+                className="px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 text-gray-700 dark:text-gray-200 rounded-full text-sm font-medium"
               >
                 {tech}
               </span>

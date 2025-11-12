@@ -268,13 +268,13 @@ export default function ArchivePage() {
   if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
       <section className="px-6 py-16 text-center">
         <div className="max-w-4xl mx-auto">
           <Link 
             href="/" 
-            className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-8 transition-colors"
+            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mb-8 transition-colors"
           >
             ← 홈으로 돌아가기
           </Link>
@@ -284,11 +284,11 @@ export default function ArchivePage() {
               text={pageContent?.title || 'Archive'}
               onSave={saveTitle}
               className="mb-6"
-              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent"
               placeholder="제목을 입력하세요"
             />
           ) : (
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
               {pageContent?.title || 'Archive'}
             </h1>
           )}
@@ -298,12 +298,12 @@ export default function ArchivePage() {
               text={pageContent?.content || ''}
               onSave={saveContent}
               className="mb-12 max-w-2xl mx-auto"
-              textClassName="text-xl text-gray-600"
+              textClassName="text-xl text-gray-600 dark:text-gray-300"
               isTextarea={true}
               placeholder="내용을 입력하세요"
             />
           ) : (
-            <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
               {pageContent?.content || ''}
             </p>
           )}
@@ -328,15 +328,15 @@ export default function ArchivePage() {
       {/* Category Filter */}
       <section className="px-6 pb-8">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">카테고리</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-gray-700">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">카테고리</h3>
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setSelectedCategory('')}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${ 
                   selectedCategory === '' 
                     ? 'bg-blue-500 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 전체 ({archives.length})
@@ -367,13 +367,13 @@ export default function ArchivePage() {
       {isAdmin && showForm && (
         <section className="px-6 pb-16">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-8">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">
                 {editingArchive ? '글 수정' : '새 글 작성'}
               </h2>
               
               {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-6">
                   {error}
                 </div>
               )}
@@ -381,7 +381,7 @@ export default function ArchivePage() {
               <form onSubmit={editingArchive ? handleUpdateArchive : handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       제목 *
                     </label>
                     <input
@@ -389,21 +389,21 @@ export default function ArchivePage() {
                       id="title"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="글 제목을 입력하세요"
                       required
                     />
                   </div>
                   
                   <div>
-                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       카테고리 *
                     </label>
                     <select
                       id="category"
                       value={category}
                       onChange={(e) => setCategory(e.target.value as ArchiveCategory)}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       {filteredCategories.map(([key, info]) => (
                         <option key={key} value={key}>
@@ -415,7 +415,7 @@ export default function ArchivePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     내용 * (마크다운 지원)
                   </label>
                   <MarkdownEditor
@@ -427,7 +427,7 @@ export default function ArchivePage() {
                 </div>
 
                 <div>
-                  <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="tags" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     태그
                   </label>
                   <input
@@ -435,14 +435,14 @@ export default function ArchivePage() {
                     id="tags"
                     value={tags}
                     onChange={(e) => setTags(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="태그1, 태그2, 태그3 (쉼표로 구분)"
                   />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       대표 이미지
                     </label>
                     <FileUpload 
@@ -454,7 +454,7 @@ export default function ArchivePage() {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       첨부 파일
                     </label>
                     <FileUpload 
@@ -485,7 +485,7 @@ export default function ArchivePage() {
           {archives.length === 0 ? (
             <div className="text-center py-16">
               <div className="max-w-md mx-auto">
-                <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
                   📝
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">
@@ -589,7 +589,7 @@ export default function ArchivePage() {
                     
                     <Link
                       href={`/archive/${archive.id}`}
-                      className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
+                      className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm transition-colors"
                     >
                       더 읽기 →
                     </Link>
