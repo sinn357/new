@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
 import { AdminProvider } from "@/contexts/AdminContext";
 import AdminLoginModal from "@/components/AdminLoginModal";
 import AdminButton from "@/components/AdminButton";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Blog Testing",
-  description: "Personal blog and portfolio website",
+  description: "신우철의 개인 블로그",
 };
 
 export default function RootLayout({
@@ -27,30 +28,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AdminProvider>
-          <nav className="bg-gray-100 p-4">
-            <div className="max-w-7xl mx-auto flex justify-between items-center">
-              <div className="flex space-x-4">
-                <Link href="/" className="text-blue-600 hover:underline">
-                  Home
-                </Link>
-                <Link href="/about" className="text-blue-600 hover:underline">
-                  About
-                </Link>
-                <Link href="/work" className="text-blue-600 hover:underline">
-                  Work
-                </Link>
-                <Link href="/archive" className="text-blue-600 hover:underline">
-                  Archive
-                </Link>
-              </div>
-            </div>
-          </nav>
-          {children}
+          <Navigation />
+          <main className="pt-24">{children}</main>
+          <Footer />
           <AdminButton />
           <AdminLoginModal />
         </AdminProvider>
