@@ -9,8 +9,8 @@
 - **Repo Root:** /Users/woocheolshin/Documents/Vibecoding_1/my-site
 - **GitHub:** https://github.com/sinn357/new.git
 - **Owner:** Partner
-- **Last Updated:** 2025-09-29 21:00 KST
-- **Session Goal (Today):** ✅ 사이트 제목 변경 + 미디어 삽입 기능 구현 완료 + MD 파일 체계적 정리
+- **Last Updated:** 2025-11-12 21:30 KST
+- **Session Goal (Today):** ✅ Phase 4 인터랙티브 애니메이션 구현 완료
 
 ---
 
@@ -124,20 +124,21 @@ my-site/
 
 ## 12) Tasks (Single Source of Truth)
 ### Active (in this session)
-- **세션 완료**: 사이트 제목 변경 + 미디어 삽입 기능 구현 + MD 파일 정리 완료
+- **세션 완료**: Phase 4 인터랙티브 애니메이션 구현 완료
 
 ### Recent Done
+- **T-004:** Phase 4 인터랙티브 애니메이션 구현 ✅ (2025-11-12) - framer-motion 설치, AnimatedCard/AnimatedHero/ScrollProgress 컴포넌트 생성, 홈/Work/Archive 페이지 애니메이션 적용 (commit: ce820c9)
 - **T-003:** MD 파일 체계적 정리 ✅ (2025-09-29) - CLAUDE.md 생성 + docs 폴더 구조 정리 + investment-app 패턴 적용
 - **T-002:** Work와 Archive 페이지 미디어 삽입 기능 추가 ✅ (2025-09-29) - MarkdownEditor 컴포넌트에 툴바, 미디어 업로드, 자동 문법 삽입, 비디오 렌더링 지원 구현
 - **T-001:** 사이트 제목 변경 ✅ (2025-09-29) - layout.tsx에서 메타데이터 "Create Next App" → "Blog Testing" 변경
 
 ### Backlog
-- **B-001:** 포트폴리오 섹션 확장
-- **B-002:** 아카이브 카테고리 시스템 개선
-- **B-003:** 검색 기능 추가
-- **B-004:** 댓글 시스템 구현
-- **B-005:** SEO 최적화
-- **B-006:** 다크모드 지원
+- **B-001:** Phase 5 - 썸네일 시스템 구현
+- **B-002:** Phase 6 - 검색 & 필터 시스템
+- **B-003:** 포트폴리오 섹션 확장
+- **B-004:** 아카이브 카테고리 시스템 개선
+- **B-005:** 댓글 시스템 구현
+- **B-006:** SEO 최적화
 
 > 원칙: **세션당 Active ≤ 2**.
 
@@ -181,6 +182,28 @@ my-site/
   - **모듈화**: docs/ 폴더에 기능별 상세 가이드 분리
   - **확장성**: 새로운 기능 추가 시 문서 패턴 재사용 가능
 
+### ADR-004: Framer Motion을 애니메이션 라이브러리로 선택
+- Date: 2025-11-12
+- Context: Phase 4 - 인터랙티브 애니메이션 구현을 위한 라이브러리 선택 필요
+- Options: Framer Motion vs GSAP vs React Spring vs CSS Animations
+- Decision: Framer Motion 사용
+- Consequences:
+  - **장점**:
+    - React 전용 라이브러리로 Next.js와 완벽한 통합
+    - 선언적 API로 코드 가독성 높음
+    - useScroll, useSpring 등 강력한 hooks 제공
+    - viewport-triggered 애니메이션 쉽게 구현
+    - 성능 최적화 (GPU 가속, once: true)
+  - **단점**:
+    - 번들 크기 증가 (~50KB gzipped)
+    - 복잡한 타임라인 애니메이션은 GSAP보다 제한적
+  - **구현 결과**:
+    - AnimatedCard: viewport 진입 시 stagger 애니메이션
+    - AnimatedHero: 페이지 로드 시 fade-in 효과
+    - ScrollProgress: 스크롤 진행률 실시간 표시
+    - 적용 페이지: 홈, Work, Archive
+  - **성능 영향**: 합리적인 번들 크기 증가로 판단 (기능 대비)
+
 ---
 
 ## 14) Risk Log
@@ -193,6 +216,10 @@ my-site/
 - **MarkdownEditor**: 마크다운 편집 + 미디어 삽입 지원 통합 컴포넌트
 - **AdminContext**: 관리자 권한 관리 React Context
 - **FileUpload**: Cloudinary 연동 파일 업로드 컴포넌트
+- **AnimatedCard**: viewport 진입 시 stagger 애니메이션 제공 컴포넌트
+- **AnimatedHero**: Hero 섹션 fade-in 애니메이션 컴포넌트
+- **ScrollProgress**: 페이지 상단 스크롤 진행률 표시 컴포넌트
+- **Stagger Animation**: 여러 요소가 순차적으로 등장하는 애니메이션 효과
 
 ---
 
