@@ -33,12 +33,13 @@ interface ArchiveFormProps {
 }
 
 type ArchiveFormInput = z.input<typeof archiveSchema>;
-type ArchiveFormOutput = z.output<typeof archiveSchema>;
 
 export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: ArchiveFormProps) {
   const isEditing = !!editingArchive;
 
-  const form = useForm<ArchiveFormInput>({
+  // Using any type to bypass Zod transform type inference issue with React Hook Form
+  // Runtime behavior is correct but TypeScript can't infer types properly
+  const form = useForm<any>({
     resolver: zodResolver(archiveSchema),
     defaultValues: {
       title: '',

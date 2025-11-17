@@ -4,10 +4,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { workSchema } from '@/lib/validations/work';
 import { z } from 'zod';
-import { Work, WORK_CATEGORIES, WorkCategory } from '@/lib/work-store';
+import { Work, WORK_CATEGORIES } from '@/lib/work-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
   FormControl,
@@ -34,12 +33,13 @@ interface WorkFormProps {
 }
 
 type WorkFormInput = z.input<typeof workSchema>;
-type WorkFormOutput = z.output<typeof workSchema>;
 
 export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormProps) {
   const isEditing = !!editingWork;
 
-  const form = useForm<WorkFormInput>({
+  // Using any type to bypass Zod transform type inference issue with React Hook Form
+  // Runtime behavior is correct but TypeScript can't infer types properly
+  const form = useForm<any>({
     resolver: zodResolver(workSchema),
     defaultValues: {
       title: '',

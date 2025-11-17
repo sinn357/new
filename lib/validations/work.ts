@@ -18,7 +18,7 @@ export const workSchema = z.object({
     .max(10000, '내용은 10,000자 이하여야 합니다'),
 
   category: z.enum(['product', 'media', 'photography'], {
-    errorMap: () => ({ message: '올바른 카테고리를 선택하세요' })
+    message: '올바른 카테고리를 선택하세요'
   }),
 
   techStack: z.string()
@@ -62,7 +62,7 @@ export const workSchema = z.object({
   fileUrl: z.string().optional(),
 
   status: z.enum(['completed', 'in-progress', 'planned'], {
-    errorMap: () => ({ message: '올바른 상태를 선택하세요' })
+    message: '올바른 상태를 선택하세요'
   }).default('completed'),
 
   duration: z.string()

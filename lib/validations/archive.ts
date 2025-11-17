@@ -35,7 +35,7 @@ export const archiveSchema = z.object({
     .max(50000, '내용은 50,000자 이하여야 합니다'),
 
   category: z.enum(ARCHIVE_CATEGORY_KEYS, {
-    errorMap: () => ({ message: '올바른 카테고리를 선택하세요' })
+    message: '올바른 카테고리를 선택하세요'
   }),
 
   tags: z.string()
