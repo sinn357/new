@@ -5,10 +5,9 @@ import Link from 'next/link';
 import { Archive, ARCHIVE_CATEGORIES, ArchiveCategory } from '@/lib/archive-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
-import FileUpload from '@/components/FileUpload';
 import InlineEdit from '@/components/InlineEdit';
-import MarkdownEditor from '@/components/MarkdownEditor';
 import AnimatedCard from '@/components/AnimatedCard';
+import ArchiveForm from '@/components/ArchiveForm';
 
 interface PageContent {
   page: string;
@@ -19,13 +18,9 @@ interface PageContent {
 export default function ArchivePage() {
   const { isAdmin } = useAdmin();
   const [archives, setArchives] = useState<Archive[]>([]);
+  const [allArchives, setAllArchives] = useState<Archive[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [category, setCategory] = useState<ArchiveCategory>('business');
-  const [tags, setTags] = useState<string>('');
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{
@@ -43,13 +38,11 @@ export default function ArchivePage() {
   });
   const [isDeleting, setIsDeleting] = useState(false);
   const [editingArchive, setEditingArchive] = useState<Archive | null>(null);
-  const [imageUrl, setImageUrl] = useState('');
-  const [fileUrl, setFileUrl] = useState('');
   const [pageContent, setPageContent] = useState<PageContent | null>(null);
 
   const fetchArchives = async (categoryFilter?: string) => {
     try {
-      const url = categoryFilter 
+      const url = categoryFilter
         ? `/api/archive?category=${categoryFilter}`
         : '/api/archive';
       const response = await fetch(url);
@@ -59,6 +52,16 @@ export default function ArchivePage() {
       setError('Failed to fetch archives');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAllArchives = async () => {
+    try {
+      const response = await fetch('/api/archive');
+      const data = await response.json();
+      return data.archives || [];
+    } catch {
+      return [];
     }
   };
 
@@ -111,52 +114,26 @@ export default function ArchivePage() {
   };
 
   useEffect(() => {
-    fetchArchives(selectedCategory || undefined);
-    if (!pageContent) {
-      fetchPageContent();
-    }
-  }, [selectedCategory, pageContent]);
+    const loadArchives = async () => {
+      const all = await fetchAllArchives();
+      setAllArchives(all);
+      fetchArchives(selectedCategory || undefined);
+    };
+    loadArchives();
+    fetchPageContent();
+  }, [selectedCategory]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim() || !content.trim()) return;
+  const handleFormSuccess = async () => {
+    const all = await fetchAllArchives();
+    setAllArchives(all);
+    await fetchArchives(selectedCategory || undefined);
+    setShowForm(false);
+    setEditingArchive(null);
+  };
 
-    setSubmitting(true);
-    try {
-      const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
-      
-      const response = await fetch('/api/archive', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          title: title.trim(), 
-          content: content.trim(),
-          category,
-          tags: tagsArray,
-          imageUrl: imageUrl.trim() || undefined,
-          fileUrl: fileUrl.trim() || undefined
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create archive');
-      }
-
-      // Reset form
-      setTitle('');
-      setContent('');
-      setCategory('business');
-      setTags('');
-      setImageUrl('');
-      setFileUrl('');
-      setShowForm(false);
-      
-      await fetchArchives(selectedCategory || undefined);
-    } catch {
-      setError('Failed to create archive');
-    } finally {
-      setSubmitting(false);
-    }
+  const handleFormCancel = () => {
+    setShowForm(false);
+    setEditingArchive(null);
   };
 
   const handleDeleteArchive = (archive: Archive) => {
@@ -180,6 +157,8 @@ export default function ArchivePage() {
         throw new Error('Failed to delete archive');
       }
 
+      const all = await fetchAllArchives();
+      setAllArchives(all);
       await fetchArchives(selectedCategory || undefined);
       setDeleteModal({ isOpen: false, type: 'archive', id: '', title: '', message: '' });
     } catch {
@@ -195,76 +174,10 @@ export default function ArchivePage() {
 
   const handleEditArchive = (archive: Archive) => {
     setEditingArchive(archive);
-    setTitle(archive.title);
-    setContent(archive.content);
-    setCategory(archive.category as ArchiveCategory);
-    setTags(archive.tags?.join(', ') || '');
-    setImageUrl(archive.imageUrl || '');
-    setFileUrl(archive.fileUrl || '');
     setShowForm(true);
   };
 
-  const handleUpdateArchive = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim() || !content.trim() || !editingArchive) return;
-
-    setSubmitting(true);
-    try {
-      const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
-      
-      const response = await fetch(`/api/archive/${editingArchive.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          title: title.trim(), 
-          content: content.trim(),
-          category,
-          tags: tagsArray,
-          imageUrl: imageUrl.trim() || undefined,
-          fileUrl: fileUrl.trim() || undefined
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update archive');
-      }
-
-      setTitle('');
-      setContent('');
-      setCategory('business');
-      setTags('');
-      setImageUrl('');
-      setFileUrl('');
-      setShowForm(false);
-      setEditingArchive(null);
-      
-      await fetchArchives(selectedCategory || undefined);
-    } catch {
-      setError('Failed to update archive');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setTitle('');
-    setContent('');
-    setCategory('business');
-    setTags('');
-    setImageUrl('');
-    setFileUrl('');
-    setShowForm(false);
-    setEditingArchive(null);
-  };
-
   const filteredCategories = Object.entries(ARCHIVE_CATEGORIES);
-  const archivesByCategory = archives.reduce((acc, archive) => {
-    if (!acc[archive.category]) {
-      acc[archive.category] = [];
-    }
-    acc[archive.category].push(archive);
-    return acc;
-  }, {} as Record<string, Archive[]>);
 
   if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
 
@@ -273,13 +186,13 @@ export default function ArchivePage() {
       {/* Hero Section */}
       <section className="px-6 py-16 text-center">
         <div className="max-w-4xl mx-auto">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mb-8 transition-colors"
           >
             ← 홈으로 돌아가기
           </Link>
-          
+
           {isAdmin ? (
             <InlineEdit
               text={pageContent?.title || 'Archive'}
@@ -293,7 +206,7 @@ export default function ArchivePage() {
               {pageContent?.title || 'Archive'}
             </h1>
           )}
-          
+
           {isAdmin ? (
             <InlineEdit
               text={pageContent?.content || ''}
@@ -308,12 +221,12 @@ export default function ArchivePage() {
               {pageContent?.content || ''}
             </p>
           )}
-          
+
           {isAdmin && (
             <button
               onClick={() => {
                 if (showForm && editingArchive) {
-                  handleCancelEdit();
+                  handleFormCancel();
                 } else {
                   setShowForm(!showForm);
                 }
@@ -334,31 +247,34 @@ export default function ArchivePage() {
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setSelectedCategory('')}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${ 
-                  selectedCategory === '' 
-                    ? 'bg-blue-500 text-white' 
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  selectedCategory === ''
+                    ? 'bg-blue-500 text-white'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
-                전체 ({archives.length})
+                전체 ({allArchives.length})
               </button>
-              {filteredCategories.map(([key, info]) => (
-                <button
-                  key={key}
-                  onClick={() => setSelectedCategory(key)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${ 
-                    selectedCategory === key 
-                      ? 'bg-blue-500 text-white' 
-                      : `${info.color} hover:opacity-80`
-                  }`}
-                >
-                  <span>{info.icon}</span>
-                  {info.label}
-                  <span className="text-xs opacity-75">
-                    ({archivesByCategory[key]?.length || 0})
-                  </span>
-                </button>
-              ))}
+              {filteredCategories.map(([key, info]) => {
+                const categoryArchives = allArchives.filter(archive => archive.category === key);
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedCategory(key)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+                      selectedCategory === key
+                        ? 'bg-blue-500 text-white'
+                        : `${info.color} hover:opacity-80`
+                    }`}
+                  >
+                    <span>{info.icon}</span>
+                    {info.label}
+                    <span className="text-xs opacity-75">
+                      ({categoryArchives.length})
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -368,114 +284,11 @@ export default function ArchivePage() {
       {isAdmin && showForm && (
         <section className="px-6 pb-16">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-8">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">
-                {editingArchive ? '글 수정' : '새 글 작성'}
-              </h2>
-              
-              {error && (
-                <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-6">
-                  {error}
-                </div>
-              )}
-
-              <form onSubmit={editingArchive ? handleUpdateArchive : handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                      제목 *
-                    </label>
-                    <input
-                      type="text"
-                      id="title"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="글 제목을 입력하세요"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                      카테고리 *
-                    </label>
-                    <select
-                      id="category"
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value as ArchiveCategory)}
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      {filteredCategories.map(([key, info]) => (
-                        <option key={key} value={key}>
-                          {info.icon} {info.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                    내용 * (마크다운 지원)
-                  </label>
-                  <MarkdownEditor
-                    value={content}
-                    onChange={setContent}
-                    placeholder="자유롭게 마크다운으로 글을 작성해보세요..."
-                    rows={10}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="tags" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                    태그
-                  </label>
-                  <input
-                    type="text"
-                    id="tags"
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="태그1, 태그2, 태그3 (쉼표로 구분)"
-                  />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                      대표 이미지
-                    </label>
-                    <FileUpload 
-                      onFileUpload={setImageUrl}
-                      accept="image/*"
-                      label="이미지 선택"
-                      currentUrl={imageUrl}
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                      첨부 파일
-                    </label>
-                    <FileUpload 
-                      onFileUpload={setFileUrl}
-                      accept="*/*"
-                      label="파일 선택"
-                      currentUrl={fileUrl}
-                    />
-                  </div>
-                </div>
-                
-                <button
-                  type="submit"
-                  disabled={submitting || !title.trim() || !content.trim()}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:from-gray-400 disabled:to-gray-500 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
-                >
-                  {submitting ? (editingArchive ? '수정 중...' : '작성 중...') : (editingArchive ? '글 수정' : '글 작성')}
-                </button>
-              </form>
-            </div>
+            <ArchiveForm
+              editingArchive={editingArchive}
+              onSuccess={handleFormSuccess}
+              onCancel={handleFormCancel}
+            />
           </div>
         </section>
       )}
@@ -552,7 +365,7 @@ export default function ArchivePage() {
                         {archive.title}
                       </h2>
                     </Link>
-                    
+
                     <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 line-clamp-3">
                       {archive.content}
                     </p>
@@ -587,7 +400,7 @@ export default function ArchivePage() {
                         )}
                       </div>
                     )}
-                    
+
                     <Link
                       href={`/archive/${archive.id}`}
                       className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm transition-colors"
