@@ -2,7 +2,8 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { archiveSchema, ArchiveInput } from '@/lib/validations/archive';
+import { archiveSchema } from '@/lib/validations/archive';
+import { z } from 'zod';
 import { Archive, ARCHIVE_CATEGORIES } from '@/lib/archive-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,10 +32,13 @@ interface ArchiveFormProps {
   onCancel: () => void;
 }
 
+type ArchiveFormInput = z.input<typeof archiveSchema>;
+type ArchiveFormOutput = z.output<typeof archiveSchema>;
+
 export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: ArchiveFormProps) {
   const isEditing = !!editingArchive;
 
-  const form = useForm<ArchiveInput>({
+  const form = useForm<ArchiveFormInput>({
     resolver: zodResolver(archiveSchema),
     defaultValues: {
       title: '',
@@ -60,7 +64,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
     }
   }, [editingArchive, form]);
 
-  const onSubmit = async (data: ArchiveInput) => {
+  const onSubmit = async (data: ArchiveFormInput) => {
     try {
       const url = isEditing ? `/api/archive/${editingArchive.id}` : '/api/archive';
       const method = isEditing ? 'PUT' : 'POST';

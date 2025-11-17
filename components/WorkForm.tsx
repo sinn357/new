@@ -2,7 +2,8 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { workSchema, WorkInput, workUpdateSchema, WorkUpdateInput } from '@/lib/validations/work';
+import { workSchema } from '@/lib/validations/work';
+import { z } from 'zod';
 import { Work, WORK_CATEGORIES, WorkCategory } from '@/lib/work-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,10 +33,13 @@ interface WorkFormProps {
   onCancel: () => void;
 }
 
+type WorkFormInput = z.input<typeof workSchema>;
+type WorkFormOutput = z.output<typeof workSchema>;
+
 export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormProps) {
   const isEditing = !!editingWork;
 
-  const form = useForm<WorkInput>({
+  const form = useForm<WorkFormInput>({
     resolver: zodResolver(workSchema),
     defaultValues: {
       title: '',
@@ -73,7 +77,7 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
     }
   }, [editingWork, form]);
 
-  const onSubmit = async (data: WorkInput) => {
+  const onSubmit = async (data: WorkFormInput) => {
     try {
       const url = isEditing ? `/api/work/${editingWork.id}` : '/api/work';
       const method = isEditing ? 'PUT' : 'POST';
