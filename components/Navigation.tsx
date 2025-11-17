@@ -31,7 +31,7 @@ export default function Navigation() {
           href="/"
           className="text-lg font-semibold text-teal-300 hover:text-teal-200 transition-all"
         >
-          신우철
+          HOME
         </Link>
 
         {/* 데스크탑 메뉴 */}
