@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
 import { AdminProvider } from "@/contexts/AdminContext";
 import AdminLoginModal from "@/components/AdminLoginModal";
 import AdminButton from "@/components/AdminButton";
@@ -35,14 +36,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <ScrollProgress />
-          <AdminProvider>
-            <Navigation />
-            <main className="pt-24">{children}</main>
-            <Footer />
-            <AdminButton />
-            <AdminLoginModal />
-          </AdminProvider>
+          <Providers>
+            <ScrollProgress />
+            <AdminProvider>
+              <Navigation />
+              <main className="pt-24">{children}</main>
+              <Footer />
+              <AdminButton />
+              <AdminLoginModal />
+            </AdminProvider>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>

@@ -9,6 +9,7 @@ import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import InlineEdit from '@/components/InlineEdit';
 import AnimatedCard from '@/components/AnimatedCard';
 import WorkForm from '@/components/WorkForm';
+import { useWorks, useDeleteWork } from '@/lib/hooks/useWorks';
 
 const statusLabels = {
   'completed': '완료됨',
@@ -30,11 +31,7 @@ interface PageContent {
 
 export default function WorkPage() {
   const { isAdmin } = useAdmin();
-  const [works, setWorks] = useState<Work[]>([]);
-  const [allWorks, setAllWorks] = useState<Work[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
@@ -49,34 +46,13 @@ export default function WorkPage() {
     title: '',
     message: ''
   });
-  const [isDeleting, setIsDeleting] = useState(false);
   const [editingWork, setEditingWork] = useState<Work | null>(null);
   const [pageContent, setPageContent] = useState<PageContent | null>(null);
 
-  const fetchWorks = async (categoryFilter?: string) => {
-    try {
-      const url = categoryFilter
-        ? `/api/work?category=${categoryFilter}`
-        : '/api/work';
-      const response = await fetch(url);
-      const data = await response.json();
-      setWorks(data.works || []);
-    } catch {
-      setError('Failed to fetch works');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchAllWorks = async () => {
-    try {
-      const response = await fetch('/api/work');
-      const data = await response.json();
-      return data.works || [];
-    } catch {
-      return [];
-    }
-  };
+  // TanStack Query hooks
+  const { data: works = [], isLoading, error } = useWorks(selectedCategory || undefined);
+  const { data: allWorks = [] } = useWorks();
+  const deleteWork = useDeleteWork();
 
   const fetchPageContent = async () => {
     try {
@@ -127,23 +103,11 @@ export default function WorkPage() {
   };
 
   useEffect(() => {
-    const loadWorks = async () => {
-      const all = await fetchAllWorks();
-      setAllWorks(all);
-      fetchWorks(selectedCategory || undefined);
-    };
-    loadWorks();
     fetchPageContent();
-  }, [selectedCategory]);
+  }, []);
 
-  useEffect(() => {
-    fetchWorks(selectedCategory || undefined);
-  }, [selectedCategory]);
-
-  const handleFormSuccess = async () => {
-    const all = await fetchAllWorks();
-    setAllWorks(all);
-    await fetchWorks(selectedCategory || undefined);
+  const handleFormSuccess = () => {
+    // TanStack Query가 자동으로 캐시를 무효화하고 재조회
     setShowForm(false);
     setEditingWork(null);
   };
@@ -164,25 +128,11 @@ export default function WorkPage() {
   };
 
   const handleConfirmDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const response = await fetch(`/api/work/${deleteModal.id}`, {
-        method: 'DELETE'
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete work');
-      }
-
-      const all = await fetchAllWorks();
-      setAllWorks(all);
-      await fetchWorks(selectedCategory || undefined);
-      setDeleteModal({ isOpen: false, type: 'work', id: '', title: '', message: '' });
-    } catch {
-      setError('Failed to delete work');
-    } finally {
-      setIsDeleting(false);
-    }
+    deleteWork.mutate(deleteModal.id, {
+      onSuccess: () => {
+        setDeleteModal({ isOpen: false, type: 'work', id: '', title: '', message: '' });
+      },
+    });
   };
 
   const handleCancelDelete = () => {
@@ -194,7 +144,8 @@ export default function WorkPage() {
     setShowForm(true);
   };
 
-  if (loading) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Loading...</div>;
+  if (isLoading) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Loading...</div>;
+  if (error) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Error: {error.message}</div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -508,7 +459,7 @@ export default function WorkPage() {
         message={deleteModal.message}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
-        isDeleting={isDeleting}
+        isDeleting={deleteWork.isPending}
       />
 
     </div>

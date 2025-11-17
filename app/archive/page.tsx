@@ -8,6 +8,7 @@ import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import InlineEdit from '@/components/InlineEdit';
 import AnimatedCard from '@/components/AnimatedCard';
 import ArchiveForm from '@/components/ArchiveForm';
+import { useArchives, useDeleteArchive } from '@/lib/hooks/useArchives';
 
 interface PageContent {
   page: string;
@@ -17,11 +18,7 @@ interface PageContent {
 
 export default function ArchivePage() {
   const { isAdmin } = useAdmin();
-  const [archives, setArchives] = useState<Archive[]>([]);
-  const [allArchives, setAllArchives] = useState<Archive[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
@@ -36,34 +33,13 @@ export default function ArchivePage() {
     title: '',
     message: ''
   });
-  const [isDeleting, setIsDeleting] = useState(false);
   const [editingArchive, setEditingArchive] = useState<Archive | null>(null);
   const [pageContent, setPageContent] = useState<PageContent | null>(null);
 
-  const fetchArchives = async (categoryFilter?: string) => {
-    try {
-      const url = categoryFilter
-        ? `/api/archive?category=${categoryFilter}`
-        : '/api/archive';
-      const response = await fetch(url);
-      const data = await response.json();
-      setArchives(data.archives || []);
-    } catch {
-      setError('Failed to fetch archives');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchAllArchives = async () => {
-    try {
-      const response = await fetch('/api/archive');
-      const data = await response.json();
-      return data.archives || [];
-    } catch {
-      return [];
-    }
-  };
+  // TanStack Query hooks
+  const { data: archives = [], isLoading, error } = useArchives(selectedCategory || undefined);
+  const { data: allArchives = [] } = useArchives();
+  const deleteArchive = useDeleteArchive();
 
   const fetchPageContent = async () => {
     try {
@@ -114,19 +90,11 @@ export default function ArchivePage() {
   };
 
   useEffect(() => {
-    const loadArchives = async () => {
-      const all = await fetchAllArchives();
-      setAllArchives(all);
-      fetchArchives(selectedCategory || undefined);
-    };
-    loadArchives();
     fetchPageContent();
-  }, [selectedCategory]);
+  }, []);
 
-  const handleFormSuccess = async () => {
-    const all = await fetchAllArchives();
-    setAllArchives(all);
-    await fetchArchives(selectedCategory || undefined);
+  const handleFormSuccess = () => {
+    // TanStack Query가 자동으로 캐시를 무효화하고 재조회
     setShowForm(false);
     setEditingArchive(null);
   };
@@ -147,25 +115,11 @@ export default function ArchivePage() {
   };
 
   const handleConfirmDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const response = await fetch(`/api/archive/${deleteModal.id}`, {
-        method: 'DELETE'
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete archive');
-      }
-
-      const all = await fetchAllArchives();
-      setAllArchives(all);
-      await fetchArchives(selectedCategory || undefined);
-      setDeleteModal({ isOpen: false, type: 'archive', id: '', title: '', message: '' });
-    } catch {
-      setError('Failed to delete archive');
-    } finally {
-      setIsDeleting(false);
-    }
+    deleteArchive.mutate(deleteModal.id, {
+      onSuccess: () => {
+        setDeleteModal({ isOpen: false, type: 'archive', id: '', title: '', message: '' });
+      },
+    });
   };
 
   const handleCancelDelete = () => {
@@ -179,7 +133,8 @@ export default function ArchivePage() {
 
   const filteredCategories = Object.entries(ARCHIVE_CATEGORIES);
 
-  if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+  if (isLoading) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Loading...</div>;
+  if (error) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Error: {error.message}</div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -422,7 +377,7 @@ export default function ArchivePage() {
         message={deleteModal.message}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
-        isDeleting={isDeleting}
+        isDeleting={deleteArchive.isPending}
       />
 
     </div>
