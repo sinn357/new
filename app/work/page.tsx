@@ -6,10 +6,9 @@ import Image from 'next/image';
 import { Work, WORK_CATEGORIES, WorkCategory } from '@/lib/work-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
-import FileUpload from '@/components/FileUpload';
 import InlineEdit from '@/components/InlineEdit';
-import MarkdownEditor from '@/components/MarkdownEditor';
 import AnimatedCard from '@/components/AnimatedCard';
+import WorkForm from '@/components/WorkForm';
 
 const statusLabels = {
   'completed': '완료됨',
@@ -19,7 +18,7 @@ const statusLabels = {
 
 const statusColors = {
   'completed': 'bg-green-100 text-green-800',
-  'in-progress': 'bg-blue-100 text-blue-800', 
+  'in-progress': 'bg-blue-100 text-blue-800',
   'planned': 'bg-yellow-100 text-yellow-800'
 };
 
@@ -34,20 +33,7 @@ export default function WorkPage() {
   const [works, setWorks] = useState<Work[]>([]);
   const [allWorks, setAllWorks] = useState<Work[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [category, setCategory] = useState<WorkCategory>('product');
-  const [techStack, setTechStack] = useState<string>('');
-  const [githubUrl, setGithubUrl] = useState('');
-  const [demoUrl, setDemoUrl] = useState('');
-  const [youtubeUrl, setYoutubeUrl] = useState('');
-  const [instagramUrl, setInstagramUrl] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [fileUrl, setFileUrl] = useState('');
-  const [status, setStatus] = useState<'completed' | 'in-progress' | 'planned'>('completed');
-  const [duration, setDuration] = useState('');
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{
@@ -69,7 +55,7 @@ export default function WorkPage() {
 
   const fetchWorks = async (categoryFilter?: string) => {
     try {
-      const url = categoryFilter 
+      const url = categoryFilter
         ? `/api/work?category=${categoryFilter}`
         : '/api/work';
       const response = await fetch(url);
@@ -154,60 +140,17 @@ export default function WorkPage() {
     fetchWorks(selectedCategory || undefined);
   }, [selectedCategory]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim() || !content.trim()) return;
+  const handleFormSuccess = async () => {
+    const all = await fetchAllWorks();
+    setAllWorks(all);
+    await fetchWorks(selectedCategory || undefined);
+    setShowForm(false);
+    setEditingWork(null);
+  };
 
-    setSubmitting(true);
-    try {
-      const techStackArray = techStack.split(',').map(tech => tech.trim()).filter(tech => tech);
-      
-      const response = await fetch('/api/work', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          title: title.trim(), 
-          content: content.trim(),
-          category,
-          techStack: techStackArray,
-          githubUrl: githubUrl.trim() || undefined,
-          demoUrl: demoUrl.trim() || undefined,
-          youtubeUrl: youtubeUrl.trim() || undefined,
-          instagramUrl: instagramUrl.trim() || undefined,
-          imageUrl: imageUrl.trim() || undefined,
-          fileUrl: fileUrl.trim() || undefined,
-          status,
-          duration: duration.trim() || undefined
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create work');
-      }
-
-      // Reset form
-      setTitle('');
-      setContent('');
-      setCategory('product');
-      setTechStack('');
-      setGithubUrl('');
-      setDemoUrl('');
-      setYoutubeUrl('');
-      setInstagramUrl('');
-      setImageUrl('');
-      setFileUrl('');
-      setStatus('completed');
-      setDuration('');
-      setShowForm(false);
-      
-      const all = await fetchAllWorks();
-      setAllWorks(all);
-      await fetchWorks(selectedCategory || undefined);
-    } catch {
-      setError('Failed to create work');
-    } finally {
-      setSubmitting(false);
-    }
+  const handleFormCancel = () => {
+    setShowForm(false);
+    setEditingWork(null);
   };
 
   const handleDeleteWork = (work: Work) => {
@@ -248,92 +191,7 @@ export default function WorkPage() {
 
   const handleEditWork = (work: Work) => {
     setEditingWork(work);
-    setTitle(work.title);
-    setContent(work.content);
-    setCategory(work.category as WorkCategory);
-    setTechStack(work.techStack?.join(', ') || '');
-    setGithubUrl(work.githubUrl || '');
-    setDemoUrl(work.demoUrl || '');
-    setYoutubeUrl(work.youtubeUrl || '');
-    setInstagramUrl(work.instagramUrl || '');
-    setImageUrl(work.imageUrl || '');
-    setFileUrl(work.fileUrl || '');
-    setStatus(work.status);
-    setDuration(work.duration || '');
     setShowForm(true);
-  };
-
-  const handleUpdateWork = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim() || !content.trim() || !editingWork) return;
-
-    setSubmitting(true);
-    try {
-      const techStackArray = techStack.split(',').map(tech => tech.trim()).filter(tech => tech);
-      
-      const response = await fetch(`/api/work/${editingWork.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          title: title.trim(), 
-          content: content.trim(),
-          category,
-          techStack: techStackArray,
-          githubUrl: githubUrl.trim() || undefined,
-          demoUrl: demoUrl.trim() || undefined,
-          youtubeUrl: youtubeUrl.trim() || undefined,
-          instagramUrl: instagramUrl.trim() || undefined,
-          imageUrl: imageUrl.trim() || undefined,
-          fileUrl: fileUrl.trim() || undefined,
-          status,
-          duration: duration.trim() || undefined
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update work');
-      }
-
-      setTitle('');
-      setContent('');
-      setCategory('product');
-      setTechStack('');
-      setGithubUrl('');
-      setDemoUrl('');
-      setYoutubeUrl('');
-      setInstagramUrl('');
-      setImageUrl('');
-      setFileUrl('');
-      setStatus('completed');
-      setDuration('');
-      setShowForm(false);
-      setEditingWork(null);
-      
-      const all = await fetchAllWorks();
-      setAllWorks(all);
-      await fetchWorks(selectedCategory || undefined);
-    } catch {
-      setError('Failed to update work');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setTitle('');
-    setContent('');
-    setCategory('product');
-    setTechStack('');
-    setGithubUrl('');
-    setDemoUrl('');
-    setYoutubeUrl('');
-    setInstagramUrl('');
-    setImageUrl('');
-    setFileUrl('');
-    setStatus('completed');
-    setDuration('');
-    setShowForm(false);
-    setEditingWork(null);
   };
 
   if (loading) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Loading...</div>;
@@ -349,7 +207,7 @@ export default function WorkPage() {
           >
             ← 홈으로 돌아가기
           </Link>
-          
+
           {isAdmin ? (
             <InlineEdit
               text={pageContent?.title || 'My Work'}
@@ -378,12 +236,12 @@ export default function WorkPage() {
               {pageContent?.content || ''}
             </p>
           )}
-          
+
           {isAdmin && (
             <button
               onClick={() => {
                 if (showForm && editingWork) {
-                  handleCancelEdit();
+                  handleFormCancel();
                 } else {
                   setShowForm(!showForm);
                 }
@@ -418,9 +276,9 @@ export default function WorkPage() {
                   <button
                     key={key}
                     onClick={() => setSelectedCategory(key)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${ 
-                      selectedCategory === key 
-                        ? 'bg-blue-500 text-white' 
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+                      selectedCategory === key
+                        ? 'bg-blue-500 text-white'
                         : `${info.color} hover:opacity-80`
                     }`}
                   >
@@ -441,211 +299,11 @@ export default function WorkPage() {
       {isAdmin && showForm && (
         <section className="px-6 pb-16">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-8">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">
-                {editingWork ? '작업물 수정' : '새 작업물 추가'}
-              </h2>
-
-              {error && (
-                <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-6">
-                  {error}
-                </div>
-              )}
-
-              <form onSubmit={editingWork ? handleUpdateWork : handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                      제목 *
-                    </label>
-                    <input
-                      type="text"
-                      id="title"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="프로젝트 제목을 입력하세요"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="duration" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                      작업 기간
-                    </label>
-                    <input
-                      type="text"
-                      id="duration"
-                      value={duration}
-                      onChange={(e) => setDuration(e.target.value)}
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="예: 2주, 1개월"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                    카테고리 *
-                  </label>
-                  <select
-                    id="category"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value as WorkCategory)}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    {Object.entries(WORK_CATEGORIES).map(([key, info]) => (
-                      <option key={key} value={key}>
-                        {info.icon} {info.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                    설명 * (마크다운 지원)
-                  </label>
-                  <MarkdownEditor
-                    value={content}
-                    onChange={setContent}
-                    placeholder="프로젝트에 대한 상세 설명을 마크다운으로 작성하세요..."
-                    rows={8}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="techStack" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                    기술 스택
-                  </label>
-                  <input
-                    type="text"
-                    id="techStack"
-                    value={techStack}
-                    onChange={(e) => setTechStack(e.target.value)}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="React, Node.js, TypeScript (쉼표로 구분)"
-                  />
-                </div>
-
-                {/* Conditional URL Fields based on Category */}
-                <div className="space-y-6">
-                  {category === 'product' && (
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                        <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                          GitHub URL
-                        </label>
-                        <input
-                          type="url"
-                          id="githubUrl"
-                          value={githubUrl}
-                          onChange={(e) => setGithubUrl(e.target.value)}
-                          className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="https://github.com/username/repo"
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="demoUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                          데모 URL
-                        </label>
-                        <input
-                          type="url"
-                          id="demoUrl"
-                          value={demoUrl}
-                          onChange={(e) => setDemoUrl(e.target.value)}
-                          className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="https://your-demo.com"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {category === 'media' && (
-                    <div>
-                      <label htmlFor="youtubeUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                        YouTube URL
-                      </label>
-                      <input
-                        type="url"
-                        id="youtubeUrl"
-                        value={youtubeUrl}
-                        onChange={(e) => setYoutubeUrl(e.target.value)}
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="https://www.youtube.com/watch?v=..."
-                      />
-                    </div>
-                  )}
-
-                  {category === 'photography' && (
-                    <div>
-                      <label htmlFor="instagramUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                        Instagram URL
-                      </label>
-                      <input
-                        type="url"
-                        id="instagramUrl"
-                        value={instagramUrl}
-                        onChange={(e) => setInstagramUrl(e.target.value)}
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="https://www.instagram.com/p/..."
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                      대표 이미지
-                    </label>
-                    <FileUpload
-                      onFileUpload={setImageUrl}
-                      accept="image/*"
-                      label="이미지 선택"
-                      currentUrl={imageUrl}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                      첨부 파일
-                    </label>
-                    <FileUpload
-                      onFileUpload={setFileUrl}
-                      accept="*/*"
-                      label="파일 선택"
-                      currentUrl={fileUrl}
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                      상태
-                    </label>
-                    <select
-                      id="status"
-                      value={status}
-                      onChange={(e) => setStatus(e.target.value as 'completed' | 'in-progress' | 'planned')}
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="completed">완료됨</option>
-                      <option value="in-progress">진행중</option>
-                      <option value="planned">계획됨</option>
-                    </select>
-                  </div>
-                </div>
-                
-                <button
-                  type="submit"
-                  disabled={submitting || !title.trim() || !content.trim()}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:from-gray-400 disabled:to-gray-500 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
-                >
-                  {submitting ? (editingWork ? '수정 중...' : '추가 중...') : (editingWork ? '작업물 수정' : '작업물 추가')}
-                </button>
-              </form>
-            </div>
+            <WorkForm
+              editingWork={editingWork}
+              onSuccess={handleFormSuccess}
+              onCancel={handleFormCancel}
+            />
           </div>
         </section>
       )}
@@ -696,7 +354,7 @@ export default function WorkPage() {
                       />
                     </div>
                   )}
-                  
+
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
@@ -733,7 +391,7 @@ export default function WorkPage() {
                         )}
                       </div>
                     </div>
-                    
+
                     <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       <Link href={`/work/${work.id}`}>
                         {work.title}
@@ -766,7 +424,7 @@ export default function WorkPage() {
                       <span className="text-sm text-gray-400 dark:text-gray-500">
                         {new Date(work.createdAt).toLocaleDateString('ko-KR')}
                       </span>
-                      
+
                       <div className="flex gap-2">
                         {work.githubUrl && (
                           <a
