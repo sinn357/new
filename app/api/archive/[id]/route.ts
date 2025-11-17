@@ -1,23 +1,24 @@
 import { prisma } from "@/lib/db";
+import { archiveSchema } from '@/lib/validations/archive';
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  
+
   try {
-    const archive = await prisma.archive.findUnique({ 
+    const archive = await prisma.archive.findUnique({
       where: { id }
     });
-    
+
     if (!archive) {
       return Response.json(
         { error: "Archive not found" },
         { status: 404 }
       );
     }
-    
+
     return Response.json({ archive });
   } catch (error) {
     console.error("Database error:", error);
@@ -33,46 +34,64 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  
+
   try {
     const body = await request.json();
-    const { title, content, category, tags, imageUrl, fileUrl } = body;
+    console.log('PUT /api/archive/[id] - Request body:', body);
 
-    if (!title?.trim() || !content?.trim()) {
+    // Zod validation
+    const validated = archiveSchema.safeParse(body);
+
+    if (!validated.success) {
+      console.log('Validation failed:', validated.error.format());
       return Response.json(
-        { error: "Title and content are required" },
+        {
+          error: "Validation failed",
+          details: validated.error.format()
+        },
         { status: 400 }
       );
     }
 
-    const archive = await prisma.archive.findUnique({ 
+    const data = validated.data;
+
+    const archive = await prisma.archive.findUnique({
       where: { id }
     });
-    
+
     if (!archive) {
       return Response.json(
         { error: "Archive not found" },
         { status: 404 }
       );
     }
-    
+
     const updatedArchive = await prisma.archive.update({
       where: { id },
       data: {
-        title: title.trim(),
-        content: content.trim(),
-        category,
-        tags: tags || [],
-        imageUrl: imageUrl?.trim() || null,
-        fileUrl: fileUrl?.trim() || null
+        title: data.title,
+        content: data.content,
+        category: data.category,
+        tags: data.tags, // Already array from Zod transform
+        imageUrl: data.imageUrl || null,
+        fileUrl: data.fileUrl || null
       }
     });
-    
+
+    console.log('Archive updated successfully:', updatedArchive.id);
     return Response.json({ archive: updatedArchive });
   } catch (error) {
-    console.error("Database error:", error);
+    console.error("PUT /api/archive/[id] error:", error);
+
+    if (error instanceof SyntaxError) {
+      return Response.json(
+        { error: "Invalid JSON format" },
+        { status: 400 }
+      );
+    }
+
     return Response.json(
-      { error: "Internal server error" },
+      { error: "Failed to update archive", details: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }
     );
   }
@@ -83,23 +102,23 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  
+
   try {
-    const archive = await prisma.archive.findUnique({ 
+    const archive = await prisma.archive.findUnique({
       where: { id }
     });
-    
+
     if (!archive) {
       return Response.json(
         { error: "Archive not found" },
         { status: 404 }
       );
     }
-    
+
     await prisma.archive.delete({
       where: { id }
     });
-    
+
     return Response.json({ message: "Archive deleted successfully" });
   } catch (error) {
     console.error("Database error:", error);
