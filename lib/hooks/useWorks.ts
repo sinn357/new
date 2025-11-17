@@ -12,9 +12,16 @@ export function useWorks(category?: string) {
     queryFn: async () => {
       const url = category ? `/api/work?category=${category}` : '/api/work'
       const response = await fetch(url)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch works: ${response.status}`)
+      }
+
       const data = await response.json()
-      if (!data.success) throw new Error(data.error)
-      return data.works
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to fetch works')
+      }
+      return data.works || []
     },
   })
 }

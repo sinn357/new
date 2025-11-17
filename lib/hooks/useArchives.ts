@@ -12,9 +12,16 @@ export function useArchives(category?: string) {
     queryFn: async () => {
       const url = category ? `/api/archive?category=${category}` : '/api/archive'
       const response = await fetch(url)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch archives: ${response.status}`)
+      }
+
       const data = await response.json()
-      if (!data.success) throw new Error(data.error)
-      return data.archives
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to fetch archives')
+      }
+      return data.archives || []
     },
   })
 }

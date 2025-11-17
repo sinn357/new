@@ -16,7 +16,7 @@ export async function GET(request: Request) {
       orderBy: { createdAt: "desc" }
     });
 
-    return Response.json({ works });
+    return Response.json({ success: true, works });
   } catch (error) {
     console.error('Database error:', error);
     console.error('DATABASE_URL present:', !!process.env.DATABASE_URL);
@@ -24,6 +24,7 @@ export async function GET(request: Request) {
 
     // 데이터베이스 연결 실패 시 빈 배열 반환
     return Response.json({
+      success: false,
       works: [],
       error: 'Database connection failed',
       message: 'Please configure DATABASE_URL environment variable in Vercel'

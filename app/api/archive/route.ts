@@ -14,11 +14,12 @@ export async function GET(request: Request) {
       orderBy: { createdAt: "desc" }
     });
 
-    return Response.json({ archives });
+    return Response.json({ success: true, archives });
   } catch (error) {
     console.error('Database error:', error);
 
     return Response.json({
+      success: false,
       archives: [],
       error: 'Database connection failed',
       message: 'Please configure DATABASE_URL environment variable in Vercel'
