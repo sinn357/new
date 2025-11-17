@@ -428,23 +428,23 @@ export default function About() {
       {/* Hero Section */}
       <section className="px-6 py-16 text-center">
         <div className="max-w-4xl mx-auto">
-          <Link 
-            href="/" 
-            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mb-8 transition-colors"
+          <Link
+            href="/"
+            className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 mb-8 transition-colors"
           >
             ← 홈으로 돌아가기
           </Link>
-          
+
           {isAdmin ? (
             <InlineEdit
               text={pageContent?.title || 'About Me'}
               onSave={saveTitle}
               className="mb-6"
-              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent"
+              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent"
               placeholder="제목을 입력하세요"
             />
           ) : (
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent mb-6">
               {pageContent?.title || 'About Me'}
             </h1>
           )}

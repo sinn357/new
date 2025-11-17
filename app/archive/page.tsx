@@ -153,11 +153,11 @@ export default function ArchivePage() {
               text={pageContent?.title || 'Archive'}
               onSave={saveTitle}
               className="mb-6"
-              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent"
+              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent"
               placeholder="제목을 입력하세요"
             />
           ) : (
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent mb-6">
               {pageContent?.title || 'Archive'}
             </h1>
           )}
@@ -186,7 +186,7 @@ export default function ArchivePage() {
                   setShowForm(!showForm);
                 }
               }}
-              className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 dark:from-indigo-600 dark:to-teal-600 dark:hover:from-indigo-700 dark:hover:to-teal-700 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               {showForm ? (editingArchive ? '편집 취소' : '폼 숨기기') : '새 글 작성'}
             </button>

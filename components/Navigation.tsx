@@ -22,14 +22,14 @@ export default function Navigation() {
   return (
     <>
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-gradient-to-r from-indigo-600 to-indigo-700 shadow-lg ${
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-gradient-to-r from-indigo-600 to-indigo-700 dark:from-indigo-900 dark:to-indigo-950 shadow-lg ${
         scrolled ? 'shadow-xl' : ''
       }`}
     >
       <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
         <Link
           href="/"
-          className="text-lg font-semibold text-teal-300 hover:text-teal-200 transition-all"
+          className="text-lg font-semibold text-teal-300 hover:text-teal-200 dark:text-teal-400 dark:hover:text-teal-300 transition-all"
         >
           HOME
         </Link>
@@ -45,7 +45,7 @@ export default function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="transition-all duration-200 hover:text-teal-300"
+                className="transition-all duration-200 hover:text-teal-300 dark:text-gray-100 dark:hover:text-teal-400"
               >
                 {item.label}
               </Link>
@@ -59,7 +59,7 @@ export default function Navigation() {
           <ThemeToggle />
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="p-2 hover:bg-indigo-500 rounded-lg transition-colors"
+            className="p-2 hover:bg-indigo-500 dark:hover:bg-indigo-800 rounded-lg transition-colors"
             aria-label="메뉴 열기"
           >
             <svg

@@ -18,9 +18,9 @@ const statusLabels = {
 };
 
 const statusColors = {
-  'completed': 'bg-green-100 text-green-800',
-  'in-progress': 'bg-indigo-100 text-indigo-800',
-  'planned': 'bg-yellow-100 text-yellow-800'
+  'completed': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  'in-progress': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
+  'planned': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
 };
 
 interface PageContent {
@@ -197,7 +197,7 @@ export default function WorkPage() {
                   setShowForm(!showForm);
                 }
               }}
-              className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 dark:from-indigo-600 dark:to-teal-600 dark:hover:from-indigo-700 dark:hover:to-teal-700 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               {showForm ? (editingWork ? '편집 취소' : '폼 숨기기') : '새 작업물 추가'}
             </button>
@@ -275,7 +275,7 @@ export default function WorkPage() {
                 {isAdmin && (
                   <button
                     onClick={() => setShowForm(true)}
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
+                    className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 dark:from-indigo-600 dark:to-teal-600 dark:hover:from-indigo-700 dark:hover:to-teal-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
                   >
                     첫 작업물 추가하기
                   </button>
@@ -326,14 +326,14 @@ export default function WorkPage() {
                           <div className="flex gap-1">
                             <button
                               onClick={() => handleEditWork(work)}
-                              className="text-indigo-500 hover:text-indigo-700 p-1 rounded hover:bg-indigo-50 transition-colors"
+                              className="text-indigo-500 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 p-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                               title="작업물 수정"
                             >
                               ✏️
                             </button>
                             <button
                               onClick={() => handleDeleteWork(work)}
-                              className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors"
+                              className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-1 rounded hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
                               title="작업물 삭제"
                             >
                               🗑️
