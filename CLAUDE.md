@@ -9,8 +9,8 @@
 - **Repo Root:** /Users/woocheolshin/Documents/Vibecoding_1/my-site
 - **GitHub:** https://github.com/sinn357/new.git
 - **Owner:** Partner
-- **Last Updated:** 2025-11-12 21:30 KST
-- **Session Goal (Today):** ✅ Phase 4 인터랙티브 애니메이션 구현 완료
+- **Last Updated:** 2025-11-17 (KST)
+- **Session Goal (Today):** ✅ 다크모드 구현 완료 (Indigo + Teal 컬러 스킴)
 
 ---
 
@@ -124,9 +124,11 @@ my-site/
 
 ## 12) Tasks (Single Source of Truth)
 ### Active (in this session)
-- **세션 완료**: Phase 4 인터랙티브 애니메이션 구현 완료
+- **세션 완료**: 다크모드 구현 완료 (Indigo + Teal 컬러 스킴)
 
 ### Recent Done
+- **T-006:** 전체 사이트 다크모드 구현 ✅ (2025-11-17) - Indigo + Teal 컬러 스킴으로 전체 컴포넌트와 페이지에 다크모드 적용, Tailwind darkMode 설정 수정 (commits: 9f307b5, 2c5e6b5, 9792cff)
+- **T-005:** 로고 텍스트 변경 ✅ (2025-11-17) - Navigation 컴포넌트에서 "신우철" → "HOME" 변경 (commit: 9f307b5)
 - **T-004:** Phase 4 인터랙티브 애니메이션 구현 ✅ (2025-11-12) - framer-motion 설치, AnimatedCard/AnimatedHero/ScrollProgress 컴포넌트 생성, 홈/Work/Archive 페이지 애니메이션 적용 (commit: ce820c9)
 - **T-003:** MD 파일 체계적 정리 ✅ (2025-09-29) - CLAUDE.md 생성 + docs 폴더 구조 정리 + investment-app 패턴 적용
 - **T-002:** Work와 Archive 페이지 미디어 삽입 기능 추가 ✅ (2025-09-29) - MarkdownEditor 컴포넌트에 툴바, 미디어 업로드, 자동 문법 삽입, 비디오 렌더링 지원 구현
@@ -204,6 +206,31 @@ my-site/
     - 적용 페이지: 홈, Work, Archive
   - **성능 영향**: 합리적인 번들 크기 증가로 판단 (기능 대비)
 
+### ADR-005: Indigo + Teal 다크모드 구현 (Subtle Dark Mode)
+- Date: 2025-11-17
+- Context: 사용자가 저조도 환경에서 편안하게 사이트를 볼 수 있도록 다크모드 구현 필요
+- Options:
+  - Option 1: Subtle Dark Mode (Indigo 브랜드 유지)
+  - Option 2: Deep Dark Mode (최대 대비)
+  - Option 3: Gradient Dark Mode (그라디언트 배경)
+- Decision: Option 1 - Subtle Dark Mode 선택
+- Consequences:
+  - **색상 전략**:
+    - 배경: gray-900/800/900 gradient (눈에 편안한 어두운 톤)
+    - 카드: gray-800 배경 + gray-700 테두리
+    - 메인 색상: Indigo-600 → Indigo-400 (다크모드에서 밝게)
+    - 액센트: Teal-500 → Teal-400/500 (가독성 유지)
+    - 텍스트: white/gray-100 (제목), gray-300 (본문)
+  - **구현 범위**:
+    - 컴포넌트: Navigation, Footer, ScrollProgress (3개)
+    - 페이지: Home, Work, Archive, About (4개)
+  - **기술적 수정**:
+    - tailwind.config.js의 darkMode 설정 오류 수정 (`['class', 'class']` → `'class'`)
+    - next-themes 라이브러리로 시스템 테마 감지 및 토글 구현
+    - ThemeProvider를 루트 레이아웃에 적용
+  - **브랜드 일관성**: Indigo + Teal 조합을 라이트/다크 모드 모두에서 유지하여 브랜드 정체성 강화
+  - **접근성**: WCAG 기준 충족하는 명암 대비 확보
+
 ---
 
 ## 14) Risk Log
@@ -220,6 +247,9 @@ my-site/
 - **AnimatedHero**: Hero 섹션 fade-in 애니메이션 컴포넌트
 - **ScrollProgress**: 페이지 상단 스크롤 진행률 표시 컴포넌트
 - **Stagger Animation**: 여러 요소가 순차적으로 등장하는 애니메이션 효과
+- **ThemeProvider**: next-themes 라이브러리 기반 다크/라이트 모드 전환 컨텍스트
+- **ThemeToggle**: 다크/라이트 모드를 전환하는 UI 컴포넌트 (Navigation에 통합)
+- **Subtle Dark Mode**: 브랜드 색상을 유지하면서 눈에 편안한 어두운 배경을 제공하는 다크모드 전략
 
 ---
 
