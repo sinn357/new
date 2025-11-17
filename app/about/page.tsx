@@ -424,7 +424,7 @@ export default function About() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
       <section className="px-6 py-16 text-center">
         <div className="max-w-4xl mx-auto">
@@ -440,11 +440,11 @@ export default function About() {
               text={pageContent?.title || 'About Me'}
               onSave={saveTitle}
               className="mb-6"
-              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent"
+              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent"
               placeholder="제목을 입력하세요"
             />
           ) : (
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
               {pageContent?.title || 'About Me'}
             </h1>
           )}
@@ -472,7 +472,7 @@ export default function About() {
           <div className="space-y-8">
             <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                <div className="w-20 h-20 bg-gradient-to-br from-indigo-400 to-teal-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                   {isAdmin ? (
                     <InlineEdit
                       text={mainIcon}
@@ -613,9 +613,9 @@ export default function About() {
                     key={skill}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 ${
                       index % 3 === 0
-                        ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700'
+                        ? 'bg-gradient-to-r from-indigo-100 to-indigo-200 text-indigo-700'
                         : index % 3 === 1
-                        ? 'bg-gradient-to-r from-purple-100 to-purple-200 text-purple-700'
+                        ? 'bg-gradient-to-r from-teal-100 to-teal-200 text-teal-700'
                         : 'bg-gradient-to-r from-green-100 to-green-200 text-green-700'
                     }`}
                   >
@@ -653,8 +653,8 @@ export default function About() {
                 {interests.map((interest, index) => (
                   <div key={interest} className="flex items-center gap-3">
                     <div className={`w-2 h-2 rounded-full ${
-                      index % 4 === 0 ? 'bg-blue-500' :
-                      index % 4 === 1 ? 'bg-purple-500' :
+                      index % 4 === 0 ? 'bg-indigo-500' :
+                      index % 4 === 1 ? 'bg-teal-500' :
                       index % 4 === 2 ? 'bg-green-500' : 'bg-orange-500'
                     }`}></div>
                     <span className="text-gray-700">{interest}</span>
@@ -679,7 +679,7 @@ export default function About() {
               
               <div className="space-y-4 mb-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
                     {isAdmin ? (
                       <InlineEdit
                         text={emailIcon}
@@ -707,7 +707,7 @@ export default function About() {
                 </div>
                 
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
                     {isAdmin ? (
                       <InlineEdit
                         text={websiteIcon}
@@ -765,7 +765,7 @@ export default function About() {
               
               <Link
                 href="/work"
-                className="w-full block bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
+                className="w-full block bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center"
               >
                 작업물 보기
               </Link>
@@ -965,7 +965,7 @@ export default function About() {
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:from-gray-400 disabled:to-gray-500 text-white py-3 px-8 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:transform-none disabled:hover:shadow-lg"
+                className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 disabled:from-gray-400 disabled:to-gray-500 text-white py-3 px-8 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:transform-none disabled:hover:shadow-lg"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
