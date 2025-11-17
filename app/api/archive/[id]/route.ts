@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { archiveSchema } from '@/lib/validations/archive';
+import { isAdminAuthenticated } from '@/lib/auth';
 
 export async function GET(
   request: Request,
@@ -36,6 +37,15 @@ export async function PUT(
   const { id } = await params;
 
   try {
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      return Response.json(
+        { error: "Unauthorized - Admin authentication required" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     console.log('PUT /api/archive/[id] - Request body:', body);
 
@@ -104,6 +114,15 @@ export async function DELETE(
   const { id } = await params;
 
   try {
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      return Response.json(
+        { error: "Unauthorized - Admin authentication required" },
+        { status: 401 }
+      );
+    }
+
     const archive = await prisma.archive.findUnique({
       where: { id }
     });

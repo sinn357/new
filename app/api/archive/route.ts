@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { archiveSchema } from '@/lib/validations/archive';
+import { isAdminAuthenticated } from '@/lib/auth';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -30,6 +31,16 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     console.log('POST /api/archive - Start');
+
+    // Check admin authentication
+    const isAuthenticated = await isAdminAuthenticated();
+    if (!isAuthenticated) {
+      console.log('Authentication failed: Not authenticated');
+      return Response.json(
+        { error: "Unauthorized - Admin authentication required" },
+        { status: 401 }
+      );
+    }
 
     const body = await request.json();
     console.log('Request body:', body);
