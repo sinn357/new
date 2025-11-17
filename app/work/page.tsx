@@ -19,7 +19,7 @@ const statusLabels = {
 
 const statusColors = {
   'completed': 'bg-green-100 text-green-800',
-  'in-progress': 'bg-blue-100 text-blue-800',
+  'in-progress': 'bg-indigo-100 text-indigo-800',
   'planned': 'bg-yellow-100 text-yellow-800'
 };
 
@@ -148,13 +148,13 @@ export default function WorkPage() {
   if (error) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Error: {error.message}</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
       <section className="px-6 py-16 text-center">
         <div className="max-w-4xl mx-auto">
           <Link
             href="/"
-            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mb-8 transition-colors"
+            className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 mb-8 transition-colors"
           >
             ← 홈으로 돌아가기
           </Link>
@@ -164,11 +164,11 @@ export default function WorkPage() {
               text={pageContent?.title || 'My Work'}
               onSave={saveTitle}
               className="mb-6"
-              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent"
+              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent"
               placeholder="제목을 입력하세요"
             />
           ) : (
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent mb-6">
               {pageContent?.title || 'My Work'}
             </h1>
           )}
@@ -197,7 +197,7 @@ export default function WorkPage() {
                   setShowForm(!showForm);
                 }
               }}
-              className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               {showForm ? (editingWork ? '편집 취소' : '폼 숨기기') : '새 작업물 추가'}
             </button>
@@ -215,7 +215,7 @@ export default function WorkPage() {
                 onClick={() => setSelectedCategory('')}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   selectedCategory === ''
-                    ? 'bg-blue-500 text-white'
+                    ? 'bg-indigo-500 text-white'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
@@ -229,7 +229,7 @@ export default function WorkPage() {
                     onClick={() => setSelectedCategory(key)}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
                       selectedCategory === key
-                        ? 'bg-blue-500 text-white'
+                        ? 'bg-indigo-500 text-white'
                         : `${info.color} hover:opacity-80`
                     }`}
                   >
@@ -326,7 +326,7 @@ export default function WorkPage() {
                           <div className="flex gap-1">
                             <button
                               onClick={() => handleEditWork(work)}
-                              className="text-blue-500 hover:text-blue-700 p-1 rounded hover:bg-blue-50 transition-colors"
+                              className="text-indigo-500 hover:text-indigo-700 p-1 rounded hover:bg-indigo-50 transition-colors"
                               title="작업물 수정"
                             >
                               ✏️
@@ -343,7 +343,7 @@ export default function WorkPage() {
                       </div>
                     </div>
 
-                    <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                       <Link href={`/work/${work.id}`}>
                         {work.title}
                       </Link>
@@ -382,7 +382,7 @@ export default function WorkPage() {
                             href={work.githubUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                            className="p-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                             title="GitHub"
                           >
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

@@ -128,7 +128,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
       <section className="px-6 py-20 text-center">
         <AnimatedHero className="max-w-4xl mx-auto">
@@ -137,11 +137,11 @@ export default function Home() {
               text={pageContent?.title || 'Welcome to My Blog'}
               onSave={saveTitle}
               className="mb-6"
-              textClassName="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+              textClassName="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 bg-clip-text text-transparent"
               placeholder="제목을 입력하세요"
             />
           ) : (
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent mb-6">
               {pageContent?.title || 'Welcome to My Blog'}
             </h1>
           )}
@@ -172,13 +172,13 @@ export default function Home() {
           <div className="flex gap-4 justify-center">
             <Link
               href="/work"
-              className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               작업물 보기
             </Link>
             <Link
               href="/archive"
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               아카이브 보기
             </Link>
@@ -273,14 +273,14 @@ export default function Home() {
           
           {loading ? (
             <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500"></div>
             </div>
           ) : archives.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500 dark:text-gray-400 text-lg">아직 아카이브 글이 없습니다.</p>
               <Link
                 href="/archive"
-                className="inline-block mt-4 text-purple-500 dark:text-purple-400 hover:text-purple-600 dark:hover:text-purple-300 font-medium"
+                className="inline-block mt-4 text-teal-500 dark:text-teal-400 hover:text-teal-600 dark:hover:text-teal-300 font-medium"
               >
                 첫 번째 글 작성하기 →
               </Link>
@@ -294,11 +294,11 @@ export default function Home() {
                   >
                     <div className="p-8">
                       <div className="flex items-center gap-2 mb-3">
-                        <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 text-sm font-medium rounded-full">
+                        <span className="px-3 py-1 bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-300 text-sm font-medium rounded-full">
                           {archive.category}
                         </span>
                       </div>
-                      <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-2">
+                      <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors line-clamp-2">
                         {archive.title}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
@@ -310,7 +310,7 @@ export default function Home() {
                         </span>
                         <Link
                           href={`/archive/${archive.id}`}
-                          className="text-purple-500 dark:text-purple-400 hover:text-purple-600 dark:hover:text-purple-300 font-medium text-sm"
+                          className="text-teal-500 dark:text-teal-400 hover:text-teal-600 dark:hover:text-teal-300 font-medium text-sm"
                         >
                           자세히 보기 →
                         </Link>
@@ -326,7 +326,7 @@ export default function Home() {
             <div className="text-center mt-12">
               <Link
                 href="/archive"
-                className="inline-flex items-center text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium"
+                className="inline-flex items-center text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 font-medium"
               >
                 모든 아카이브 보기
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -351,7 +351,7 @@ export default function Home() {
             {['React', 'Next.js', 'TypeScript', 'Node.js', 'Prisma', 'PostgreSQL'].map((tech) => (
               <span
                 key={tech}
-                className="px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 text-gray-700 dark:text-gray-200 rounded-full text-sm font-medium"
+                className="px-4 py-2 bg-gradient-to-r from-indigo-100 to-teal-100 dark:from-indigo-900 dark:to-teal-900 text-gray-700 dark:text-gray-200 rounded-full text-sm font-medium"
               >
                 {tech}
               </span>
