@@ -38,10 +38,15 @@ export const archiveSchema = z.object({
     message: '올바른 카테고리를 선택하세요'
   }),
 
-  tags: z.string()
+  tags: z.union([
+      z.string(),
+      z.array(z.string())
+    ])
     .optional()
     .default('')
     .transform((val) => {
+      // 이미 배열이면 그대로 반환 (클라이언트에서 transform된 경우)
+      if (Array.isArray(val)) return val;
       // 콤마로 구분된 문자열을 배열로 변환
       if (!val || val.trim() === '') return [];
       return val.split(',').map(s => s.trim()).filter(s => s.length > 0);
