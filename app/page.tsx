@@ -18,6 +18,7 @@ interface PageContent {
 export default function Home() {
   const { isAdmin } = useAdmin();
   const [works, setWorks] = useState<Work[]>([]);
+  const [featuredWorks, setFeaturedWorks] = useState<Work[]>([]);
   const [archives, setArchives] = useState<Archive[]>([]);
   const [totalWorks, setTotalWorks] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -62,18 +63,22 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const response = await fetch('/api/work');
-        
+
         if (!response.ok) {
           throw new Error(`API responded with status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         console.log('API response:', data);
-        
+
         if (data.error) {
           throw new Error(`API error: ${data.error} - ${data.message || ''}`);
         }
-        
+
+        // Featured 프로젝트 필터링
+        const featured = data.works.filter((work: any) => work.isFeatured);
+        setFeaturedWorks(featured.slice(0, 3)); // 최대 3개
+
         setWorks(data.works.slice(0, 3)); // 최신 3개만
         setTotalWorks(data.works.length);
       } catch (error) {
@@ -191,6 +196,82 @@ export default function Home() {
           </div>
         </AnimatedHero>
       </section>
+
+      {/* Featured Projects Section */}
+      {featuredWorks.length > 0 && (
+        <section className="px-6 py-16 bg-gradient-to-br from-indigo-100 to-teal-100 dark:from-gray-800 dark:to-gray-900">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <span className="text-4xl mb-4 block">⭐</span>
+              <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100">
+                Featured Projects
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                특별히 선정된 대표 프로젝트를 확인해보세요
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {featuredWorks.map((work, index) => (
+                <AnimatedCard key={work.id} delay={index * 0.1}>
+                  <article
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group border-2 border-indigo-200 dark:border-indigo-900"
+                  >
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                      ⭐ FEATURED
+                    </div>
+                    {work.imageUrl && (
+                      <div className="h-48 overflow-hidden">
+                        <img
+                          src={work.imageUrl}
+                          alt={work.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                    <div className="p-8">
+                      <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
+                        {work.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                        {work.content}
+                      </p>
+                      {work.techStack && work.techStack.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {work.techStack.slice(0, 3).map((tech, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-xs rounded-full"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                          {work.techStack.length > 3 && (
+                            <span className="px-2 py-1 text-gray-500 dark:text-gray-400 text-xs">
+                              +{work.techStack.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-400 dark:text-gray-500">
+                          {new Date(work.createdAt).toLocaleDateString('ko-KR')}
+                        </span>
+                        <Link
+                          href={`/work/${work.id}`}
+                          className="text-indigo-500 dark:text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 font-medium text-sm"
+                        >
+                          자세히 보기 →
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                </AnimatedCard>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Latest Works Section */}
       <section className="px-6 py-16">

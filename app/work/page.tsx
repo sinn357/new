@@ -144,6 +144,15 @@ export default function WorkPage() {
     setShowForm(true);
   };
 
+  // Featured 프로젝트를 우선 정렬
+  const sortedWorks = [...works].sort((a, b) => {
+    const aFeatured = (a as any).isFeatured || false;
+    const bFeatured = (b as any).isFeatured || false;
+    if (aFeatured && !bFeatured) return -1;
+    if (!aFeatured && bFeatured) return 1;
+    return 0;
+  });
+
   if (isLoading) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Loading...</div>;
   if (error) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Error: {error.message}</div>;
 
@@ -289,11 +298,20 @@ export default function WorkPage() {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {works.map((work, index) => (
+              {sortedWorks.map((work, index) => (
                 <AnimatedCard key={work.id} delay={index * 0.1}>
                   <article
-                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
+                    className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group ${
+                      (work as any).isFeatured
+                        ? 'border-2 border-yellow-400 dark:border-yellow-500'
+                        : 'border border-gray-100 dark:border-gray-700'
+                    }`}
                   >
+                  {(work as any).isFeatured && (
+                    <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                      ⭐ FEATURED
+                    </div>
+                  )}
                   {work.imageUrl && (
                     <div className="h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
                       <Image

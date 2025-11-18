@@ -72,7 +72,11 @@ export const workSchema = z.object({
 
   duration: z.string()
     .max(100, '기간은 100자 이하여야 합니다')
+    .optional(),
+
+  isFeatured: z.boolean()
     .optional()
+    .default(false)
 });
 
 /**

@@ -21,6 +21,7 @@ model Work {
   fileUrl      String?
   status       String    @default("completed") // "completed", "in-progress", "planned"
   duration     String?
+  isFeatured   Boolean   @default(false) // Featured project to display on home page
   createdAt    DateTime  @default(now())
 }
 

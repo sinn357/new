@@ -53,7 +53,8 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
       imageUrl: '',
       fileUrl: '',
       status: 'completed',
-      duration: ''
+      duration: '',
+      isFeatured: false
     }
   });
 
@@ -72,7 +73,8 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
         imageUrl: editingWork.imageUrl || '',
         fileUrl: editingWork.fileUrl || '',
         status: editingWork.status,
-        duration: editingWork.duration || ''
+        duration: editingWork.duration || '',
+        isFeatured: (editingWork as any).isFeatured || false
       });
     }
   }, [editingWork, form]);
@@ -374,6 +376,50 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
                     </SelectContent>
                   </Select>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Duration & Featured */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="duration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>작업 기간</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="예: 2주, 1개월"
+                      {...field}
+                      className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="isFeatured"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">⭐ Featured 프로젝트</FormLabel>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      홈 페이지에 강조 표시
+                    </p>
+                  </div>
+                  <FormControl>
+                    <input
+                      type="checkbox"
+                      checked={field.value}
+                      onChange={field.onChange}
+                      className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                  </FormControl>
                 </FormItem>
               )}
             />
