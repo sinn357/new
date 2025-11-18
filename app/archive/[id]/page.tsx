@@ -12,6 +12,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import StarRating from '@/components/StarRating';
 import { RenderMarkdownWithSpoilers } from '@/lib/spoiler-parser';
+import { ClickableImage } from '@/components/ImageLightbox';
+import ImageLightbox from '@/components/ImageLightbox';
 
 export default function ArchiveDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -226,7 +228,7 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
                   </a>
                 ),
                 img: ({ src, alt }: any) => (
-                  <img
+                  <ClickableImage
                     src={src}
                     alt={alt}
                     className="max-w-full h-auto rounded-lg shadow-md mb-4"
@@ -275,23 +277,15 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
                       
                       {/* Image preview */}
                       {isImageFile(archive.imageUrl) && (
-                        <a 
-                          href={archive.imageUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="inline-block"
-                        >
-                          <div className="relative max-w-full" style={{ maxHeight: '300px' }}>
-                            <Image 
-                              src={archive.imageUrl} 
-                              alt="첨부 이미지"
-                              width={400}
-                              height={300}
-                              className="rounded-md border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer object-contain"
-                              style={{ maxHeight: '300px', width: 'auto' }}
-                            />
-                          </div>
-                        </a>
+                        <div className="inline-block">
+                          <ImageLightbox
+                            src={archive.imageUrl}
+                            alt="첨부 이미지"
+                            width={400}
+                            height={300}
+                            style={{ maxHeight: '300px', objectFit: 'contain' }}
+                          />
+                        </div>
                       )}
                       
                       {/* Video preview */}

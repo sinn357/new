@@ -11,6 +11,8 @@ import { isImageFile, isVideoFile, isAudioFile, isPdfFile, getFileIcon, getFileT
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { ClickableImage } from '@/components/ImageLightbox';
+import ImageLightbox from '@/components/ImageLightbox';
 
 const statusLabels = {
   'completed': '완료됨',
@@ -150,12 +152,13 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                     
                     {/* Image preview */}
                     {isImageFile(work.imageUrl) && (
-                      <Image
+                      <ImageLightbox
                         src={work.imageUrl}
                         alt={work.title}
                         width={600}
                         height={400}
-                        className="w-full h-auto object-cover rounded-lg"
+                        className="w-full"
+                        style={{ height: 'auto', objectFit: 'cover' }}
                       />
                     )}
                     
@@ -231,11 +234,11 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                   )}
                 </div>
 
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                   {work.title}
                 </h1>
 
-                <div className="text-sm text-gray-500 mb-6 pb-6 border-b border-gray-200">
+                <div className="text-sm text-gray-500 dark:text-gray-400 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                   작성일: {new Date(work.createdAt).toLocaleDateString('ko-KR', {
                     year: 'numeric',
                     month: 'long',
@@ -244,7 +247,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                   })}
                 </div>
 
-                <div className="prose prose-lg max-w-none mb-8">
+                <div className="prose prose-lg max-w-none dark:prose-invert mb-8">
                   <ReactMarkdown
                     components={{
                       code({ inline, className, children, ...props }: any) {
@@ -315,8 +318,8 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                         </a>
                       ),
                       img: ({ src, alt }: any) => (
-                        <img 
-                          src={src} 
+                        <ClickableImage
+                          src={src}
                           alt={alt}
                           className="max-w-full h-auto rounded-lg shadow-md mb-4"
                         />
