@@ -8,9 +8,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAdmin } from '@/contexts/AdminContext';
 import { isImageFile, isVideoFile, isAudioFile, isPdfFile, getFileIcon, getFileTypeLabel, getFileName } from '@/lib/file-utils';
-import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import StarRating from '@/components/StarRating';
+import { RenderMarkdownWithSpoilers } from '@/lib/spoiler-parser';
 
 export default function ArchiveDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -143,92 +144,96 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
               )}
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
               {archive.title}
             </h1>
 
-            <div className="prose prose-lg max-w-none">
-              <ReactMarkdown
-                components={{
-                  code({ inline, className, children, ...props }: any) {
-                    const match = /language-(\w+)/.exec(className || '');
-                    const language = match ? match[1] : '';
-                    
-                    return !inline && language ? (
-                      <SyntaxHighlighter
-                        style={oneDark}
-                        language={language}
-                        PreTag="div"
-                        {...props}
-                      >
-                        {String(children).replace(/\n$/, '')}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <code className={className} {...props}>
-                        {children}
-                      </code>
-                    );
-                  },
-                  h1: ({ children }) => (
-                    <h1 className="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">
-                      {children}
-                    </h1>
-                  ),
-                  h2: ({ children }) => (
-                    <h2 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-                      {children}
-                    </h2>
-                  ),
-                  h3: ({ children }) => (
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2 mt-4">
-                      {children}
-                    </h3>
-                  ),
-                  p: ({ children }) => (
-                    <p className="text-gray-700 mb-4 leading-relaxed">
-                      {children}
-                    </p>
-                  ),
-                  ul: ({ children }) => (
-                    <ul className="list-disc list-inside mb-4 text-gray-700 space-y-2">
-                      {children}
-                    </ul>
-                  ),
-                  ol: ({ children }) => (
-                    <ol className="list-decimal list-inside mb-4 text-gray-700 space-y-2">
-                      {children}
-                    </ol>
-                  ),
-                  li: ({ children }) => (
-                    <li className="ml-4">{children}</li>
-                  ),
-                  blockquote: ({ children }) => (
-                    <blockquote className="border-l-4 border-purple-500 pl-4 py-2 mb-4 bg-purple-50 text-gray-700 italic">
-                      {children}
-                    </blockquote>
-                  ),
-                  a: ({ href, children }) => (
-                    <a 
-                      href={href} 
-                      className="text-purple-600 hover:text-purple-700 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
+            {(archive as any).rating && (
+              <div className="mb-8">
+                <StarRating value={(archive as any).rating} readonly size="md" />
+              </div>
+            )}
+
+            <RenderMarkdownWithSpoilers
+              content={archive.content}
+              className="prose prose-lg max-w-none dark:prose-invert"
+              markdownComponents={{
+                code({ inline, className, children, ...props }: any) {
+                  const match = /language-(\w+)/.exec(className || '');
+                  const language = match ? match[1] : '';
+
+                  return !inline && language ? (
+                    <SyntaxHighlighter
+                      style={oneDark}
+                      language={language}
+                      PreTag="div"
+                      {...props}
                     >
+                      {String(children).replace(/\n$/, '')}
+                    </SyntaxHighlighter>
+                  ) : (
+                    <code className={className} {...props}>
                       {children}
-                    </a>
-                  ),
-                  img: ({ src, alt }: any) => (
-                    <img 
-                      src={src} 
-                      alt={alt}
-                      className="max-w-full h-auto rounded-lg shadow-md mb-4"
-                    />
-                  )
-                }}
-              >
-                {archive.content}
-              </ReactMarkdown>
-            </div>
+                    </code>
+                  );
+                },
+                h1: ({ children }) => (
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 border-b pb-2">
+                    {children}
+                  </h1>
+                ),
+                h2: ({ children }) => (
+                  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3 mt-6">
+                    {children}
+                  </h2>
+                ),
+                h3: ({ children }) => (
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2 mt-4">
+                    {children}
+                  </h3>
+                ),
+                p: ({ children }) => (
+                  <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+                    {children}
+                  </p>
+                ),
+                ul: ({ children }) => (
+                  <ul className="list-disc list-inside mb-4 text-gray-700 dark:text-gray-300 space-y-2">
+                    {children}
+                  </ul>
+                ),
+                ol: ({ children }) => (
+                  <ol className="list-decimal list-inside mb-4 text-gray-700 dark:text-gray-300 space-y-2">
+                    {children}
+                  </ol>
+                ),
+                li: ({ children }) => (
+                  <li className="ml-4">{children}</li>
+                ),
+                blockquote: ({ children }) => (
+                  <blockquote className="border-l-4 border-purple-500 dark:border-purple-400 pl-4 py-2 mb-4 bg-purple-50 dark:bg-purple-900/20 text-gray-700 dark:text-gray-300 italic">
+                    {children}
+                  </blockquote>
+                ),
+                a: ({ href, children }) => (
+                  <a
+                    href={href}
+                    className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {children}
+                  </a>
+                ),
+                img: ({ src, alt }: any) => (
+                  <img
+                    src={src}
+                    alt={alt}
+                    className="max-w-full h-auto rounded-lg shadow-md mb-4"
+                  />
+                )
+              }}
+            />
 
             {archive.tags && archive.tags.length > 0 && (
               <div className="mt-8 pt-8 border-t border-gray-200">

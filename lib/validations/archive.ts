@@ -53,7 +53,13 @@ export const archiveSchema = z.object({
     }),
 
   imageUrl: z.string().optional(),
-  fileUrl: z.string().optional()
+  fileUrl: z.string().optional(),
+  rating: z.number()
+    .int('평점은 정수여야 합니다')
+    .min(1, '평점은 1 이상이어야 합니다')
+    .max(5, '평점은 5 이하여야 합니다')
+    .optional()
+    .nullable()
 });
 
 /**

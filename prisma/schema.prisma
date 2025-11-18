@@ -32,6 +32,7 @@ model Archive {
   tags      String[]  // Optional tags for additional filtering
   imageUrl  String?   // Optional image for the post
   fileUrl   String?   // Optional file attachment
+  rating    Int?      // Rating 1-5 for reviews (optional)
   createdAt DateTime  @default(now())
 }
 

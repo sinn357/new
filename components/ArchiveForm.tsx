@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/select';
 import FileUpload from '@/components/FileUpload';
 import MarkdownEditor from '@/components/MarkdownEditor';
+import StarRating from '@/components/StarRating';
 import { useEffect } from 'react';
 
 interface ArchiveFormProps {
@@ -47,7 +48,8 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
       category: 'essay',
       tags: '',
       imageUrl: '',
-      fileUrl: ''
+      fileUrl: '',
+      rating: null
     }
   });
 
@@ -60,7 +62,8 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
         category: editingArchive.category as any,
         tags: editingArchive.tags?.join(', ') || '',
         imageUrl: editingArchive.imageUrl || '',
-        fileUrl: editingArchive.fileUrl || ''
+        fileUrl: editingArchive.fileUrl || '',
+        rating: (editingArchive as any).rating || null
       });
     }
   }, [editingArchive, form]);
@@ -149,6 +152,29 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                     ))}
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Rating */}
+          <FormField
+            control={form.control}
+            name="rating"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>평점 (선택사항)</FormLabel>
+                <FormControl>
+                  <div className="py-2">
+                    <StarRating
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </div>
+                </FormControl>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  영화, 책, 음악 등 리뷰 글에 평점을 남겨보세요
+                </p>
                 <FormMessage />
               </FormItem>
             )}

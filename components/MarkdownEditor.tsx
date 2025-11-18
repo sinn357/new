@@ -135,6 +135,14 @@ export default function MarkdownEditor({
           >
             🔗
           </button>
+          <button
+            type="button"
+            onClick={() => insertMarkdownSyntax('[spoiler]스포일러 내용[/spoiler]', '스포일러 내용')}
+            className="px-2 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+            title="스포일러 (클릭 시 표시)"
+          >
+            ⚠️
+          </button>
           <div className="h-4 w-px bg-gray-300"></div>
           <button
             type="button"

@@ -9,6 +9,7 @@ import InlineEdit from '@/components/InlineEdit';
 import AnimatedCard from '@/components/AnimatedCard';
 import ArchiveForm from '@/components/ArchiveForm';
 import { useArchives, useDeleteArchive } from '@/lib/hooks/useArchives';
+import StarRating from '@/components/StarRating';
 
 interface PageContent {
   page: string;
@@ -320,6 +321,12 @@ export default function ArchivePage() {
                         {archive.title}
                       </h2>
                     </Link>
+
+                    {(archive as any).rating && (
+                      <div className="mb-4">
+                        <StarRating value={(archive as any).rating} readonly size="sm" />
+                      </div>
+                    )}
 
                     <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 line-clamp-3">
                       {archive.content}
