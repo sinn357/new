@@ -10,7 +10,7 @@
 - **GitHub:** https://github.com/sinn357/new.git
 - **Owner:** Partner
 - **Last Updated:** 2025-11-18 (KST)
-- **Session Goal (Today):** 🔄 Vercel Production 환경 설정 및 DB 스키마 동기화
+- **Session Goal (Today):** ✅ Vercel 환경변수 설정 완료, Cloudinary 폴더 구조 정리, 트러블슈팅 문서화
 
 ---
 
@@ -124,16 +124,27 @@ my-site/
 
 ## 12) Tasks (Single Source of Truth)
 ### Active (in this session)
-- **T-007:** Vercel Production 환경 설정 및 데이터베이스 스키마 동기화 (진행 중)
+- 없음 (세션 종료)
 
 ### Recent Done
-- **T-007:** Cloudinary 폴더 구조 정리 및 Vercel 환경변수 설정 🔄 (2025-11-18) - Cloudinary 폴더명 변경 (my-site-uploads → blog-web), Vercel 환경변수 설정 (DATABASE_URL, CLOUDINARY_*), Production DB 스키마 동기화 필요 발견 (commit: 01d1d47)
+- **T-008:** 트러블슈팅 가이드 문서화 ✅ (2025-11-18) - TROUBLESHOOTING.md 생성, Database connection 에러 진단/해결 과정, Cloudinary 환경변수 공유 가이드, Vercel 환경별 설정 정리 (commit: 4de3916)
+- **T-007:** Cloudinary 폴더 구조 정리 및 Vercel 환경변수 설정 ✅ (2025-11-18) - Cloudinary 폴더명 변경 (my-site-uploads → blog-web), Vercel 환경변수 설정 완료 (DATABASE_URL, CLOUDINARY_*), Production DB 스키마 동기화 필요 발견 (commit: 01d1d47)
 - **T-006:** 전체 사이트 다크모드 구현 ✅ (2025-11-17) - Indigo + Teal 컬러 스킴으로 전체 컴포넌트와 페이지에 다크모드 적용, Tailwind darkMode 설정 수정 (commits: 9f307b5, 2c5e6b5, 9792cff)
 - **T-005:** 로고 텍스트 변경 ✅ (2025-11-17) - Navigation 컴포넌트에서 "신우철" → "HOME" 변경 (commit: 9f307b5)
 - **T-004:** Phase 4 인터랙티브 애니메이션 구현 ✅ (2025-11-12) - framer-motion 설치, AnimatedCard/AnimatedHero/ScrollProgress 컴포넌트 생성, 홈/Work/Archive 페이지 애니메이션 적용 (commit: ce820c9)
 - **T-003:** MD 파일 체계적 정리 ✅ (2025-09-29) - CLAUDE.md 생성 + docs 폴더 구조 정리 + investment-app 패턴 적용
 - **T-002:** Work와 Archive 페이지 미디어 삽입 기능 추가 ✅ (2025-09-29) - MarkdownEditor 컴포넌트에 툴바, 미디어 업로드, 자동 문법 삽입, 비디오 렌더링 지원 구현
 - **T-001:** 사이트 제목 변경 ✅ (2025-09-29) - layout.tsx에서 메타데이터 "Create Next App" → "Blog Testing" 변경
+
+### Next Priority (즉시 필요)
+- **URGENT:** Production DB 스키마 동기화
+  - 방법 1: Neon SQL Editor에서 직접 실행
+    ```sql
+    ALTER TABLE "Work" ADD COLUMN "isFeatured" BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE "Archive" ADD COLUMN "rating" INTEGER;
+    ```
+  - 방법 2: 터미널에서 `npx prisma db push` 실행
+  - 완료 후: Vercel work/archive 페이지 정상 작동 확인
 
 ### Backlog
 - **B-001:** Phase 5 - 썸네일 시스템 구현
