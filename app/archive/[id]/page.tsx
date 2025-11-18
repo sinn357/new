@@ -188,45 +188,45 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
                     </code>
                   );
                 },
-                h1: ({ children }) => (
+                h1: ({ children }: any) => (
                   <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 border-b pb-2">
                     {children}
                   </h1>
                 ),
-                h2: ({ children }) => (
+                h2: ({ children }: any) => (
                   <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3 mt-6">
                     {children}
                   </h2>
                 ),
-                h3: ({ children }) => (
+                h3: ({ children }: any) => (
                   <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2 mt-4">
                     {children}
                   </h3>
                 ),
-                p: ({ children }) => (
+                p: ({ children }: any) => (
                   <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
                     {children}
                   </p>
                 ),
-                ul: ({ children }) => (
+                ul: ({ children }: any) => (
                   <ul className="list-disc list-inside mb-4 text-gray-700 dark:text-gray-300 space-y-2">
                     {children}
                   </ul>
                 ),
-                ol: ({ children }) => (
+                ol: ({ children }: any) => (
                   <ol className="list-decimal list-inside mb-4 text-gray-700 dark:text-gray-300 space-y-2">
                     {children}
                   </ol>
                 ),
-                li: ({ children }) => (
+                li: ({ children }: any) => (
                   <li className="ml-4">{children}</li>
                 ),
-                blockquote: ({ children }) => (
+                blockquote: ({ children }: any) => (
                   <blockquote className="border-l-4 border-purple-500 dark:border-purple-400 pl-4 py-2 mb-4 bg-purple-50 dark:bg-purple-900/20 text-gray-700 dark:text-gray-300 italic">
                     {children}
                   </blockquote>
                 ),
-                a: ({ href, children }) => (
+                a: ({ href, children }: any) => (
                   <a
                     href={href}
                     className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline"
