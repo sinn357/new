@@ -13,6 +13,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { ClickableImage } from '@/components/ImageLightbox';
 import ImageLightbox from '@/components/ImageLightbox';
+import ShareButtons from '@/components/ShareButtons';
 
 const statusLabels = {
   'completed': '완료됨',
@@ -238,13 +239,20 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                   {work.title}
                 </h1>
 
-                <div className="text-sm text-gray-500 dark:text-gray-400 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-                  작성일: {new Date(work.createdAt).toLocaleDateString('ko-KR', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    weekday: 'long'
-                  })}
+                <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    작성일: {new Date(work.createdAt).toLocaleDateString('ko-KR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      weekday: 'long'
+                    })}
+                  </div>
+                  <ShareButtons
+                    url={typeof window !== 'undefined' ? window.location.href : ''}
+                    title={work.title}
+                    description={work.content.substring(0, 150)}
+                  />
                 </div>
 
                 <div className="prose prose-lg max-w-none dark:prose-invert mb-8">

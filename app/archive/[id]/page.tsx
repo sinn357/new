@@ -14,6 +14,7 @@ import StarRating from '@/components/StarRating';
 import { RenderMarkdownWithSpoilers } from '@/lib/spoiler-parser';
 import { ClickableImage } from '@/components/ImageLightbox';
 import ImageLightbox from '@/components/ImageLightbox';
+import ShareButtons from '@/components/ShareButtons';
 
 export default function ArchiveDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -151,10 +152,18 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
             </h1>
 
             {(archive as any).rating && (
-              <div className="mb-8">
+              <div className="mb-6">
                 <StarRating value={(archive as any).rating} readonly size="md" />
               </div>
             )}
+
+            <div className="flex justify-end mb-8">
+              <ShareButtons
+                url={typeof window !== 'undefined' ? window.location.href : ''}
+                title={archive.title}
+                description={archive.content.substring(0, 150)}
+              />
+            </div>
 
             <RenderMarkdownWithSpoilers
               content={archive.content}

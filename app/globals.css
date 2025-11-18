@@ -84,3 +84,82 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Print Optimization */
+@media print {
+  /* Hide unnecessary elements */
+  nav,
+  header,
+  footer,
+  button,
+  .no-print,
+  [role="navigation"],
+  [aria-label="Share"],
+  .share-buttons {
+    display: none !important;
+  }
+
+  /* Reset backgrounds and colors */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Optimize page layout */
+  @page {
+    margin: 2cm;
+  }
+
+  /* Prevent page breaks inside elements */
+  article,
+  section,
+  pre,
+  blockquote,
+  img {
+    page-break-inside: avoid;
+  }
+
+  /* Ensure links show URLs */
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  /* Don't show URLs for anchor links */
+  a[href^="#"]:after,
+  a[href^="javascript:"]:after {
+    content: "";
+  }
+
+  /* Optimize images */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  /* Clean up text */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    color: black !important;
+  }
+
+  p, li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Code blocks */
+  pre, code {
+    background: #f5f5f5 !important;
+    border: 1px solid #ddd !important;
+    page-break-inside: avoid;
+  }
+
+  /* Remove shadows and gradients */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    background-image: none !important;
+  }
+}
