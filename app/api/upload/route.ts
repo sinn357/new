@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
         cloudinary.uploader.upload_stream(
           {
             resource_type: 'auto',
-            folder: 'my-site-uploads',
+            folder: 'blog-web',
             public_id: `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`,
           },
           (error, result) => {
