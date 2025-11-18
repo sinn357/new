@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Work, WORK_CATEGORIES, WorkCategory } from '@/lib/work-store';
+import { Work, WORK_CATEGORIES } from '@/lib/work-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import InlineEdit from '@/components/InlineEdit';
