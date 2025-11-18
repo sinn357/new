@@ -9,8 +9,8 @@
 - **Repo Root:** /Users/woocheolshin/Documents/Vibecoding_1/my-site
 - **GitHub:** https://github.com/sinn357/new.git
 - **Owner:** Partner
-- **Last Updated:** 2025-11-17 (KST)
-- **Session Goal (Today):** ✅ 다크모드 구현 완료 (Indigo + Teal 컬러 스킴)
+- **Last Updated:** 2025-11-18 (KST)
+- **Session Goal (Today):** 🔄 Vercel Production 환경 설정 및 DB 스키마 동기화
 
 ---
 
@@ -124,9 +124,10 @@ my-site/
 
 ## 12) Tasks (Single Source of Truth)
 ### Active (in this session)
-- **세션 완료**: 다크모드 구현 완료 (Indigo + Teal 컬러 스킴)
+- **T-007:** Vercel Production 환경 설정 및 데이터베이스 스키마 동기화 (진행 중)
 
 ### Recent Done
+- **T-007:** Cloudinary 폴더 구조 정리 및 Vercel 환경변수 설정 🔄 (2025-11-18) - Cloudinary 폴더명 변경 (my-site-uploads → blog-web), Vercel 환경변수 설정 (DATABASE_URL, CLOUDINARY_*), Production DB 스키마 동기화 필요 발견 (commit: 01d1d47)
 - **T-006:** 전체 사이트 다크모드 구현 ✅ (2025-11-17) - Indigo + Teal 컬러 스킴으로 전체 컴포넌트와 페이지에 다크모드 적용, Tailwind darkMode 설정 수정 (commits: 9f307b5, 2c5e6b5, 9792cff)
 - **T-005:** 로고 텍스트 변경 ✅ (2025-11-17) - Navigation 컴포넌트에서 "신우철" → "HOME" 변경 (commit: 9f307b5)
 - **T-004:** Phase 4 인터랙티브 애니메이션 구현 ✅ (2025-11-12) - framer-motion 설치, AnimatedCard/AnimatedHero/ScrollProgress 컴포넌트 생성, 홈/Work/Archive 페이지 애니메이션 적용 (commit: ce820c9)
@@ -236,6 +237,7 @@ my-site/
 ## 14) Risk Log
 - **R-001:** Vercel 배포 시 환경변수 누락 → **대응:** 배포 전 환경변수 체크리스트 확인
 - **R-002:** 미디어 파일 용량 제한 → **대응:** Cloudinary 용량 모니터링, 압축 설정
+- **R-003:** Production DB 스키마와 로컬 스키마 불일치 → **대응:** 배포 전 `prisma db push` 또는 Neon SQL Editor로 스키마 동기화 필수
 
 ---
 
