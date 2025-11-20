@@ -124,9 +124,10 @@ my-site/
 
 ## 12) Tasks (Single Source of Truth)
 ### Active (in this session)
-- **세션 완료**: 다크모드 구현 완료 (Indigo + Teal 컬러 스킴)
+- **세션 완료**: Phase 5 썸네일 시스템 구현 완료
 
 ### Recent Done
+- **T-007:** Phase 5 썸네일 시스템 구현 ✅ (2025-11-20) - Archive 페이지에 썸네일 표시 기능 추가, Work/Archive 페이지 이미지 최적화 (lazy loading, responsive sizes), Next.js Image fill prop 적용 (commit: 2155940)
 - **T-006:** 전체 사이트 다크모드 구현 ✅ (2025-11-17) - Indigo + Teal 컬러 스킴으로 전체 컴포넌트와 페이지에 다크모드 적용, Tailwind darkMode 설정 수정 (commits: 9f307b5, 2c5e6b5, 9792cff)
 - **T-005:** 로고 텍스트 변경 ✅ (2025-11-17) - Navigation 컴포넌트에서 "신우철" → "HOME" 변경 (commit: 9f307b5)
 - **T-004:** Phase 4 인터랙티브 애니메이션 구현 ✅ (2025-11-12) - framer-motion 설치, AnimatedCard/AnimatedHero/ScrollProgress 컴포넌트 생성, 홈/Work/Archive 페이지 애니메이션 적용 (commit: ce820c9)
@@ -135,8 +136,7 @@ my-site/
 - **T-001:** 사이트 제목 변경 ✅ (2025-09-29) - layout.tsx에서 메타데이터 "Create Next App" → "Blog Testing" 변경
 
 ### Backlog
-- **B-001:** Phase 5 - 썸네일 시스템 구현
-- **B-002:** Phase 6 - 검색 & 필터 시스템
+- **B-001:** Phase 6 - 검색 & 필터 시스템
 - **B-003:** 포트폴리오 섹션 확장
 - **B-004:** 아카이브 카테고리 시스템 개선
 - **B-005:** 댓글 시스템 구현
@@ -230,6 +230,33 @@ my-site/
     - ThemeProvider를 루트 레이아웃에 적용
   - **브랜드 일관성**: Indigo + Teal 조합을 라이트/다크 모드 모두에서 유지하여 브랜드 정체성 강화
   - **접근성**: WCAG 기준 충족하는 명암 대비 확보
+
+### ADR-006: Phase 5 썸네일 시스템 구현 (Next.js Image 최적화)
+- Date: 2025-11-20
+- Context: Work와 Archive 페이지의 시각적 매력도를 높이고, 사용자가 콘텐츠를 더 쉽게 식별할 수 있도록 썸네일 시스템 필요
+- Options:
+  - Option 1: 기본 img 태그 사용
+  - Option 2: Next.js Image 컴포넌트 (width/height 지정)
+  - Option 3: Next.js Image fill prop (반응형)
+- Decision: Option 3 - Next.js Image fill prop 사용
+- Consequences:
+  - **최적화 전략**:
+    - fill prop: 컨테이너 크기에 자동으로 맞춤 (반응형)
+    - loading="lazy": 뷰포트에 진입할 때만 로드 (성능 개선)
+    - sizes 속성: 브레이크포인트별 이미지 크기 최적화
+    - object-cover: 썸네일 영역에 이미지를 완전히 채우기
+  - **구현 결과**:
+    - Archive 페이지: 썸네일 표시 기능 추가 (h-64, 256px)
+    - Work 페이지: 기존 썸네일 최적화 (h-48, 192px)
+    - 호버 효과: scale-105로 인터랙티브한 경험 제공
+  - **장점**:
+    - 자동 이미지 최적화 (WebP, AVIF 변환)
+    - 반응형 이미지 로딩 (srcset)
+    - 누적 레이아웃 이동(CLS) 방지
+    - 대역폭 절약 (lazy loading)
+  - **단점**:
+    - fill prop 사용 시 부모 컨테이너에 relative/absolute 필요
+  - **성능 영향**: 페이지 로딩 속도 개선, 사용자 경험 향상
 
 ---
 
