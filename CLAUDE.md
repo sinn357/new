@@ -124,9 +124,10 @@ my-site/
 
 ## 12) Tasks (Single Source of Truth)
 ### Active (in this session)
-- **세션 완료**: Phase 5 썸네일 시스템 구현 완료
+- **세션 완료**: Phase 6 검색 & 필터 시스템 구현 완료
 
 ### Recent Done
+- **T-008:** Phase 6 검색 & 필터 시스템 구현 ✅ (2025-11-20) - Fuse.js 기반 fuzzy search 구현, SearchBar 컴포넌트 생성, Work/Archive 페이지 검색/정렬 기능 통합, 300ms debounce 적용 (commit: 01a5973)
 - **T-007:** Phase 5 썸네일 시스템 구현 ✅ (2025-11-20) - Archive 페이지에 썸네일 표시 기능 추가, Work/Archive 페이지 이미지 최적화 (lazy loading, responsive sizes), Next.js Image fill prop 적용 (commit: 2155940)
 - **T-006:** 전체 사이트 다크모드 구현 ✅ (2025-11-17) - Indigo + Teal 컬러 스킴으로 전체 컴포넌트와 페이지에 다크모드 적용, Tailwind darkMode 설정 수정 (commits: 9f307b5, 2c5e6b5, 9792cff)
 - **T-005:** 로고 텍스트 변경 ✅ (2025-11-17) - Navigation 컴포넌트에서 "신우철" → "HOME" 변경 (commit: 9f307b5)
@@ -136,8 +137,8 @@ my-site/
 - **T-001:** 사이트 제목 변경 ✅ (2025-09-29) - layout.tsx에서 메타데이터 "Create Next App" → "Blog Testing" 변경
 
 ### Backlog
-- **B-001:** Phase 6 - 검색 & 필터 시스템
-- **B-003:** 포트폴리오 섹션 확장
+- **B-001:** Phase 7 - UX 미세 조정 (Skeleton UI, 무한 스크롤)
+- **B-002:** 포트폴리오 섹션 확장
 - **B-004:** 아카이브 카테고리 시스템 개선
 - **B-005:** 댓글 시스템 구현
 - **B-006:** SEO 최적화
@@ -258,6 +259,36 @@ my-site/
     - fill prop 사용 시 부모 컨테이너에 relative/absolute 필요
   - **성능 영향**: 페이지 로딩 속도 개선, 사용자 경험 향상
 
+### ADR-007: Phase 6 검색 & 필터 시스템 (Fuse.js)
+- Date: 2025-11-20
+- Context: Work와 Archive 페이지에서 콘텐츠 탐색을 쉽게 하기 위한 검색 및 필터 시스템 필요
+- Options:
+  - Option 1: 클라이언트 사이드 검색 (Fuse.js)
+  - Option 2: 서버 사이드 검색 (PostgreSQL Full-text Search)
+  - Option 3: 외부 검색 서비스 (Algolia)
+- Decision: Option 1 - Fuse.js 클라이언트 사이드 검색
+- Consequences:
+  - **검색 전략**:
+    - Fuzzy search threshold: 0.3 (적절한 매칭 정확도)
+    - 검색 대상: Work (title, content, techStack, category), Archive (title, content, tags, category)
+    - Debounce: 300ms (타이핑 중 과도한 검색 방지)
+    - 정렬: 최신순/오래된순
+  - **구현 결과**:
+    - SearchBar 컴포넌트: 재사용 가능한 검색 UI
+    - Work/Archive 페이지: 검색, 필터, 정렬 통합
+    - 검색 결과 카운트 표시
+    - Empty state 개선 (검색 결과 없음)
+  - **장점**:
+    - 빠른 검색 속도 (클라이언트 메모리)
+    - 서버 부하 없음
+    - 간단한 구현
+    - 오프라인 검색 가능
+  - **단점**:
+    - 대량 데이터 시 메모리 사용량 증가
+    - 초기 로딩 시 모든 데이터 필요
+  - **번들 크기**: Fuse.js ~15KB (gzipped)
+  - **향후 고려사항**: 콘텐츠가 1000개 이상으로 증가 시 서버 사이드 검색 전환 검토
+
 ---
 
 ## 14) Risk Log
@@ -273,10 +304,12 @@ my-site/
 - **AnimatedCard**: viewport 진입 시 stagger 애니메이션 제공 컴포넌트
 - **AnimatedHero**: Hero 섹션 fade-in 애니메이션 컴포넌트
 - **ScrollProgress**: 페이지 상단 스크롤 진행률 표시 컴포넌트
+- **SearchBar**: 검색 입력, 정렬 옵션, debounce 처리가 포함된 재사용 가능한 검색 컴포넌트
 - **Stagger Animation**: 여러 요소가 순차적으로 등장하는 애니메이션 효과
 - **ThemeProvider**: next-themes 라이브러리 기반 다크/라이트 모드 전환 컨텍스트
 - **ThemeToggle**: 다크/라이트 모드를 전환하는 UI 컴포넌트 (Navigation에 통합)
 - **Subtle Dark Mode**: 브랜드 색상을 유지하면서 눈에 편안한 어두운 배경을 제공하는 다크모드 전략
+- **Fuzzy Search**: 오타나 유사한 단어를 허용하는 유연한 검색 방식
 
 ---
 
