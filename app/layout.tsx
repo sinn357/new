@@ -9,6 +9,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import ScrollProgress from "@/components/ScrollProgress";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,6 +39,30 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Providers>
             <ScrollProgress />
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  background: '#363636',
+                  color: '#fff',
+                },
+                success: {
+                  duration: 3000,
+                  iconTheme: {
+                    primary: '#10b981',
+                    secondary: '#fff',
+                  },
+                },
+                error: {
+                  duration: 4000,
+                  iconTheme: {
+                    primary: '#ef4444',
+                    secondary: '#fff',
+                  },
+                },
+              }}
+            />
             <AdminProvider>
               <Navigation />
               <main className="pt-24">{children}</main>

@@ -11,6 +11,7 @@ import InlineEdit from '@/components/InlineEdit';
 import AnimatedCard from '@/components/AnimatedCard';
 import WorkForm from '@/components/WorkForm';
 import SearchBar from '@/components/SearchBar';
+import SkeletonCard from '@/components/SkeletonCard';
 import { useWorks, useDeleteWork } from '@/lib/hooks/useWorks';
 
 const statusLabels = {
@@ -188,8 +189,27 @@ export default function WorkPage() {
     });
   }, [filteredWorks]);
 
-  if (isLoading) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Loading...</div>;
-  if (error) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Error: {error.message}</div>;
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-6">
+        <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-gray-700 text-center">
+          <div className="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">오류가 발생했습니다</h3>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">{error.message}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 dark:from-indigo-600 dark:to-teal-600 dark:hover:from-indigo-700 dark:hover:to-teal-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300"
+          >
+            다시 시도
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -319,13 +339,19 @@ export default function WorkPage() {
       <section className="px-6 pb-16">
         <div className="max-w-6xl mx-auto">
           {/* Search Results Summary */}
-          {searchQuery && (
+          {searchQuery && !isLoading && (
             <div className="mb-6 text-gray-600 dark:text-gray-300">
               <span className="font-medium">{filteredWorks.length}</span>개의 검색 결과
             </div>
           )}
 
-          {filteredWorks.length === 0 ? (
+          {isLoading ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(6)].map((_, index) => (
+                <SkeletonCard key={index} variant="work" />
+              ))}
+            </div>
+          ) : filteredWorks.length === 0 ? (
             <div className="text-center py-16">
               <div className="max-w-md mx-auto">
                 <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
