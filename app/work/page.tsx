@@ -313,13 +313,14 @@ export default function WorkPage() {
                     </div>
                   )}
                   {work.imageUrl && (
-                    <div className="h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                    <div className="relative h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
                       <Image
                         src={work.imageUrl}
                         alt={work.title}
-                        width={400}
-                        height={192}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
                       />
                     </div>
                   )}

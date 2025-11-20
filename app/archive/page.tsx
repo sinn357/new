@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Archive, ARCHIVE_CATEGORIES, ArchiveCategory } from '@/lib/archive-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
@@ -281,8 +282,23 @@ export default function ArchivePage() {
                 return (
                   <AnimatedCard key={archive.id} delay={index * 0.1}>
                     <article
-                      className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-gray-100 dark:border-gray-700 group"
+                      className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 group"
                     >
+                    {/* Thumbnail */}
+                    {archive.imageUrl && (
+                      <div className="relative h-64 bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                        <Image
+                          src={archive.imageUrl}
+                          alt={archive.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+
+                    <div className="p-8">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${categoryInfo?.color || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}>
@@ -369,6 +385,7 @@ export default function ArchivePage() {
                     >
                       더 읽기 →
                     </Link>
+                    </div>
                   </article>
                   </AnimatedCard>
                 );
