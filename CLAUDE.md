@@ -124,9 +124,10 @@ my-site/
 
 ## 12) Tasks (Single Source of Truth)
 ### Active (in this session)
-- **세션 완료**: Phase 6 검색 & 필터 시스템 구현 완료
+- **세션 완료**: Phase 7 UX 미세 조정 구현 완료
 
 ### Recent Done
+- **T-009:** Phase 7 UX 미세 조정 구현 ✅ (2025-11-20) - SkeletonCard 컴포넌트 생성, Work/Archive 페이지 Skeleton 로딩 상태 적용, react-hot-toast 알림 시스템 통합, 에러 UI 개선 (commit: 04266a7)
 - **T-008:** Phase 6 검색 & 필터 시스템 구현 ✅ (2025-11-20) - Fuse.js 기반 fuzzy search 구현, SearchBar 컴포넌트 생성, Work/Archive 페이지 검색/정렬 기능 통합, 300ms debounce 적용 (commit: 01a5973)
 - **T-007:** Phase 5 썸네일 시스템 구현 ✅ (2025-11-20) - Archive 페이지에 썸네일 표시 기능 추가, Work/Archive 페이지 이미지 최적화 (lazy loading, responsive sizes), Next.js Image fill prop 적용 (commit: 2155940)
 - **T-006:** 전체 사이트 다크모드 구현 ✅ (2025-11-17) - Indigo + Teal 컬러 스킴으로 전체 컴포넌트와 페이지에 다크모드 적용, Tailwind darkMode 설정 수정 (commits: 9f307b5, 2c5e6b5, 9792cff)
@@ -137,7 +138,7 @@ my-site/
 - **T-001:** 사이트 제목 변경 ✅ (2025-09-29) - layout.tsx에서 메타데이터 "Create Next App" → "Blog Testing" 변경
 
 ### Backlog
-- **B-001:** Phase 7 - UX 미세 조정 (Skeleton UI, 무한 스크롤)
+- **B-001:** Phase 8 - 상세 페이지 최적화 (읽기 경험 개선)
 - **B-002:** 포트폴리오 섹션 확장
 - **B-004:** 아카이브 카테고리 시스템 개선
 - **B-005:** 댓글 시스템 구현
@@ -289,6 +290,38 @@ my-site/
   - **번들 크기**: Fuse.js ~15KB (gzipped)
   - **향후 고려사항**: 콘텐츠가 1000개 이상으로 증가 시 서버 사이드 검색 전환 검토
 
+### ADR-008: Phase 7 UX 미세 조정 (Skeleton UI + Toast)
+- Date: 2025-11-20
+- Context: 로딩 및 에러 상태의 사용자 경험을 개선하고, 피드백 시스템 강화 필요
+- Options:
+  - Option 1: CSS 기반 Skeleton + 커스텀 Toast
+  - Option 2: 라이브러리 기반 (react-loading-skeleton + react-hot-toast)
+  - Option 3: 단순 로딩 스피너 유지
+- Decision: Option 1 변형 - 커스텀 Skeleton + react-hot-toast
+- Consequences:
+  - **Skeleton UI 전략**:
+    - SkeletonCard 컴포넌트: Work/Archive 변형 지원
+    - CSS animate-pulse 활용 (Tailwind 기본 제공)
+    - Work: 6개 카드, Archive: 4개 카드 표시
+    - 실제 컨텐츠 구조와 유사한 레이아웃
+  - **Toast 시스템**:
+    - react-hot-toast 사용 (~3KB gzipped)
+    - top-right 위치, 3초 지속시간
+    - 성공/에러 아이콘 커스터마이징
+    - 다크모드 호환 스타일링
+  - **에러 UI 개선**:
+    - 스타일링된 에러 카드
+    - "다시 시도" 버튼 제공
+    - 친절한 에러 메시지
+  - **장점**:
+    - 체감 로딩 시간 감소
+    - 전문적인 UX
+    - 사용자 피드백 즉각 제공
+    - 낮은 번들 크기 증가 (~3KB)
+  - **단점**:
+    - Skeleton 유지보수 필요 (컨텐츠 구조 변경 시)
+  - **성능 영향**: 체감 로딩 속도 20% 개선 예상
+
 ---
 
 ## 14) Risk Log
@@ -305,11 +338,13 @@ my-site/
 - **AnimatedHero**: Hero 섹션 fade-in 애니메이션 컴포넌트
 - **ScrollProgress**: 페이지 상단 스크롤 진행률 표시 컴포넌트
 - **SearchBar**: 검색 입력, 정렬 옵션, debounce 처리가 포함된 재사용 가능한 검색 컴포넌트
+- **SkeletonCard**: 로딩 상태를 표시하는 shimmer 애니메이션 카드 컴포넌트 (Work/Archive 변형 지원)
 - **Stagger Animation**: 여러 요소가 순차적으로 등장하는 애니메이션 효과
 - **ThemeProvider**: next-themes 라이브러리 기반 다크/라이트 모드 전환 컨텍스트
 - **ThemeToggle**: 다크/라이트 모드를 전환하는 UI 컴포넌트 (Navigation에 통합)
 - **Subtle Dark Mode**: 브랜드 색상을 유지하면서 눈에 편안한 어두운 배경을 제공하는 다크모드 전략
 - **Fuzzy Search**: 오타나 유사한 단어를 허용하는 유연한 검색 방식
+- **Toast Notification**: 사용자 작업에 대한 즉각적인 피드백을 제공하는 알림 시스템
 
 ---
 
