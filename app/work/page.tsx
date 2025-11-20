@@ -1,14 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Fuse from 'fuse.js';
 import { Work, WORK_CATEGORIES } from '@/lib/work-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import InlineEdit from '@/components/InlineEdit';
 import AnimatedCard from '@/components/AnimatedCard';
 import WorkForm from '@/components/WorkForm';
+import SearchBar from '@/components/SearchBar';
 import { useWorks, useDeleteWork } from '@/lib/hooks/useWorks';
 
 const statusLabels = {
@@ -32,6 +34,8 @@ interface PageContent {
 export default function WorkPage() {
   const { isAdmin } = useAdmin();
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [showForm, setShowForm] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
@@ -53,6 +57,35 @@ export default function WorkPage() {
   const { data: works = [], isLoading, error } = useWorks(selectedCategory || undefined);
   const { data: allWorks = [] } = useWorks();
   const deleteWork = useDeleteWork();
+
+  // Fuse.js configuration for search
+  const fuse = useMemo(() => {
+    return new Fuse(works, {
+      keys: ['title', 'content', 'techStack', 'category'],
+      threshold: 0.3, // Lower = more strict matching
+      includeScore: true,
+    });
+  }, [works]);
+
+  // Filter and sort works
+  const filteredWorks = useMemo(() => {
+    let result = works;
+
+    // Apply search filter
+    if (searchQuery) {
+      const searchResults = fuse.search(searchQuery);
+      result = searchResults.map(r => r.item);
+    }
+
+    // Apply sorting
+    result = [...result].sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+
+    return result;
+  }, [works, searchQuery, sortOrder, fuse]);
 
   const fetchPageContent = async () => {
     try {
@@ -145,13 +178,15 @@ export default function WorkPage() {
   };
 
   // Featured 프로젝트를 우선 정렬
-  const sortedWorks = [...works].sort((a, b) => {
-    const aFeatured = (a as any).isFeatured || false;
-    const bFeatured = (b as any).isFeatured || false;
-    if (aFeatured && !bFeatured) return -1;
-    if (!aFeatured && bFeatured) return 1;
-    return 0;
-  });
+  const sortedWorks = useMemo(() => {
+    return [...filteredWorks].sort((a, b) => {
+      const aFeatured = (a as any).isFeatured || false;
+      const bFeatured = (b as any).isFeatured || false;
+      if (aFeatured && !bFeatured) return -1;
+      if (!aFeatured && bFeatured) return 1;
+      return 0;
+    });
+  }, [filteredWorks]);
 
   if (isLoading) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Loading...</div>;
   if (error) return <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 dark:text-white">Error: {error.message}</div>;
@@ -214,6 +249,18 @@ export default function WorkPage() {
         </div>
       </section>
 
+      {/* Search Bar */}
+      <section className="px-6 pb-8">
+        <div className="max-w-6xl mx-auto">
+          <SearchBar
+            placeholder="프로젝트 제목, 설명, 기술 스택으로 검색..."
+            onSearch={setSearchQuery}
+            onSortChange={setSortOrder}
+            sortOrder={sortOrder}
+          />
+        </div>
+      </section>
+
       {/* Category Filter */}
       <section className="px-6 pb-8">
         <div className="max-w-6xl mx-auto">
@@ -271,15 +318,26 @@ export default function WorkPage() {
       {/* Works Gallery */}
       <section className="px-6 pb-16">
         <div className="max-w-6xl mx-auto">
-          {works.length === 0 ? (
+          {/* Search Results Summary */}
+          {searchQuery && (
+            <div className="mb-6 text-gray-600 dark:text-gray-300">
+              <span className="font-medium">{filteredWorks.length}</span>개의 검색 결과
+            </div>
+          )}
+
+          {filteredWorks.length === 0 ? (
             <div className="text-center py-16">
               <div className="max-w-md mx-auto">
                 <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                  💼
+                  {searchQuery ? '🔍' : '💼'}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">아직 작업물이 없습니다</h3>
+                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                  {searchQuery ? '검색 결과가 없습니다' : '아직 작업물이 없습니다'}
+                </h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  첫 번째 프로젝트를 추가해서 포트폴리오를 시작해보세요!
+                  {searchQuery
+                    ? '다른 검색어로 시도해보세요.'
+                    : '첫 번째 프로젝트를 추가해서 포트폴리오를 시작해보세요!'}
                 </p>
                 {isAdmin && (
                   <button

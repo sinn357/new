@@ -1,14 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Fuse from 'fuse.js';
 import { Archive, ARCHIVE_CATEGORIES, ArchiveCategory } from '@/lib/archive-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import InlineEdit from '@/components/InlineEdit';
 import AnimatedCard from '@/components/AnimatedCard';
 import ArchiveForm from '@/components/ArchiveForm';
+import SearchBar from '@/components/SearchBar';
 import { useArchives, useDeleteArchive } from '@/lib/hooks/useArchives';
 import StarRating from '@/components/StarRating';
 
@@ -21,6 +23,8 @@ interface PageContent {
 export default function ArchivePage() {
   const { isAdmin } = useAdmin();
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [showForm, setShowForm] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
@@ -42,6 +46,35 @@ export default function ArchivePage() {
   const { data: archives = [], isLoading, error } = useArchives(selectedCategory || undefined);
   const { data: allArchives = [] } = useArchives();
   const deleteArchive = useDeleteArchive();
+
+  // Fuse.js configuration for search
+  const fuse = useMemo(() => {
+    return new Fuse(archives, {
+      keys: ['title', 'content', 'tags', 'category'],
+      threshold: 0.3,
+      includeScore: true,
+    });
+  }, [archives]);
+
+  // Filter and sort archives
+  const filteredArchives = useMemo(() => {
+    let result = archives;
+
+    // Apply search filter
+    if (searchQuery) {
+      const searchResults = fuse.search(searchQuery);
+      result = searchResults.map(r => r.item);
+    }
+
+    // Apply sorting
+    result = [...result].sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+
+    return result;
+  }, [archives, searchQuery, sortOrder, fuse]);
 
   const fetchPageContent = async () => {
     try {
@@ -196,6 +229,18 @@ export default function ArchivePage() {
         </div>
       </section>
 
+      {/* Search Bar */}
+      <section className="px-6 pb-8">
+        <div className="max-w-6xl mx-auto">
+          <SearchBar
+            placeholder="제목, 내용, 태그로 검색..."
+            onSearch={setSearchQuery}
+            onSortChange={setSortOrder}
+            sortOrder={sortOrder}
+          />
+        </div>
+      </section>
+
       {/* Category Filter */}
       <section className="px-6 pb-8">
         <div className="max-w-6xl mx-auto">
@@ -253,17 +298,32 @@ export default function ArchivePage() {
       {/* Archives List */}
       <section className="px-6 pb-16">
         <div className="max-w-4xl mx-auto">
-          {archives.length === 0 ? (
+          {/* Search Results Summary */}
+          {searchQuery && (
+            <div className="mb-6 text-gray-600 dark:text-gray-300">
+              <span className="font-medium">{filteredArchives.length}</span>개의 검색 결과
+            </div>
+          )}
+
+          {filteredArchives.length === 0 ? (
             <div className="text-center py-16">
               <div className="max-w-md mx-auto">
                 <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                  📝
+                  {searchQuery ? '🔍' : '📝'}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                  {selectedCategory ? '해당 카테고리에 글이 없습니다' : '아직 작성된 글이 없습니다'}
+                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                  {searchQuery
+                    ? '검색 결과가 없습니다'
+                    : selectedCategory
+                    ? '해당 카테고리에 글이 없습니다'
+                    : '아직 작성된 글이 없습니다'}
                 </h3>
-                <p className="text-gray-600 mb-6">
-                  {isAdmin ? '첫 번째 글을 작성해서 아카이브를 시작해보세요!' : '관리자가 글을 작성하면 여기에 표시됩니다.'}
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  {searchQuery
+                    ? '다른 검색어로 시도해보세요.'
+                    : isAdmin
+                    ? '첫 번째 글을 작성해서 아카이브를 시작해보세요!'
+                    : '관리자가 글을 작성하면 여기에 표시됩니다.'}
                 </p>
                 {isAdmin && (
                   <button
@@ -277,7 +337,7 @@ export default function ArchivePage() {
             </div>
           ) : (
             <div className="space-y-6">
-              {archives.map((archive, index) => {
+              {filteredArchives.map((archive, index) => {
                 const categoryInfo = ARCHIVE_CATEGORIES[archive.category as ArchiveCategory];
                 return (
                   <AnimatedCard key={archive.id} delay={index * 0.1}>
