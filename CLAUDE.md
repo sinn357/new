@@ -124,9 +124,10 @@ my-site/
 
 ## 12) Tasks (Single Source of Truth)
 ### Active (in this session)
-- **세션 완료**: Phase 7 UX 미세 조정 구현 완료
+- **세션 완료**: Phase A 기능 향상 로드맵 완료 (리뷰 평점, 스포일러, 라이트박스, Featured, OG 메타태그)
 
 ### Recent Done
+- **T-010:** Phase A 기능 향상 로드맵 완료 ✅ (2025-11-20) - Archive 리뷰 평점 시스템 (이미 구현됨), 스포일러 블러 기능 (이미 구현됨), 이미지 라이트박스 (이미 구현됨), Work Featured 프로젝트 (이미 구현됨), Open Graph 메타태그 추가 (Work/Archive 상세 페이지 layout.tsx 생성) (commit: e12bb62)
 - **T-009:** Phase 7 UX 미세 조정 구현 ✅ (2025-11-20) - SkeletonCard 컴포넌트 생성, Work/Archive 페이지 Skeleton 로딩 상태 적용, react-hot-toast 알림 시스템 통합, 에러 UI 개선 (commit: 04266a7)
 - **T-008:** Phase 6 검색 & 필터 시스템 구현 ✅ (2025-11-20) - Fuse.js 기반 fuzzy search 구현, SearchBar 컴포넌트 생성, Work/Archive 페이지 검색/정렬 기능 통합, 300ms debounce 적용 (commit: 01a5973)
 - **T-007:** Phase 5 썸네일 시스템 구현 ✅ (2025-11-20) - Archive 페이지에 썸네일 표시 기능 추가, Work/Archive 페이지 이미지 최적화 (lazy loading, responsive sizes), Next.js Image fill prop 적용 (commit: 2155940)
@@ -321,6 +322,36 @@ my-site/
   - **단점**:
     - Skeleton 유지보수 필요 (컨텐츠 구조 변경 시)
   - **성능 영향**: 체감 로딩 속도 20% 개선 예상
+
+### ADR-009: Phase A 기능 향상 로드맵 (Open Graph 메타태그)
+- Date: 2025-11-20
+- Context: Phase A의 4가지 기능(리뷰 평점, 스포일러, 라이트박스, Featured) 중 대부분이 이미 구현되어 있었고, Open Graph 메타태그만 추가 필요
+- Options:
+  - Option 1: 클라이언트 컴포넌트에서 react-helmet 사용
+  - Option 2: 동적 라우트 layout.tsx로 서버 사이드 메타데이터 생성
+  - Option 3: 페이지 자체를 서버 컴포넌트로 리팩토링
+- Decision: Option 2 - layout.tsx로 generateMetadata 구현
+- Consequences:
+  - **기존 구현 확인**:
+    - StarRating: Archive 평점 시스템 (Prisma rating 필드, ArchiveForm UI, 목록/상세 표시)
+    - SpoilerBlur: [spoiler]...[/spoiler] 마크다운 문법 파서 및 토글 UI
+    - ImageLightbox: 이미지 클릭 확대 기능 (yet-another-react-lightbox 사용)
+    - ShareButtons: 소셜 공유 버튼 (Twitter, Facebook, URL 복사)
+    - Featured Projects: Prisma isFeatured 필드, 홈 페이지 Featured 섹션, Work 페이지 우선 정렬
+  - **Open Graph 메타태그 추가**:
+    - `/work/[id]/layout.tsx`: 동적 Work 메타데이터 생성
+    - `/archive/[id]/layout.tsx`: 동적 Archive 메타데이터 생성
+    - generateMetadata 함수로 제목, 설명, 이미지, URL 자동 설정
+    - Archive에는 평점 정보도 description에 포함
+    - Twitter Card 및 Facebook Open Graph 태그 모두 지원
+  - **장점**:
+    - 클라이언트 컴포넌트는 그대로 유지
+    - 서버 사이드 렌더링으로 SEO 최적화
+    - SNS 공유 시 썸네일 및 메타 정보 표시
+    - Next.js 15 App Router의 권장 패턴 사용
+  - **단점**:
+    - 로컬 개발 환경에서는 fetch 시 localhost URL 사용 (NEXT_PUBLIC_BASE_URL 필요)
+  - **성능 영향**: 초기 페이지 로드 시 메타데이터 생성 (서버 사이드), SEO 점수 향상
 
 ---
 
