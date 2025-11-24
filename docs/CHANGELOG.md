@@ -32,6 +32,55 @@
 
 ---
 
+## 2025-11-24
+
+### Added - Major Redesign ⭐⭐⭐
+- **Footer 재디자인**
+  - Glassmorphism 스타일 (Navigation과 일치)
+  - Animated Wave 배경 (Indigo → Purple → Teal)
+  - Quick Links 섹션 (Work, Archive, About)
+  - Enhanced social links with hover animations
+- **Admin Dashboard Modal**
+  - 설정(⚙️) 버튼으로 접근
+  - Quick Actions: Work/Archive 생성, Home 편집 바로가기
+  - 실시간 통계: 총 작업물, 아카이브, 카테고리 수
+  - Admin 상태 표시 + Logout 버튼
+- **About Page - Bento Grid Layout**
+  - 기존 단일 컬럼 → Modern Bento Grid
+  - Profile Card (2x2 large): 아바타, 이름, 역할, 소개, 연락처
+  - Skills Card: 그라디언트 pills 디자인
+  - Interests Card: Bullet points
+  - Experience Timeline: 타임라인 + 연도 배지
+  - CTA Card: Contact Form → Floating Modal로 변경
+  - 모든 섹션 InlineEdit 지원
+- **Floating Glass Filter Bar** (Work/Archive)
+  - Sticky positioning (스크롤 시 상단 고정)
+  - Glassmorphism + 가로 스크롤
+  - Gradient scroll indicators
+  - 70% 공간 절약
+
+### Changed
+- About 페이지 코드 **70% 감소** (1101줄 → 240줄)
+- Hero Section 간소화 (Work/Archive와 일관성)
+- `scrollbar-hide` CSS utility 추가
+
+### Documentation
+- `docs/MAJOR_REDESIGN_2025-11-24.md` 작성 (소급)
+  - 디자인 철학 및 원칙
+  - 각 컴포넌트 상세 설명
+  - 테스트 시나리오
+  - 배운 점
+
+### Commits
+- `d679258`: feat: Major redesign - Footer, Admin Dashboard, and About page
+
+### 이후 수정 사항
+- Footer Quick Links 제거 (Connect만 유지)
+- Admin Dashboard 설정 버튼 제거
+- Category Bar 스크롤 문제 수정 (2025-01-24)
+
+---
+
 ## 2025-11-18
 
 ### Added
