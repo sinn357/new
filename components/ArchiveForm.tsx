@@ -22,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import FileUpload from '@/components/FileUpload';
 import MarkdownEditor from '@/components/MarkdownEditor';
 import StarRating from '@/components/StarRating';
 import { useEffect } from 'react';
@@ -218,47 +217,6 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
               </FormItem>
             )}
           />
-
-          {/* Image & File Upload */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <FormField
-              control={form.control}
-              name="imageUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>대표 이미지</FormLabel>
-                  <FormControl>
-                    <FileUpload
-                      onFileUpload={field.onChange}
-                      accept="image/*"
-                      label="이미지 선택"
-                      currentUrl={field.value}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="fileUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>첨부 파일</FormLabel>
-                  <FormControl>
-                    <FileUpload
-                      onFileUpload={field.onChange}
-                      accept="*/*"
-                      label="파일 선택"
-                      currentUrl={field.value}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
 
           {/* Submit & Cancel Buttons */}
           <div className="flex gap-4">

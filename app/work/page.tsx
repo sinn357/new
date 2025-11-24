@@ -11,6 +11,20 @@ import AnimatedCard from '@/components/AnimatedCard';
 import WorkForm from '@/components/WorkForm';
 import { useWorks, useDeleteWork } from '@/lib/hooks/useWorks';
 
+// Helper function to strip markdown syntax for preview
+function stripMarkdown(markdown: string): string {
+  return markdown
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/(\*\*|__)(.*?)\1/g, '$2')
+    .replace(/(\*|_)(.*?)\1/g, '$2')
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 const statusLabels = {
   'completed': '완료됨',
   'in-progress': '진행중',
@@ -368,7 +382,7 @@ export default function WorkPage() {
                     </h3>
 
                     <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                      {work.content}
+                      {stripMarkdown(work.content)}
                     </p>
 
                     {work.techStack && work.techStack.length > 0 && (

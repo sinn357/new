@@ -22,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import FileUpload from '@/components/FileUpload';
 import MarkdownEditor from '@/components/MarkdownEditor';
 import { useEffect } from 'react';
 
@@ -317,69 +316,29 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
             )}
           </div>
 
-          {/* Image, File, Status */}
-          <div className="grid md:grid-cols-3 gap-6">
-            <FormField
-              control={form.control}
-              name="imageUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>대표 이미지</FormLabel>
+          {/* Status */}
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>상태</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <FileUpload
-                      onFileUpload={field.onChange}
-                      accept="image/*"
-                      label="이미지 선택"
-                      currentUrl={field.value}
-                    />
+                    <SelectTrigger className="dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                      <SelectValue />
+                    </SelectTrigger>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="fileUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>첨부 파일</FormLabel>
-                  <FormControl>
-                    <FileUpload
-                      onFileUpload={field.onChange}
-                      accept="*/*"
-                      label="파일 선택"
-                      currentUrl={field.value}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>상태</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                        <SelectValue />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="completed">완료됨</SelectItem>
-                      <SelectItem value="in-progress">진행중</SelectItem>
-                      <SelectItem value="planned">계획됨</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+                  <SelectContent>
+                    <SelectItem value="completed">완료됨</SelectItem>
+                    <SelectItem value="in-progress">진행중</SelectItem>
+                    <SelectItem value="planned">계획됨</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           {/* Duration & Featured */}
           <div className="grid md:grid-cols-2 gap-6">
