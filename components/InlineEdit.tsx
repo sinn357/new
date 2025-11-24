@@ -24,10 +24,10 @@ export default function InlineEdit({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
-    if (value.trim() !== text.trim()) {
+    if (value !== text) {
       setIsLoading(true);
       try {
-        await onSave(value.trim());
+        await onSave(value);
       } catch (error) {
         console.error('Failed to save:', error);
         setValue(text); // 실패시 원래 텍스트로 되돌림

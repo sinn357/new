@@ -140,7 +140,7 @@ export default function AboutPage() {
   const saveRole = async (newRole: string) => saveSectionData('role', newRole);
   const saveBio = async (newBio: string) => saveSectionData('bio', newBio);
   const saveSkills = async (skillsText: string) => {
-    if (!skillsText.trim()) {
+    if (!skillsText || !skillsText.trim()) {
       await saveSectionData('skills', []);
       return;
     }
@@ -149,7 +149,7 @@ export default function AboutPage() {
   };
 
   const saveInterests = async (interestsText: string) => {
-    if (!interestsText.trim()) {
+    if (!interestsText || !interestsText.trim()) {
       await saveSectionData('interests', []);
       return;
     }
@@ -158,7 +158,7 @@ export default function AboutPage() {
   };
 
   const saveExperience = async (experienceText: string) => {
-    if (!experienceText.trim()) {
+    if (!experienceText || !experienceText.trim()) {
       await saveSectionData('experience', []);
       return;
     }
