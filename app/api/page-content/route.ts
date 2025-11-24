@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { page, title, content, sections } = body;
 
-    if (!page || !title || !content) {
+    if (!page || title === undefined || content === undefined) {
       return Response.json(
         { error: 'Page, title, and content are required' },
         { status: 400 }
@@ -87,7 +87,7 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { page, title, content, sections } = body;
 
-    if (!page || !title || !content) {
+    if (!page || title === undefined || content === undefined) {
       return Response.json(
         { error: 'Page, title, and content are required' },
         { status: 400 }

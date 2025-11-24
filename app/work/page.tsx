@@ -271,7 +271,7 @@ export default function WorkPage() {
           <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-indigo-50 via-indigo-50/50 to-transparent dark:from-gray-900 dark:via-gray-900/50 dark:to-transparent pointer-events-none z-10 rounded-r-full"></div>
 
           <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-800/70 rounded-full px-4 py-3 shadow-lg border border-white/20 dark:border-gray-700/20">
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide scroll-smooth px-8">
+            <div className="flex items-center gap-2 overflow-x-auto scroll-smooth px-8 scrollbar-thin scrollbar-thumb-indigo-400 scrollbar-track-transparent hover:scrollbar-thumb-indigo-500">
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
