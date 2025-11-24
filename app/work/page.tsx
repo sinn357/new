@@ -11,6 +11,13 @@ import AnimatedCard from '@/components/AnimatedCard';
 import WorkForm from '@/components/WorkForm';
 import { useWorks, useDeleteWork } from '@/lib/hooks/useWorks';
 
+// Helper function to extract first image from markdown
+function extractFirstImage(markdown: string): string | null {
+  const imageRegex = /!\[.*?\]\((.*?)\)/;
+  const match = markdown.match(imageRegex);
+  return match ? match[1] : null;
+}
+
 // Helper function to strip markdown syntax for preview
 function stripMarkdown(markdown: string): string {
   return markdown
@@ -187,11 +194,11 @@ export default function WorkPage() {
               text={pageContent?.title || 'My Work'}
               onSave={saveTitle}
               className="mb-6"
-              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent"
+              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2"
               placeholder="제목을 입력하세요"
             />
           ) : (
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2 mb-6">
               {pageContent?.title || 'My Work'}
             </h1>
           )}
@@ -326,17 +333,18 @@ export default function WorkPage() {
                       ⭐ FEATURED
                     </div>
                   )}
-                  {work.imageUrl && (
-                    <div className="h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
-                      <Image
-                        src={work.imageUrl}
-                        alt={work.title}
-                        width={400}
-                        height={192}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  )}
+                  {(() => {
+                    const firstImage = extractFirstImage(work.content);
+                    return firstImage ? (
+                      <div className="h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                        <img
+                          src={firstImage}
+                          alt={work.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      </div>
+                    ) : null;
+                  })()}
 
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-3">
@@ -381,7 +389,7 @@ export default function WorkPage() {
                       </Link>
                     </h3>
 
-                    <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                    <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
                       {stripMarkdown(work.content)}
                     </p>
 

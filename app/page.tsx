@@ -163,11 +163,11 @@ export default function Home() {
               text={pageContent?.title || 'Welcome to My Blog'}
               onSave={saveTitle}
               className="mb-6"
-              textClassName="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 bg-clip-text text-transparent"
+              textClassName="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 bg-clip-text text-transparent pb-2"
               placeholder="제목을 입력하세요"
             />
           ) : (
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent mb-6">
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2 mb-6">
               {pageContent?.title || 'Welcome to My Blog'}
             </h1>
           )}

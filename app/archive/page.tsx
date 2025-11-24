@@ -11,6 +11,13 @@ import ArchiveForm from '@/components/ArchiveForm';
 import { useArchives, useDeleteArchive } from '@/lib/hooks/useArchives';
 import StarRating from '@/components/StarRating';
 
+// Helper function to extract first image from markdown
+function extractFirstImage(markdown: string): string | null {
+  const imageRegex = /!\[.*?\]\((.*?)\)/;
+  const match = markdown.match(imageRegex);
+  return match ? match[1] : null;
+}
+
 // Helper function to strip markdown syntax for preview
 function stripMarkdown(markdown: string): string {
   return markdown
@@ -174,11 +181,11 @@ export default function ArchivePage() {
               text={pageContent?.title || 'Archive'}
               onSave={saveTitle}
               className="mb-6"
-              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent"
+              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2"
               placeholder="제목을 입력하세요"
             />
           ) : (
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2 mb-6">
               {pageContent?.title || 'Archive'}
             </h1>
           )}
@@ -301,8 +308,21 @@ export default function ArchivePage() {
                 return (
                   <AnimatedCard key={archive.id} delay={index * 0.1}>
                     <article
-                      className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-gray-100 dark:border-gray-700 group"
+                      className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group overflow-hidden"
                     >
+                    {(() => {
+                      const firstImage = extractFirstImage(archive.content);
+                      return firstImage ? (
+                        <div className="h-48 overflow-hidden bg-gray-100 dark:bg-gray-700">
+                          <img
+                            src={firstImage}
+                            alt={archive.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                        </div>
+                      ) : null;
+                    })()}
+                    <div className="p-8">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${categoryInfo?.color || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}>
@@ -348,7 +368,7 @@ export default function ArchivePage() {
                       </div>
                     )}
 
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 line-clamp-3">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 line-clamp-2">
                       {stripMarkdown(archive.content)}
                     </p>
 
@@ -389,6 +409,7 @@ export default function ArchivePage() {
                     >
                       더 읽기 →
                     </Link>
+                    </div>
                   </article>
                   </AnimatedCard>
                 );
