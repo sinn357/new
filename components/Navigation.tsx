@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import ThemeToggle from './ThemeToggle'
-import AdminDashboard from './AdminDashboard'
 import { useAdmin } from '@/contexts/AdminContext'
 
 const menuItems = [
@@ -17,7 +16,6 @@ const menuItems = [
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [adminDashboardOpen, setAdminDashboardOpen] = useState(false)
   const pathname = usePathname()
   const { isAdmin } = useAdmin()
 
@@ -94,18 +92,6 @@ export default function Navigation() {
                 </div>
               </motion.div>
 
-              {/* Admin Button */}
-              {isAdmin && (
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setAdminDashboardOpen(true)}
-                  className="hidden md:block p-2 rounded-full backdrop-blur-lg bg-white/10 dark:bg-gray-800/10 border border-white/20 dark:border-gray-700/20 text-xl"
-                  title="Admin Dashboard"
-                >
-                  ⚙️
-                </motion.button>
-              )}
 
               {/* Mobile Menu Button */}
               <motion.button
@@ -161,12 +147,6 @@ export default function Navigation() {
           )}
         </AnimatePresence>
       </motion.header>
-
-      {/* Admin Dashboard Modal */}
-      <AdminDashboard
-        isOpen={adminDashboardOpen}
-        onClose={() => setAdminDashboardOpen(false)}
-      />
     </>
   )
 }

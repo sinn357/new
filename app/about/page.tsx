@@ -140,12 +140,38 @@ export default function AboutPage() {
   const saveRole = async (newRole: string) => saveSectionData('role', newRole);
   const saveBio = async (newBio: string) => saveSectionData('bio', newBio);
   const saveSkills = async (skillsText: string) => {
+    if (!skillsText.trim()) {
+      await saveSectionData('skills', []);
+      return;
+    }
     const skillsArray = skillsText.split(',').map(s => s.trim()).filter(s => s);
     await saveSectionData('skills', skillsArray);
   };
+
   const saveInterests = async (interestsText: string) => {
+    if (!interestsText.trim()) {
+      await saveSectionData('interests', []);
+      return;
+    }
     const interestsArray = interestsText.split(',').map(i => i.trim()).filter(i => i);
     await saveSectionData('interests', interestsArray);
+  };
+
+  const saveExperience = async (experienceText: string) => {
+    if (!experienceText.trim()) {
+      await saveSectionData('experience', []);
+      return;
+    }
+    // Format: "year|title|description, year2|title2|description2"
+    const experienceArray = experienceText.split(',').map(item => {
+      const parts = item.split('|').map(p => p.trim());
+      return {
+        year: parts[0] || '',
+        title: parts[1] || '',
+        description: parts[2] || ''
+      };
+    }).filter(item => item.year && item.title);
+    await saveSectionData('experience', experienceArray);
   };
 
   const validateForm = (): boolean => {
@@ -333,14 +359,6 @@ export default function AboutPage() {
               >
                 <FaGithub /> GitHub
               </a>
-              <a
-                href={website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-100 to-teal-200 dark:from-teal-900/50 dark:to-teal-800/50 text-teal-700 dark:text-teal-300 rounded-full hover:scale-105 transition-transform"
-              >
-                <FaGlobe /> Website
-              </a>
             </div>
           </motion.div>
 
@@ -416,24 +434,37 @@ export default function AboutPage() {
             className="md:col-span-3 lg:col-span-2 backdrop-blur-xl bg-white/70 dark:bg-gray-800/70 rounded-3xl p-8 shadow-xl border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-shadow"
           >
             <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">📚 Experience</h3>
-            <div className="space-y-6">
-              {experience.map((exp, index) => (
-                <div key={index} className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold">
-                      {exp.year}
+            {isAdmin ? (
+              <div>
+                <InlineEdit
+                  text={experience.map(exp => `${exp.year}|${exp.title}|${exp.description}`).join(', ')}
+                  onSave={saveExperience}
+                  textClassName="text-gray-600 dark:text-gray-300 text-sm"
+                  isTextarea={true}
+                  placeholder="형식: 년도|제목|설명, 년도2|제목2|설명2 (예: 2023|프로젝트 A|설명, 2024|프로젝트 B|설명)"
+                />
+                <p className="text-xs text-gray-400 mt-2">형식: 년도|제목|설명을 쉼표로 구분 (예: 2023|프로젝트 A|프로젝트 설명)</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {experience.map((exp, index) => (
+                  <div key={index} className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                        {exp.year}
+                      </div>
+                      {index < experience.length - 1 && (
+                        <div className="w-0.5 h-full bg-gradient-to-b from-indigo-500 to-teal-500 mt-2"></div>
+                      )}
                     </div>
-                    {index < experience.length - 1 && (
-                      <div className="w-0.5 h-full bg-gradient-to-b from-indigo-500 to-teal-500 mt-2"></div>
-                    )}
+                    <div className="flex-1 pb-6">
+                      <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{exp.title}</h4>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">{exp.description}</p>
+                    </div>
                   </div>
-                  <div className="flex-1 pb-6">
-                    <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{exp.title}</h4>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">{exp.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* CTA Card */}
