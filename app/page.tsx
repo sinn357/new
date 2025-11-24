@@ -153,6 +153,44 @@ export default function Home() {
     setPageContent(result.pageContent);
   };
 
+  const saveAboutTitle = async (newTitle: string) => {
+    const response = await fetch('/api/page-content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'about',
+        title: newTitle,
+        content: aboutContent?.content || '개발하며 배운 것들을 기록하고, 프로젝트를 정리하는 공간입니다.'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save about title');
+    }
+
+    const result = await response.json();
+    setAboutContent(result.pageContent);
+  };
+
+  const saveAboutContent = async (newContent: string) => {
+    const response = await fetch('/api/page-content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'about',
+        title: aboutContent?.title || 'About This Space',
+        content: newContent
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save about content');
+    }
+
+    const result = await response.json();
+    setAboutContent(result.pageContent);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
@@ -468,23 +506,56 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section className="px-6 py-16 bg-white/50 dark:bg-gray-900/50">
+      <section className="px-6 py-16 bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100">
-            {aboutContent?.title || 'About'}
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-            {aboutContent?.content || ''}
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {['React', 'Next.js', 'TypeScript', 'Node.js', 'Prisma', 'PostgreSQL'].map((tech) => (
-              <span
-                key={tech}
-                className="px-4 py-2 bg-gradient-to-r from-indigo-100 to-teal-100 dark:from-indigo-900 dark:to-teal-900 text-gray-700 dark:text-gray-200 rounded-full text-sm font-medium"
-              >
-                {tech}
-              </span>
-            ))}
+          {isAdmin ? (
+            <InlineEdit
+              text={aboutContent?.title || 'About This Space'}
+              onSave={saveAboutTitle}
+              className="mb-6"
+              textClassName="text-3xl font-bold text-gray-800 dark:text-gray-100"
+              placeholder="제목을 입력하세요"
+            />
+          ) : (
+            <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">
+              {aboutContent?.title || 'About This Space'}
+            </h2>
+          )}
+
+          {isAdmin ? (
+            <InlineEdit
+              text={aboutContent?.content || '개발하며 배운 것들을 기록하고, 프로젝트를 정리하는 공간입니다.'}
+              onSave={saveAboutContent}
+              className="mb-12 max-w-2xl mx-auto"
+              textClassName="text-lg text-gray-600 dark:text-gray-300"
+              isTextarea={true}
+              placeholder="내용을 입력하세요"
+            />
+          ) : (
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
+              {aboutContent?.content || '개발하며 배운 것들을 기록하고, 프로젝트를 정리하는 공간입니다.'}
+            </p>
+          )}
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
+            <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+              <div className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent pb-1">
+                {archives.length}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">Articles</div>
+            </div>
+            <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+              <div className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-green-600 dark:from-teal-400 dark:to-green-400 bg-clip-text text-transparent pb-1">
+                {works.length}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">Projects</div>
+            </div>
+            <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 col-span-2 md:col-span-1">
+              <div className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-orange-600 dark:from-pink-400 dark:to-orange-400 bg-clip-text text-transparent pb-1">
+                {new Set([...archives.map(a => a.category), ...works.map(w => w.category)]).size}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">Categories</div>
+            </div>
           </div>
         </div>
       </section>
