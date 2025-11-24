@@ -41,8 +41,16 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
+    // In production, Cloudinary is required (Vercel has read-only filesystem)
+    if (isProduction && !hasCloudinary) {
+      return NextResponse.json({
+        error: 'Server configuration error',
+        details: 'Cloudinary credentials not configured in production environment'
+      }, { status: 500 });
+    }
+
     // Use Cloudinary in production or when configured, otherwise use local storage
-    if ((isProduction || hasCloudinary) && hasCloudinary) {
+    if (hasCloudinary) {
       // Upload to Cloudinary
       const uploadResponse = await new Promise((resolve, reject) => {
         const uploadOptions = {
