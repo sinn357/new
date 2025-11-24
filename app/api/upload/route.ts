@@ -45,14 +45,23 @@ export async function POST(request: NextRequest) {
     if ((isProduction || hasCloudinary) && hasCloudinary) {
       // Upload to Cloudinary
       const uploadResponse = await new Promise((resolve, reject) => {
+        const uploadOptions = {
+          resource_type: 'auto' as const,
+          folder: 'blog-web',
+          public_id: `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`,
+          // Enable HEIC/HEIF support by allowing format transformation
+          format: file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif')
+            ? 'jpg'
+            : undefined,
+        };
+
         cloudinary.uploader.upload_stream(
-          {
-            resource_type: 'auto',
-            folder: 'blog-web',
-            public_id: `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`,
-          },
+          uploadOptions,
           (error, result) => {
-            if (error) reject(error);
+            if (error) {
+              console.error('Cloudinary upload error:', error);
+              reject(error);
+            }
             else resolve(result);
           }
         ).end(buffer);
@@ -103,8 +112,10 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('File upload error:', error);
-    return NextResponse.json({ 
-      error: 'Failed to upload file' 
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({
+      error: 'Failed to upload file',
+      details: errorMessage
     }, { status: 500 });
   }
 }
