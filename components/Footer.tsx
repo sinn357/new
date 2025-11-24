@@ -1,26 +1,140 @@
+'use client'
+
 import { FaGithub, FaEnvelope } from 'react-icons/fa'
+import Link from 'next/link'
+import { motion } from 'framer-motion'
 
 export default function Footer() {
+  const quickLinks = [
+    { label: 'Work', href: '/work' },
+    { label: 'Archive', href: '/archive' },
+    { label: 'About', href: '/about' },
+  ]
+
+  const socialLinks = [
+    {
+      icon: <FaEnvelope />,
+      href: 'mailto:sinn357@naver.com',
+      label: 'Email',
+      color: 'hover:text-teal-400'
+    },
+    {
+      icon: <FaGithub />,
+      href: 'https://github.com/sinn357/new',
+      label: 'GitHub',
+      color: 'hover:text-purple-400',
+      external: true
+    },
+  ]
+
   return (
-    <footer className="mt-16 bg-indigo-900 dark:bg-indigo-950 text-white py-10">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 px-6">
-        <div className="flex space-x-6 text-2xl">
-          <a href="mailto:sinn357@naver.com" aria-label="Email" className="text-teal-400 hover:text-teal-300 dark:text-teal-500 dark:hover:text-teal-400 transition">
-            <FaEnvelope />
-          </a>
-          <a
-            href="https://github.com/sinn357/new"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"
-            className="text-teal-400 hover:text-teal-300 dark:text-teal-500 dark:hover:text-teal-400 transition"
-          >
-            <FaGithub />
-          </a>
+    <footer className="relative mt-16 overflow-hidden">
+      {/* Animated Wave Background */}
+      <div className="absolute inset-0 -z-10">
+        <svg
+          className="absolute bottom-0 w-full h-32"
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
+        >
+          <motion.path
+            initial={{ d: "M0,60 C240,90 480,30 720,60 C960,90 1200,30 1440,60 L1440,120 L0,120 Z" }}
+            animate={{
+              d: [
+                "M0,60 C240,90 480,30 720,60 C960,90 1200,30 1440,60 L1440,120 L0,120 Z",
+                "M0,60 C240,30 480,90 720,60 C960,30 1200,90 1440,60 L1440,120 L0,120 Z",
+                "M0,60 C240,90 480,30 720,60 C960,90 1200,30 1440,60 L1440,120 L0,120 Z"
+              ]
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            fill="url(#gradient)"
+          />
+          <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(99, 102, 241)" stopOpacity="0.3" />
+              <stop offset="50%" stopColor="rgb(139, 92, 246)" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="rgb(20, 184, 166)" stopOpacity="0.3" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      {/* Glass Footer Content */}
+      <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border-t border-white/20 dark:border-gray-700/20 py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
+            {/* Brand Section */}
+            <div>
+              <Link href="/">
+                <motion.h3
+                  whileHover={{ scale: 1.05 }}
+                  className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2 mb-2"
+                >
+                  HOME
+                </motion.h3>
+              </Link>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                개발과 지식 공유를 사랑하는<br />개발자의 블로그
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                Quick Links
+              </h4>
+              <div className="space-y-2">
+                {quickLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="block text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Connect */}
+            <div>
+              <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                Connect
+              </h4>
+              <div className="flex gap-4">
+                {socialLinks.map((social) => (
+                  <motion.a
+                    key={social.label}
+                    href={social.href}
+                    target={social.external ? "_blank" : undefined}
+                    rel={social.external ? "noopener noreferrer" : undefined}
+                    aria-label={social.label}
+                    whileHover={{ scale: 1.2, y: -4 }}
+                    whileTap={{ scale: 0.9 }}
+                    className={`text-2xl text-gray-600 dark:text-gray-400 ${social.color} transition-colors`}
+                  >
+                    {social.icon}
+                  </motion.a>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-gray-300 dark:border-gray-700 pt-6">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+              <p>
+                © {new Date().getFullYear()} 신우철. All rights reserved.
+              </p>
+              <p className="flex items-center gap-2">
+                Made with <span className="text-red-500">❤️</span> using <span className="font-semibold text-gray-800 dark:text-gray-200">Next.js 15</span>
+              </p>
+            </div>
+          </div>
         </div>
-        <p className="text-sm text-gray-300 dark:text-gray-400">
-          © {new Date().getFullYear()} 신우철. All rights reserved.
-        </p>
       </div>
     </footer>
   )

@@ -256,46 +256,59 @@ export default function WorkPage() {
         </div>
       </section>
 
-      {/* Category Filter */}
-      <section className="px-6 pb-8">
+      {/* Floating Glass Filter Bar */}
+      <motion.section
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="sticky top-20 z-40 px-6 pb-8"
+      >
         <div className="max-w-6xl mx-auto">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">카테고리</h3>
-            <div className="flex flex-wrap gap-3">
-              <button
+          <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-800/70 rounded-full px-4 py-3 shadow-lg border border-white/20 dark:border-gray-700/20">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+              <motion.button
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedCategory('')}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap flex items-center gap-2 ${
                   selectedCategory === ''
-                    ? 'bg-indigo-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    ? 'bg-gradient-to-r from-indigo-500 to-teal-500 text-white shadow-md'
+                    : 'bg-white/50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-700/80'
                 }`}
               >
-                전체 ({allWorks.length})
-              </button>
+                <span>전체</span>
+                <span className={`text-xs ${selectedCategory === '' ? 'opacity-90' : 'opacity-60'}`}>
+                  {allWorks.length}
+                </span>
+              </motion.button>
+
               {Object.entries(WORK_CATEGORIES).map(([key, info]) => {
                 const categoryWorks = allWorks.filter(work => work.category === key);
+                const isActive = selectedCategory === key;
                 return (
-                  <button
+                  <motion.button
                     key={key}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedCategory(key)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
-                      selectedCategory === key
-                        ? 'bg-indigo-500 text-white'
-                        : `${info.color} hover:opacity-80`
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap flex items-center gap-2 ${
+                      isActive
+                        ? 'bg-gradient-to-r from-indigo-500 to-teal-500 text-white shadow-md'
+                        : 'bg-white/50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-700/80'
                     }`}
                   >
                     <span>{info.icon}</span>
-                    {info.label}
-                    <span className="text-xs opacity-75">
-                      ({categoryWorks.length})
+                    <span>{info.label}</span>
+                    <span className={`text-xs ${isActive ? 'opacity-90' : 'opacity-60'}`}>
+                      {categoryWorks.length}
                     </span>
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Add Work Form */}
       {isAdmin && showForm && (
