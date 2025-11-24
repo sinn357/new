@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { Work, WORK_CATEGORIES } from '@/lib/work-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
@@ -180,46 +181,66 @@ export default function WorkPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
-      <section className="px-6 py-16 text-center">
-        <div className="max-w-4xl mx-auto">
-          <Link
-            href="/"
-            className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 mb-8 transition-colors"
-          >
-            ← 홈으로 돌아가기
-          </Link>
+      <section className="relative px-6 py-20 overflow-hidden">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900" />
 
+        <div className="max-w-4xl mx-auto text-center">
           {isAdmin ? (
-            <InlineEdit
-              text={pageContent?.title || 'My Work'}
-              onSave={saveTitle}
-              className="mb-6"
-              textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2"
-              placeholder="제목을 입력하세요"
-            />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <InlineEdit
+                text={pageContent?.title || 'My Work'}
+                onSave={saveTitle}
+                className="mb-6"
+                textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2"
+                placeholder="제목을 입력하세요"
+              />
+            </motion.div>
           ) : (
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2 mb-6">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2 mb-6"
+            >
               {pageContent?.title || 'My Work'}
-            </h1>
+            </motion.h1>
           )}
 
           {isAdmin ? (
-            <InlineEdit
-              text={pageContent?.content || ''}
-              onSave={saveContent}
-              className="mb-12 max-w-2xl mx-auto"
-              textClassName="text-xl text-gray-600 dark:text-gray-300"
-              isTextarea={true}
-              placeholder="내용을 입력하세요"
-            />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <InlineEdit
+                text={pageContent?.content || ''}
+                onSave={saveContent}
+                className="mb-12 max-w-2xl mx-auto"
+                textClassName="text-xl text-gray-600 dark:text-gray-300"
+                isTextarea={true}
+                placeholder="내용을 입력하세요"
+              />
+            </motion.div>
           ) : (
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto"
+            >
               {pageContent?.content || ''}
-            </p>
+            </motion.p>
           )}
 
           {isAdmin && (
-            <button
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
               onClick={() => {
                 if (showForm && editingWork) {
                   handleFormCancel();
@@ -230,7 +251,7 @@ export default function WorkPage() {
               className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 dark:from-indigo-600 dark:to-teal-600 dark:hover:from-indigo-700 dark:hover:to-teal-700 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               {showForm ? (editingWork ? '편집 취소' : '폼 숨기기') : '새 작업물 추가'}
-            </button>
+            </motion.button>
           )}
         </div>
       </section>
