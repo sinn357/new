@@ -2,15 +2,25 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import MobileMenu from './MobileMenu'
+import { usePathname } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 import ThemeToggle from './ThemeToggle'
+import { useAdmin } from '@/contexts/AdminContext'
+
+const menuItems = [
+  { label: 'Work', href: '/work' },
+  { label: 'Archive', href: '/archive' },
+  { label: 'About', href: '/about' },
+]
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const pathname = usePathname()
+  const { isAdmin } = useAdmin()
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20)
+    const handleScroll = () => setScrolled(window.scrollY > 50)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -21,70 +31,133 @@ export default function Navigation() {
 
   return (
     <>
-    <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-gradient-to-r from-indigo-600 to-indigo-700 dark:from-indigo-900 dark:to-indigo-950 shadow-lg ${
-        scrolled ? 'shadow-xl' : ''
-      }`}
-    >
-      <div className="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
-        <Link
-          href="/"
-          className="text-lg font-semibold text-teal-300 hover:text-teal-200 dark:text-teal-400 dark:hover:text-teal-300 transition-all"
-        >
-          HOME
-        </Link>
-
-        {/* 데스크탑 메뉴 */}
-        <div className="hidden md:flex items-center space-x-6">
-          <div className="flex space-x-6 text-white font-medium">
-            {[
-              { label: 'Work', href: '/work' },
-              { label: 'Archive', href: '/archive' },
-              { label: 'About', href: '/about' },
-            ].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="transition-all duration-200 hover:text-teal-300 dark:text-gray-100 dark:hover:text-teal-400"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-          <ThemeToggle />
-        </div>
-
-        {/* 모바일 버튼들 */}
-        <div className="md:hidden flex items-center space-x-2">
-          <ThemeToggle />
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="p-2 hover:bg-indigo-500 dark:hover:bg-indigo-800 rounded-lg transition-colors"
-            aria-label="메뉴 열기"
-          >
-            <svg
-              className="w-6 h-6 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+      <motion.header
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? 'backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 shadow-lg py-3'
+            : 'bg-transparent py-6'
+        }`}
+      >
+        <nav className="max-w-7xl mx-auto px-6">
+          <div className="flex items-center justify-between">
+            {/* Logo with Hover Effect */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </nav>
+              <Link href="/">
+                <div className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent">
+                  HOME
+                </div>
+              </Link>
+            </motion.div>
 
-    {/* 모바일 메뉴 */}
-    <MobileMenu
-      isOpen={mobileMenuOpen}
-      onClose={handleCloseMenu}
-    />
-  </>
+            {/* Center Menu - Glass Dock Style (Desktop) */}
+            <div className="hidden md:flex items-center gap-1 backdrop-blur-lg bg-white/10 dark:bg-gray-800/10 border border-white/20 dark:border-gray-700/20 rounded-full px-2 py-2 shadow-xl">
+              {menuItems.map((item) => {
+                const isActive = pathname === item.href
+                return (
+                  <motion.div
+                    key={item.href}
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      href={item.href}
+                      className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                        isActive
+                          ? 'bg-gradient-to-r from-indigo-500 to-teal-500 text-white shadow-lg'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                )
+              })}
+            </div>
+
+            {/* Right Actions */}
+            <div className="flex items-center gap-3">
+              {/* Theme Toggle */}
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 180 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <div className="backdrop-blur-lg bg-white/10 dark:bg-gray-800/10 border border-white/20 dark:border-gray-700/20 rounded-full">
+                  <ThemeToggle />
+                </div>
+              </motion.div>
+
+              {/* Admin Button */}
+              {isAdmin && (
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="hidden md:block p-2 rounded-full backdrop-blur-lg bg-white/10 dark:bg-gray-800/10 border border-white/20 dark:border-gray-700/20 text-xl"
+                  title="Admin Mode Active"
+                >
+                  ⚙️
+                </motion.button>
+              )}
+
+              {/* Mobile Menu Button */}
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                className="md:hidden p-2 rounded-full backdrop-blur-lg bg-white/10 dark:bg-gray-800/10 border border-white/20 dark:border-gray-700/20"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle menu"
+              >
+                <div className="text-xl text-gray-700 dark:text-gray-300">
+                  {mobileMenuOpen ? '✕' : '☰'}
+                </div>
+              </motion.button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Mobile Menu with Slide Animation */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="md:hidden backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border-t border-white/20 dark:border-gray-700/20 overflow-hidden"
+            >
+              <div className="px-6 py-4 space-y-2">
+                {menuItems.map((item) => {
+                  const isActive = pathname === item.href
+                  return (
+                    <motion.div
+                      key={item.href}
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Link
+                        href={item.href}
+                        onClick={handleCloseMenu}
+                        className={`block px-4 py-3 rounded-xl transition-all ${
+                          isActive
+                            ? 'bg-gradient-to-r from-indigo-500 to-teal-500 text-white shadow-lg'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    </motion.div>
+                  )
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.header>
+    </>
   )
 }
