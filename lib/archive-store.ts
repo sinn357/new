@@ -23,7 +23,7 @@ export const ARCHIVE_CATEGORIES = {
   'movie': { label: '영화', color: 'bg-red-100 text-red-800', icon: '🎬' },
   'book': { label: '책', color: 'bg-green-100 text-green-800', icon: '📚' },
   'music': { label: '음악', color: 'bg-yellow-100 text-yellow-800', icon: '🎵' },
-  'anime': { label: '애니', color: 'bg-indigo-100 text-indigo-800', icon: '🎌' },
+  'anime': { label: '애니', color: 'bg-indigo-100 text-indigo-800', icon: '🎭' },
   'comics': { label: '코믹스', color: 'bg-orange-100 text-orange-800', icon: '📖' },
   'product': { label: '제품', color: 'bg-teal-100 text-teal-800', icon: '📱' },
   'food': { label: '음식', color: 'bg-amber-100 text-amber-800', icon: '🍽️' },

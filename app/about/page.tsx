@@ -381,7 +381,7 @@ export default function AboutPage() {
                 />
                 <p className="text-xs text-gray-400 mt-2">쉼표(,)로 구분해서 입력하세요</p>
               </div>
-            ) : (
+            ) : skills.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {skills.map((skill, index) => (
                   <span
@@ -392,6 +392,8 @@ export default function AboutPage() {
                   </span>
                 ))}
               </div>
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400 text-sm">아직 추가된 스킬이 없습니다.</p>
             )}
           </motion.div>
 
@@ -414,7 +416,7 @@ export default function AboutPage() {
                 />
                 <p className="text-xs text-gray-400 mt-2">쉼표(,)로 구분해서 입력하세요</p>
               </div>
-            ) : (
+            ) : interests.length > 0 ? (
               <div className="space-y-2">
                 {interests.map((interest, index) => (
                   <div key={index} className="flex items-center gap-2">
@@ -423,6 +425,8 @@ export default function AboutPage() {
                   </div>
                 ))}
               </div>
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400 text-sm">아직 추가된 관심사가 없습니다.</p>
             )}
           </motion.div>
 
@@ -445,7 +449,7 @@ export default function AboutPage() {
                 />
                 <p className="text-xs text-gray-400 mt-2">형식: 년도|제목|설명을 쉼표로 구분 (예: 2023|프로젝트 A|프로젝트 설명)</p>
               </div>
-            ) : (
+            ) : experience.length > 0 ? (
               <div className="space-y-6">
                 {experience.map((exp, index) => (
                   <div key={index} className="flex gap-4">
@@ -464,6 +468,8 @@ export default function AboutPage() {
                   </div>
                 ))}
               </div>
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400 text-sm">아직 추가된 경험이 없습니다.</p>
             )}
           </motion.div>
 
