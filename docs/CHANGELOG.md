@@ -1,5 +1,37 @@
 # Blog Web Changelog
 
+## 2025-01-24
+
+### Fixed
+- **카테고리바 스크롤 문제 해결** (Archive/Work 페이지)
+  - `scrollbar-hide` → `scrollbar-thin` 커스텀 클래스로 변경
+  - 6px 높이의 얇은 인디고 색상 스크롤바 추가
+  - PC 환경에서 모든 카테고리(게임, 드라마 포함) 표시 가능
+  - 다크모드 지원 스크롤바 스타일
+- **빈 텍스트 저장 기능 구현** (About 페이지)
+  - API 검증 로직 수정: falsy 체크 → undefined 체크
+  - POST/PUT 핸들러에서 빈 문자열("") 허용
+  - title과 content를 비워서 저장 가능
+- **InlineEdit 컴포넌트 개선**
+  - trim() 제거로 빈 문자열 저장 가능
+  - 검증 로직 개선
+
+### Changed
+- `app/globals.css`: 커스텀 스크롤바 스타일 추가 (+43줄)
+- `app/api/page-content/route.ts`: 빈 값 검증 로직 개선
+
+### Documentation
+- `docs/CRITICAL_BUG_FIXES_2025-01-24.md` 작성
+  - 문제 진단 과정 상세 기록
+  - 근본 원인 분석 및 해결 방법
+  - 배운 점과 개선 사항 정리
+
+### Commits
+- `ef72d85`: fix: resolve scrollbar visibility and empty text validation issues
+- `c20ba75`: fix: resolve critical UI issues on Archive and About pages
+
+---
+
 ## 2025-11-18
 
 ### Added
