@@ -114,6 +114,40 @@ export default function AboutPage() {
     setPageContent(result.pageContent);
   };
 
+  const saveSectionData = async (sectionKey: string, newValue: unknown) => {
+    const updatedSections = {
+      ...pageContent?.sections,
+      [sectionKey]: newValue
+    };
+
+    const response = await fetch('/api/page-content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'about',
+        title: pageContent?.title || 'About Me',
+        content: pageContent?.content || '',
+        sections: updatedSections
+      })
+    });
+
+    if (!response.ok) throw new Error('Failed to save section data');
+    const result = await response.json();
+    setPageContent(result.pageContent);
+  };
+
+  const saveName = async (newName: string) => saveSectionData('name', newName);
+  const saveRole = async (newRole: string) => saveSectionData('role', newRole);
+  const saveBio = async (newBio: string) => saveSectionData('bio', newBio);
+  const saveSkills = async (skillsText: string) => {
+    const skillsArray = skillsText.split(',').map(s => s.trim()).filter(s => s);
+    await saveSectionData('skills', skillsArray);
+  };
+  const saveInterests = async (interestsText: string) => {
+    const interestsArray = interestsText.split(',').map(i => i.trim()).filter(i => i);
+    await saveSectionData('interests', interestsArray);
+  };
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     if (!formData.name.trim()) newErrors.name = '이름을 입력해주세요.';
@@ -247,9 +281,39 @@ export default function AboutPage() {
                 {name.charAt(0)}
               </div>
               <div className="flex-1">
-                <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">{name}</h2>
-                <p className="text-indigo-600 dark:text-indigo-400 font-medium mb-4">{role}</p>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{bio}</p>
+                {isAdmin ? (
+                  <InlineEdit
+                    text={name}
+                    onSave={saveName}
+                    textClassName="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2"
+                    placeholder="이름을 입력하세요"
+                  />
+                ) : (
+                  <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">{name}</h2>
+                )}
+
+                {isAdmin ? (
+                  <InlineEdit
+                    text={role}
+                    onSave={saveRole}
+                    textClassName="text-indigo-600 dark:text-indigo-400 font-medium mb-4"
+                    placeholder="직책을 입력하세요"
+                  />
+                ) : (
+                  <p className="text-indigo-600 dark:text-indigo-400 font-medium mb-4">{role}</p>
+                )}
+
+                {isAdmin ? (
+                  <InlineEdit
+                    text={bio}
+                    onSave={saveBio}
+                    textClassName="text-gray-600 dark:text-gray-300 leading-relaxed"
+                    isTextarea={true}
+                    placeholder="소개를 입력하세요"
+                  />
+                ) : (
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{bio}</p>
+                )}
               </div>
             </div>
 
@@ -288,16 +352,29 @@ export default function AboutPage() {
             className="backdrop-blur-xl bg-white/70 dark:bg-gray-800/70 rounded-3xl p-6 shadow-xl border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-shadow"
           >
             <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">🛠️ Skills</h3>
-            <div className="flex flex-wrap gap-2">
-              {skills.map((skill, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-gradient-to-r from-indigo-500 to-teal-500 text-white text-sm rounded-full"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
+            {isAdmin ? (
+              <div>
+                <InlineEdit
+                  text={skills.join(', ')}
+                  onSave={saveSkills}
+                  textClassName="text-gray-600 dark:text-gray-300 text-sm"
+                  isTextarea={true}
+                  placeholder="쉼표로 구분해서 입력 (예: React, Node.js, TypeScript)"
+                />
+                <p className="text-xs text-gray-400 mt-2">쉼표(,)로 구분해서 입력하세요</p>
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {skills.map((skill, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-gradient-to-r from-indigo-500 to-teal-500 text-white text-sm rounded-full"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* Interests Card */}
@@ -308,14 +385,27 @@ export default function AboutPage() {
             className="backdrop-blur-xl bg-white/70 dark:bg-gray-800/70 rounded-3xl p-6 shadow-xl border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-shadow"
           >
             <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">💡 Interests</h3>
-            <div className="space-y-2">
-              {interests.map((interest, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <span className="text-gray-700 dark:text-gray-300 text-sm">{interest}</span>
-                </div>
-              ))}
-            </div>
+            {isAdmin ? (
+              <div>
+                <InlineEdit
+                  text={interests.join(', ')}
+                  onSave={saveInterests}
+                  textClassName="text-gray-600 dark:text-gray-300 text-sm"
+                  isTextarea={true}
+                  placeholder="쉼표로 구분해서 입력 (예: 웹 개발, AI, 오픈소스)"
+                />
+                <p className="text-xs text-gray-400 mt-2">쉼표(,)로 구분해서 입력하세요</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {interests.map((interest, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-gray-700 dark:text-gray-300 text-sm">{interest}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* Experience Timeline - Full Width */}
@@ -382,7 +472,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl z-50 p-4 max-h-[90vh] overflow-y-auto"
+            className="fixed inset-4 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-2xl md:h-auto z-50 overflow-y-auto"
           >
             <div className="backdrop-blur-xl bg-white/90 dark:bg-gray-800/90 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/20 p-8">
               <div className="flex items-center justify-between mb-6">

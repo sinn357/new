@@ -263,9 +263,15 @@ export default function WorkPage() {
         transition={{ duration: 0.5, delay: 0.3 }}
         className="sticky top-20 z-40 px-6 pb-8"
       >
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto relative">
+          {/* Scroll Indicator Left */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-full bg-gradient-to-r from-white dark:from-gray-900 to-transparent pointer-events-none z-10 rounded-l-full"></div>
+
+          {/* Scroll Indicator Right */}
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-full bg-gradient-to-l from-white dark:from-gray-900 to-transparent pointer-events-none z-10 rounded-r-full"></div>
+
           <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-800/70 rounded-full px-4 py-3 shadow-lg border border-white/20 dark:border-gray-700/20">
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide scroll-smooth">
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}

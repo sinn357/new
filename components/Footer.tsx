@@ -5,12 +5,6 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 
 export default function Footer() {
-  const quickLinks = [
-    { label: 'Work', href: '/work' },
-    { label: 'Archive', href: '/archive' },
-    { label: 'About', href: '/about' },
-  ]
-
   const socialLinks = [
     {
       icon: <FaEnvelope />,
@@ -65,61 +59,26 @@ export default function Footer() {
       {/* Glass Footer Content */}
       <div className="backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border-t border-white/20 dark:border-gray-700/20 py-12">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            {/* Brand Section */}
-            <div>
-              <Link href="/">
-                <motion.h3
-                  whileHover={{ scale: 1.05 }}
-                  className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2 mb-2"
+          {/* Connect - Centered */}
+          <div className="text-center mb-8">
+            <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+              Connect
+            </h4>
+            <div className="flex gap-6 justify-center">
+              {socialLinks.map((social) => (
+                <motion.a
+                  key={social.label}
+                  href={social.href}
+                  target={social.external ? "_blank" : undefined}
+                  rel={social.external ? "noopener noreferrer" : undefined}
+                  aria-label={social.label}
+                  whileHover={{ scale: 1.2, y: -4 }}
+                  whileTap={{ scale: 0.9 }}
+                  className={`text-3xl text-gray-600 dark:text-gray-400 ${social.color} transition-colors`}
                 >
-                  HOME
-                </motion.h3>
-              </Link>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                개발과 지식 공유를 사랑하는<br />개발자의 블로그
-              </p>
-            </div>
-
-            {/* Quick Links */}
-            <div>
-              <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
-                Quick Links
-              </h4>
-              <div className="space-y-2">
-                {quickLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Connect */}
-            <div>
-              <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
-                Connect
-              </h4>
-              <div className="flex gap-4">
-                {socialLinks.map((social) => (
-                  <motion.a
-                    key={social.label}
-                    href={social.href}
-                    target={social.external ? "_blank" : undefined}
-                    rel={social.external ? "noopener noreferrer" : undefined}
-                    aria-label={social.label}
-                    whileHover={{ scale: 1.2, y: -4 }}
-                    whileTap={{ scale: 0.9 }}
-                    className={`text-2xl text-gray-600 dark:text-gray-400 ${social.color} transition-colors`}
-                  >
-                    {social.icon}
-                  </motion.a>
-                ))}
-              </div>
+                  {social.icon}
+                </motion.a>
+              ))}
             </div>
           </div>
 
