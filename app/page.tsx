@@ -7,7 +7,7 @@ import { Archive } from '@/lib/archive-store';
 import { useAdmin } from '@/contexts/AdminContext';
 import InlineEdit from '@/components/InlineEdit';
 import AnimatedCard from '@/components/AnimatedCard';
-import AnimatedHero from '@/components/AnimatedHero';
+import { motion } from 'framer-motion';
 
 // Helper function to extract first image from markdown
 function extractFirstImage(markdown: string): string | null {
@@ -194,66 +194,117 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
-      <section className="px-6 py-20 text-center">
-        <AnimatedHero className="max-w-4xl mx-auto">
-          {isAdmin ? (
-            <InlineEdit
-              text={pageContent?.title || 'Welcome to My Blog'}
-              onSave={saveTitle}
-              className="mb-6"
-              textClassName="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 bg-clip-text text-transparent pb-2"
-              placeholder="제목을 입력하세요"
-            />
-          ) : (
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2 mb-6">
-              {pageContent?.title || 'Welcome to My Blog'}
-            </h1>
-          )}
-          
-          {isAdmin ? (
-            <InlineEdit
-              text={pageContent?.content || ''}
-              onSave={saveContent}
-              className="mb-12 max-w-2xl mx-auto"
-              textClassName="text-xl md:text-2xl text-gray-600"
-              isTextarea={true}
-              placeholder="내용을 입력하세요"
-            />
-          ) : (
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
-              {pageContent?.content || ''}
-            </p>
-          )}
-          
-          {/* Stats */}
-          <div className="flex justify-center gap-8 mb-12">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{totalWorks}</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">작업물</div>
-            </div>
-          </div>
+      <section className="relative px-6 py-32 overflow-hidden">
+        {/* Animated Background Blobs */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/30 dark:bg-indigo-500/20 rounded-full blur-3xl animate-blob" />
+          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-teal-500/30 dark:bg-teal-500/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
+          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-purple-500/30 dark:bg-purple-500/20 rounded-full blur-3xl animate-blob animation-delay-4000" />
+        </div>
 
-          <div className="flex gap-4 justify-center">
-            <Link
-              href="/work"
-              className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 dark:from-indigo-600 dark:to-teal-600 dark:hover:from-indigo-700 dark:hover:to-teal-700 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            >
-              작업물 보기
-            </Link>
-            <Link
-              href="/archive"
-              className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 dark:from-teal-600 dark:to-cyan-600 dark:hover:from-teal-700 dark:hover:to-cyan-700 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            >
-              아카이브 보기
-            </Link>
-            <Link
-              href="/about"
-              className="border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-200 px-8 py-3 rounded-full font-medium transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-            >
-              소개 및 연락
-            </Link>
-          </div>
-        </AnimatedHero>
+        {/* Floating Icons */}
+        <motion.div
+          className="absolute top-20 left-10 md:left-20 text-4xl opacity-60"
+          animate={{ y: [0, -20, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        >
+          💻
+        </motion.div>
+
+        <motion.div
+          className="absolute top-40 right-10 md:right-20 text-4xl opacity-60"
+          animate={{ y: [0, 20, 0], rotate: [0, 10, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        >
+          ✨
+        </motion.div>
+
+        <motion.div
+          className="absolute bottom-40 left-1/4 text-3xl opacity-60"
+          animate={{ y: [0, -15, 0], rotate: [0, -10, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          🚀
+        </motion.div>
+
+        <motion.div
+          className="absolute bottom-32 right-1/3 text-3xl opacity-60"
+          animate={{ y: [0, 15, 0] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          📱
+        </motion.div>
+
+        {/* Main Content */}
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          {/* Name/Title with Stagger Animation */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            {isAdmin ? (
+              <InlineEdit
+                text={pageContent?.title || 'Welcome'}
+                onSave={saveTitle}
+                className="mb-6"
+                textClassName="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-teal-600 dark:from-indigo-400 dark:via-purple-400 dark:to-teal-400 bg-clip-text text-transparent pb-2"
+                placeholder="제목을 입력하세요"
+              />
+            ) : (
+              <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-teal-600 dark:from-indigo-400 dark:via-purple-400 dark:to-teal-400 bg-clip-text text-transparent pb-2 mb-6">
+                {pageContent?.title || 'Welcome'}
+              </h1>
+            )}
+          </motion.div>
+
+          {/* Tagline with Delay */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mt-6"
+          >
+            {isAdmin ? (
+              <InlineEdit
+                text={pageContent?.content || 'Building digital experiences\nthrough code and design'}
+                onSave={saveContent}
+                className="mb-12 max-w-2xl mx-auto"
+                textClassName="text-xl md:text-2xl text-gray-600 dark:text-gray-300"
+                isTextarea={true}
+                placeholder="내용을 입력하세요"
+              />
+            ) : (
+              <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto whitespace-pre-line">
+                {pageContent?.content || 'Building digital experiences\nthrough code and design'}
+              </p>
+            )}
+          </motion.div>
+
+          {/* Glass Card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="mt-12 inline-block"
+          >
+            <div className="backdrop-blur-lg bg-white/10 dark:bg-gray-800/10 border border-white/20 dark:border-gray-700/20 rounded-2xl px-8 py-4 shadow-2xl">
+              <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                <span className="text-2xl">✨</span>
+                <span>Currently building amazing things</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <motion.div
+          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <div className="text-2xl text-gray-400 dark:text-gray-500">↓</div>
+        </motion.div>
       </section>
 
       {/* Featured Projects Section */}
