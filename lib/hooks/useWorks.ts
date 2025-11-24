@@ -56,8 +56,9 @@ export function useCreateWork() {
       return data.work as Work
     },
     onSuccess: () => {
-      // 작업물 목록 무효화 → 자동 재조회
+      // 작업물 목록 무효화 + 즉시 재조회
       queryClient.invalidateQueries({ queryKey: ['works'] })
+      queryClient.refetchQueries({ queryKey: ['works'] })
     },
   })
 }

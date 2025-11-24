@@ -56,8 +56,9 @@ export function useCreateArchive() {
       return data.archive as Archive
     },
     onSuccess: () => {
-      // 아카이브 목록 무효화 → 자동 재조회
+      // 아카이브 목록 무효화 + 즉시 재조회
       queryClient.invalidateQueries({ queryKey: ['archives'] })
+      queryClient.refetchQueries({ queryKey: ['archives'] })
     },
   })
 }

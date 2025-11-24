@@ -9,6 +9,27 @@ import InlineEdit from '@/components/InlineEdit';
 import AnimatedCard from '@/components/AnimatedCard';
 import AnimatedHero from '@/components/AnimatedHero';
 
+// Helper function to extract first image from markdown
+function extractFirstImage(markdown: string): string | null {
+  const imageRegex = /!\[.*?\]\((.*?)\)/;
+  const match = markdown.match(imageRegex);
+  return match ? match[1] : null;
+}
+
+// Helper function to strip markdown syntax for preview
+function stripMarkdown(markdown: string): string {
+  return markdown
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/(\*\*|__)(.*?)\1/g, '$2')
+    .replace(/(\*|_)(.*?)\1/g, '$2')
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 interface PageContent {
   page: string;
   title: string;
@@ -217,24 +238,27 @@ export default function Home() {
                   <article
                     className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group border-2 border-indigo-200 dark:border-indigo-900"
                   >
-                    <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10">
                       ⭐ FEATURED
                     </div>
-                    {work.imageUrl && (
-                      <div className="h-48 overflow-hidden">
-                        <img
-                          src={work.imageUrl}
-                          alt={work.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                        />
-                      </div>
-                    )}
+                    {(() => {
+                      const firstImage = extractFirstImage(work.content);
+                      return firstImage ? (
+                        <div className="h-48 overflow-hidden bg-gray-100 dark:bg-gray-700">
+                          <img
+                            src={firstImage}
+                            alt={work.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                        </div>
+                      ) : null;
+                    })()}
                     <div className="p-8">
                       <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
                         {work.title}
                       </h3>
-                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                        {work.content}
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+                        {stripMarkdown(work.content)}
                       </p>
                       {work.techStack && work.techStack.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-4">
@@ -301,12 +325,24 @@ export default function Home() {
                   <article
                     className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
                   >
+                    {(() => {
+                      const firstImage = extractFirstImage(work.content);
+                      return firstImage ? (
+                        <div className="h-48 overflow-hidden bg-gray-100 dark:bg-gray-700">
+                          <img
+                            src={firstImage}
+                            alt={work.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                        </div>
+                      ) : null;
+                    })()}
                     <div className="p-8">
                       <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
                         {work.title}
                       </h3>
-                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                        {work.content}
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+                        {stripMarkdown(work.content)}
                       </p>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-400 dark:text-gray-500">
@@ -373,6 +409,18 @@ export default function Home() {
                   <article
                     className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
                   >
+                    {(() => {
+                      const firstImage = extractFirstImage(archive.content);
+                      return firstImage ? (
+                        <div className="h-48 overflow-hidden bg-gray-100 dark:bg-gray-700">
+                          <img
+                            src={firstImage}
+                            alt={archive.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                        </div>
+                      ) : null;
+                    })()}
                     <div className="p-8">
                       <div className="flex items-center gap-2 mb-3">
                         <span className="px-3 py-1 bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-300 text-sm font-medium rounded-full">
@@ -382,8 +430,8 @@ export default function Home() {
                       <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors line-clamp-2">
                         {archive.title}
                       </h3>
-                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                        {archive.content}
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+                        {stripMarkdown(archive.content)}
                       </p>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-400 dark:text-gray-500">
