@@ -12,6 +12,7 @@ import { Link } from '@tiptap/extension-link';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { useState, useEffect } from 'react';
 import FileUpload from './FileUpload';
+import { ImageGallery } from '@/lib/tiptap-extensions/ImageGallery';
 
 interface RichTextEditorProps {
   value: string;
@@ -25,8 +26,10 @@ export default function RichTextEditor({
   placeholder = "내용을 입력해보세요..."
 }: RichTextEditorProps) {
   const [showImageUpload, setShowImageUpload] = useState(false);
+  const [showGalleryUpload, setShowGalleryUpload] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHighlightPicker, setShowHighlightPicker] = useState(false);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
   const editor = useEditor({
     extensions: [
@@ -139,7 +142,8 @@ export default function RichTextEditor({
       }),
       Placeholder.configure({
         placeholder
-      })
+      }),
+      ImageGallery
     ],
     content: value,
     onUpdate: ({ editor }) => {
@@ -163,6 +167,21 @@ export default function RichTextEditor({
     if (editor) {
       editor.chain().focus().setImage({ src: url }).run();
       setShowImageUpload(false);
+    }
+  };
+
+  const handleGalleryImageUpload = (url: string) => {
+    setGalleryImages(prev => [...prev, url]);
+  };
+
+  const insertGallery = () => {
+    if (editor && galleryImages.length > 0) {
+      editor.chain().focus().setImageGallery({
+        images: galleryImages,
+        columns: 3
+      }).run();
+      setGalleryImages([]);
+      setShowGalleryUpload(false);
     }
   };
 
@@ -426,6 +445,14 @@ export default function RichTextEditor({
           >
             📷 이미지
           </button>
+          <button
+            type="button"
+            onClick={() => setShowGalleryUpload(!showGalleryUpload)}
+            className="px-3 py-1 text-sm bg-purple-500 dark:bg-purple-600 text-white rounded hover:bg-purple-600 dark:hover:bg-purple-700 transition-colors"
+            title="이미지 갤러리"
+          >
+            🖼️ 갤러리
+          </button>
         </div>
       </div>
 
@@ -450,6 +477,61 @@ export default function RichTextEditor({
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
             이미지: JPG, PNG, GIF, WebP 등 | 동영상: MP4, WebM, MOV 등
           </p>
+        </div>
+      )}
+
+      {/* Gallery Upload Panel */}
+      {showGalleryUpload && (
+        <div className="border-b border-gray-300 dark:border-gray-700 bg-purple-50 dark:bg-purple-900/20 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">갤러리 이미지 업로드 ({galleryImages.length}개)</h4>
+            <button
+              type="button"
+              onClick={() => {
+                setShowGalleryUpload(false);
+                setGalleryImages([]);
+              }}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+            >
+              ✕
+            </button>
+          </div>
+
+          {galleryImages.length > 0 && (
+            <div className="grid grid-cols-4 gap-2 mb-4">
+              {galleryImages.map((url, index) => (
+                <div key={index} className="relative group">
+                  <img src={url} alt={`Gallery ${index + 1}`} className="w-full h-20 object-cover rounded" />
+                  <button
+                    type="button"
+                    onClick={() => setGalleryImages(prev => prev.filter((_, i) => i !== index))}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <FileUpload
+            onFileUpload={handleGalleryImageUpload}
+            accept="image/*"
+            label="이미지 추가"
+          />
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            여러 이미지를 선택하여 갤러리를 만드세요
+          </p>
+
+          {galleryImages.length > 0 && (
+            <button
+              type="button"
+              onClick={insertGallery}
+              className="mt-3 w-full bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              갤러리 삽입 ({galleryImages.length}개 이미지)
+            </button>
+          )}
         </div>
       )}
 
