@@ -161,11 +161,8 @@ function WorkPageContent() {
   };
 
   const handleConfirmDelete = async () => {
-    deleteWork.mutate(deleteModal.id, {
-      onSuccess: () => {
-        setDeleteModal({ isOpen: false, type: 'work', id: '', title: '', message: '' });
-      },
-    });
+    await deleteWork.mutateAsync(deleteModal.id);
+    setDeleteModal({ isOpen: false, type: 'work', id: '', title: '', message: '' });
   };
 
   const handleCancelDelete = () => {

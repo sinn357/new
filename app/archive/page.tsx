@@ -149,11 +149,8 @@ function ArchivePageContent() {
   };
 
   const handleConfirmDelete = async () => {
-    deleteArchive.mutate(deleteModal.id, {
-      onSuccess: () => {
-        setDeleteModal({ isOpen: false, type: 'archive', id: '', title: '', message: '' });
-      },
-    });
+    await deleteArchive.mutateAsync(deleteModal.id);
+    setDeleteModal({ isOpen: false, type: 'archive', id: '', title: '', message: '' });
   };
 
   const handleCancelDelete = () => {
