@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/select';
 import RichTextEditor from '@/components/RichTextEditor';
 import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface WorkFormProps {
   editingWork?: Work | null;
@@ -35,6 +36,7 @@ type WorkFormInput = z.input<typeof workSchema>;
 
 export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormProps) {
   const isEditing = !!editingWork;
+  const queryClient = useQueryClient();
 
   // Using any type to bypass Zod transform type inference issue with React Hook Form
   // Runtime behavior is correct but TypeScript can't infer types properly
@@ -92,6 +94,9 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
       if (!response.ok) {
         throw new Error(`Failed to ${isEditing ? 'update' : 'create'} work`);
       }
+
+      // Invalidate and refetch queries
+      await queryClient.invalidateQueries({ queryKey: ['works'] });
 
       form.reset(); // 자동 리셋!
       onSuccess();

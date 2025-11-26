@@ -70,7 +70,7 @@ export default function ImageGalleryNode({
         )}
 
         {/* Gallery Grid */}
-        <div className={`grid ${gridColsClass} gap-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600`}>
+        <div className={`grid ${gridColsClass} gap-4`}>
           {(images as string[]).map((src: string, index: number) => (
             <div key={index} className="relative group">
               <img

@@ -25,6 +25,7 @@ import {
 import RichTextEditor from '@/components/RichTextEditor';
 import StarRating from '@/components/StarRating';
 import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface ArchiveFormProps {
   editingArchive?: Archive | null;
@@ -36,6 +37,7 @@ type ArchiveFormInput = z.input<typeof archiveSchema>;
 
 export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: ArchiveFormProps) {
   const isEditing = !!editingArchive;
+  const queryClient = useQueryClient();
 
   // Using any type to bypass Zod transform type inference issue with React Hook Form
   // Runtime behavior is correct but TypeScript can't infer types properly
@@ -81,6 +83,9 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
       if (!response.ok) {
         throw new Error(`Failed to ${isEditing ? 'update' : 'create'} archive`);
       }
+
+      // Invalidate and refetch queries
+      await queryClient.invalidateQueries({ queryKey: ['archives'] });
 
       form.reset(); // 자동 리셋!
       onSuccess();

@@ -80,7 +80,7 @@ export const ImageGallery = Node.create<ImageGalleryOptions>({
       'div',
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
         'data-type': 'image-gallery',
-        class: `grid ${gridColsClass} gap-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 my-4`,
+        class: `grid ${gridColsClass} gap-4 my-4`,
       }),
       ...imagesHTML
     ];

@@ -15,6 +15,21 @@ import { useWorks, useDeleteWork } from '@/lib/hooks/useWorks';
 
 // Helper function to extract first image from HTML
 function extractFirstImage(html: string): string | null {
+  // Try to extract from gallery first
+  const galleryRegex = /data-images="([^"]+)"/;
+  const galleryMatch = html.match(galleryRegex);
+  if (galleryMatch) {
+    try {
+      const images = JSON.parse(galleryMatch[1].replace(/&quot;/g, '"'));
+      if (Array.isArray(images) && images.length > 0) {
+        return images[0];
+      }
+    } catch (e) {
+      // Fallback to img tag
+    }
+  }
+
+  // Fallback to regular img tag
   const imgRegex = /<img[^>]+src="([^">]+)"/;
   const match = html.match(imgRegex);
   return match ? match[1] : null;
@@ -161,8 +176,11 @@ function WorkPageContent() {
   };
 
   const handleConfirmDelete = async () => {
-    await deleteWork.mutateAsync(deleteModal.id);
-    setDeleteModal({ isOpen: false, type: 'work', id: '', title: '', message: '' });
+    try {
+      await deleteWork.mutateAsync(deleteModal.id);
+    } finally {
+      setDeleteModal({ isOpen: false, type: 'work', id: '', title: '', message: '' });
+    }
   };
 
   const handleCancelDelete = () => {

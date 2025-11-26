@@ -13,10 +13,25 @@ import ArchiveForm from '@/components/ArchiveForm';
 import { useArchives, useDeleteArchive } from '@/lib/hooks/useArchives';
 import StarRating from '@/components/StarRating';
 
-// Helper function to extract first image from markdown
-function extractFirstImage(markdown: string): string | null {
-  const imageRegex = /!\[.*?\]\((.*?)\)/;
-  const match = markdown.match(imageRegex);
+// Helper function to extract first image from HTML
+function extractFirstImage(html: string): string | null {
+  // Try to extract from gallery first
+  const galleryRegex = /data-images="([^"]+)"/;
+  const galleryMatch = html.match(galleryRegex);
+  if (galleryMatch) {
+    try {
+      const images = JSON.parse(galleryMatch[1].replace(/&quot;/g, '"'));
+      if (Array.isArray(images) && images.length > 0) {
+        return images[0];
+      }
+    } catch (e) {
+      // Fallback to img tag
+    }
+  }
+
+  // Fallback to regular img tag
+  const imgRegex = /<img[^>]+src="([^">]+)"/;
+  const match = html.match(imgRegex);
   return match ? match[1] : null;
 }
 
@@ -149,8 +164,11 @@ function ArchivePageContent() {
   };
 
   const handleConfirmDelete = async () => {
-    await deleteArchive.mutateAsync(deleteModal.id);
-    setDeleteModal({ isOpen: false, type: 'archive', id: '', title: '', message: '' });
+    try {
+      await deleteArchive.mutateAsync(deleteModal.id);
+    } finally {
+      setDeleteModal({ isOpen: false, type: 'archive', id: '', title: '', message: '' });
+    }
   };
 
   const handleCancelDelete = () => {
