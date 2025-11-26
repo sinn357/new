@@ -61,13 +61,28 @@ export const ImageGallery = Node.create<ImageGalleryOptions>({
     ];
   },
 
-  renderHTML({ HTMLAttributes }) {
+  renderHTML({ HTMLAttributes, node }) {
+    const { images, columns } = node.attrs;
+
+    // Generate grid HTML for non-editor view
+    const gridColsClass = ({
+      1: 'grid-cols-1',
+      2: 'grid-cols-1 md:grid-cols-2',
+      3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+      4: 'grid-cols-2 md:grid-cols-4',
+    } as Record<number, string>)[columns] || 'grid-cols-3';
+
+    const imagesHTML = images.map((src: string) =>
+      ['img', { src, class: 'w-full h-auto rounded-lg object-cover', style: 'aspect-ratio: 4/3' }]
+    );
+
     return [
       'div',
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
         'data-type': 'image-gallery',
+        class: `grid ${gridColsClass} gap-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 my-4`,
       }),
-      0,
+      ...imagesHTML
     ];
   },
 
