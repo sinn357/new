@@ -6,9 +6,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import { Color } from '@tiptap/extension-color';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Highlight } from '@tiptap/extension-highlight';
-import { Underline } from '@tiptap/extension-underline';
 import { Image } from '@tiptap/extension-image';
-import { Link } from '@tiptap/extension-link';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { useState, useEffect } from 'react';
 import FileUpload from './FileUpload';
@@ -33,11 +31,7 @@ export default function RichTextEditor({
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3]
-        }
-      }),
+      StarterKit,
       TextAlign.configure({
         types: ['heading', 'paragraph']
       }),
@@ -46,7 +40,6 @@ export default function RichTextEditor({
       Highlight.configure({
         multicolor: true
       }),
-      Underline,
       Image.configure({
         inline: true,
         allowBase64: true,
@@ -133,12 +126,6 @@ export default function RichTextEditor({
             };
           };
         },
-      }),
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-blue-600 underline hover:text-blue-800'
-        }
       }),
       Placeholder.configure({
         placeholder

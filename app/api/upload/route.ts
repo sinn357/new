@@ -34,9 +34,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file received.' }, { status: 400 });
     }
 
-    // File size limit (10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File size exceeds 10MB limit.' }, { status: 400 });
+    // File size limit (4MB for Vercel)
+    const maxSize = 4 * 1024 * 1024; // 4MB
+    if (file.size > maxSize) {
+      return NextResponse.json({
+        error: `파일 크기가 너무 큽니다. 최대 ${Math.floor(maxSize / 1024 / 1024)}MB까지 업로드 가능합니다.`
+      }, { status: 413 });
     }
 
     // All file types are now allowed
