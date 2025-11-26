@@ -46,7 +46,90 @@ export default function RichTextEditor({
       Underline,
       Image.configure({
         inline: true,
-        allowBase64: true
+        allowBase64: true,
+        HTMLAttributes: {
+          class: 'rounded-lg cursor-pointer',
+          style: 'max-width: 100%; height: auto;'
+        }
+      }).extend({
+        addAttributes() {
+          return {
+            ...this.parent?.(),
+            width: {
+              default: null,
+              renderHTML: attributes => {
+                return {
+                  width: attributes.width,
+                }
+              },
+            },
+            height: {
+              default: null,
+              renderHTML: attributes => {
+                return {
+                  height: attributes.height,
+                }
+              },
+            },
+          }
+        },
+        addNodeView() {
+          return ({ node, getPos, editor }) => {
+            const container = document.createElement('div');
+            container.className = 'relative inline-block group';
+
+            const img = document.createElement('img');
+            img.src = node.attrs.src;
+            img.alt = node.attrs.alt || '';
+            img.className = 'rounded-lg max-w-full h-auto';
+            if (node.attrs.width) img.style.width = `${node.attrs.width}px`;
+            if (node.attrs.height) img.style.height = `${node.attrs.height}px`;
+
+            // Resize handles
+            const resizeHandle = document.createElement('div');
+            resizeHandle.className = 'absolute bottom-0 right-0 w-4 h-4 bg-blue-500 rounded-full cursor-se-resize opacity-0 group-hover:opacity-100 transition-opacity';
+
+            let startX = 0, startY = 0, startWidth = 0;
+
+            resizeHandle.addEventListener('mousedown', (e) => {
+              e.preventDefault();
+              startX = e.clientX;
+              startY = e.clientY;
+              startWidth = img.offsetWidth;
+
+              const onMouseMove = (e: MouseEvent) => {
+                const width = startWidth + (e.clientX - startX);
+                if (width > 100) {
+                  img.style.width = `${width}px`;
+                  img.style.height = 'auto';
+                }
+              };
+
+              const onMouseUp = () => {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+
+                // Update node attributes
+                if (typeof getPos === 'function') {
+                  editor.commands.updateAttributes('image', {
+                    width: parseInt(img.style.width),
+                    height: null
+                  });
+                }
+              };
+
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
+            });
+
+            container.appendChild(img);
+            container.appendChild(resizeHandle);
+
+            return {
+              dom: container,
+            };
+          };
+        },
       }),
       Link.configure({
         openOnClick: false,

@@ -12,24 +12,20 @@ import AnimatedCard from '@/components/AnimatedCard';
 import WorkForm from '@/components/WorkForm';
 import { useWorks, useDeleteWork } from '@/lib/hooks/useWorks';
 
-// Helper function to extract first image from markdown
-function extractFirstImage(markdown: string): string | null {
-  const imageRegex = /!\[.*?\]\((.*?)\)/;
-  const match = markdown.match(imageRegex);
+// Helper function to extract first image from HTML
+function extractFirstImage(html: string): string | null {
+  const imgRegex = /<img[^>]+src="([^">]+)"/;
+  const match = html.match(imgRegex);
   return match ? match[1] : null;
 }
 
-// Helper function to strip markdown syntax for preview
-function stripMarkdown(markdown: string): string {
-  return markdown
-    .replace(/!\[.*?\]\(.*?\)/g, '')
-    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
-    .replace(/^#{1,6}\s+/gm, '')
-    .replace(/(\*\*|__)(.*?)\1/g, '$2')
-    .replace(/(\*|_)(.*?)\1/g, '$2')
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/\n{3,}/g, '\n\n')
+// Helper function to strip HTML tags for preview
+function stripHtml(html: string): string {
+  return html
+    .replace(/<style[^>]*>.*?<\/style>/gi, '')
+    .replace(/<script[^>]*>.*?<\/script>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
@@ -430,7 +426,7 @@ export default function WorkPage() {
                     </h3>
 
                     <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                      {stripMarkdown(work.content)}
+                      {stripHtml(work.content)}
                     </p>
 
                     {work.techStack && work.techStack.length > 0 && (

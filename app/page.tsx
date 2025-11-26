@@ -16,17 +16,13 @@ function extractFirstImage(markdown: string): string | null {
   return match ? match[1] : null;
 }
 
-// Helper function to strip markdown syntax for preview
-function stripMarkdown(markdown: string): string {
-  return markdown
-    .replace(/!\[.*?\]\(.*?\)/g, '')
-    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
-    .replace(/^#{1,6}\s+/gm, '')
-    .replace(/(\*\*|__)(.*?)\1/g, '$2')
-    .replace(/(\*|_)(.*?)\1/g, '$2')
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/\n{3,}/g, '\n\n')
+// Helper function to strip HTML tags for preview
+function stripHtml(html: string): string {
+  return html
+    .replace(/<style[^>]*>.*?<\/style>/gi, '')
+    .replace(/<script[^>]*>.*?<\/script>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
@@ -347,7 +343,7 @@ export default function Home() {
                         {work.title}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                        {stripMarkdown(work.content)}
+                        {stripHtml(work.content)}
                       </p>
                       {work.techStack && work.techStack.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-4">
@@ -431,7 +427,7 @@ export default function Home() {
                         {work.title}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                        {stripMarkdown(work.content)}
+                        {stripHtml(work.content)}
                       </p>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-400 dark:text-gray-500">
@@ -520,7 +516,7 @@ export default function Home() {
                         {archive.title}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                        {stripMarkdown(archive.content)}
+                        {stripHtml(archive.content)}
                       </p>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-400 dark:text-gray-500">

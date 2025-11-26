@@ -19,23 +19,13 @@ function extractFirstImage(markdown: string): string | null {
   return match ? match[1] : null;
 }
 
-// Helper function to strip markdown syntax for preview
-function stripMarkdown(markdown: string): string {
-  return markdown
-    // Remove images and videos: ![alt](url) or ![alt](url)
-    .replace(/!\[.*?\]\(.*?\)/g, '')
-    // Remove links: [text](url) -> text
-    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
-    // Remove headers: ### Header -> Header
-    .replace(/^#{1,6}\s+/gm, '')
-    // Remove bold/italic: **text** or *text* -> text
-    .replace(/(\*\*|__)(.*?)\1/g, '$2')
-    .replace(/(\*|_)(.*?)\1/g, '$2')
-    // Remove code blocks
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`([^`]+)`/g, '$1')
-    // Remove extra whitespace
-    .replace(/\n{3,}/g, '\n\n')
+// Helper function to strip HTML tags for preview
+function stripHtml(html: string): string {
+  return html
+    .replace(/<style[^>]*>.*?<\/style>/gi, '')
+    .replace(/<script[^>]*>.*?<\/script>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
@@ -409,7 +399,7 @@ export default function ArchivePage() {
                     )}
 
                     <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 line-clamp-2">
-                      {stripMarkdown(archive.content)}
+                      {stripHtml(archive.content)}
                     </p>
 
                     {archive.tags && archive.tags.length > 0 && (
