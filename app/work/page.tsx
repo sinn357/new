@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -47,8 +48,11 @@ interface PageContent {
   content: string;
 }
 
-export default function WorkPage() {
+function WorkPageContent() {
   const { isAdmin } = useAdmin();
+  const searchParams = useSearchParams();
+  const editId = searchParams?.get('edit');
+
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showForm, setShowForm] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{
@@ -71,6 +75,17 @@ export default function WorkPage() {
   const { data: works = [], isLoading, error } = useWorks(selectedCategory || undefined);
   const { data: allWorks = [] } = useWorks();
   const deleteWork = useDeleteWork();
+
+  // Load work for editing when edit ID is in URL
+  useEffect(() => {
+    if (editId && allWorks.length > 0) {
+      const workToEdit = allWorks.find(w => w.id === editId);
+      if (workToEdit) {
+        setEditingWork(workToEdit);
+        setShowForm(true);
+      }
+    }
+  }, [editId, allWorks]);
 
   const fetchPageContent = async () => {
     try {
@@ -539,5 +554,13 @@ export default function WorkPage() {
       />
 
     </div>
+  );
+}
+
+export default function WorkPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
+      <WorkPageContent />
+    </Suspense>
   );
 }

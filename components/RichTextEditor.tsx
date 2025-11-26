@@ -10,7 +10,7 @@ import { Underline } from '@tiptap/extension-underline';
 import { Image } from '@tiptap/extension-image';
 import { Link } from '@tiptap/extension-link';
 import { Placeholder } from '@tiptap/extension-placeholder';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FileUpload from './FileUpload';
 
 interface RichTextEditorProps {
@@ -151,6 +151,13 @@ export default function RichTextEditor({
       }
     }
   });
+
+  // Update editor content when value prop changes (for editing mode)
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value);
+    }
+  }, [value, editor]);
 
   const handleImageUpload = (url: string) => {
     if (editor) {

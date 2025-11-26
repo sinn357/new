@@ -221,13 +221,22 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                     )}
                   </div>
                   {isAdmin && (
-                    <button
-                      onClick={handleDeleteWork}
-                      className="text-red-500 hover:text-red-700 p-3 rounded-lg hover:bg-red-50 transition-colors"
-                      title="작업물 삭제"
-                    >
-                      🗑️
-                    </button>
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/work?edit=${id}`}
+                        className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        title="작업물 수정"
+                      >
+                        ✏️
+                      </Link>
+                      <button
+                        onClick={handleDeleteWork}
+                        className="text-red-500 hover:text-red-700 p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        title="작업물 삭제"
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   )}
                 </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Archive, ARCHIVE_CATEGORIES, ArchiveCategory } from '@/lib/archive-store';
@@ -35,8 +36,11 @@ interface PageContent {
   content: string;
 }
 
-export default function ArchivePage() {
+function ArchivePageContent() {
   const { isAdmin } = useAdmin();
+  const searchParams = useSearchParams();
+  const editId = searchParams?.get('edit');
+
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showForm, setShowForm] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{
@@ -59,6 +63,17 @@ export default function ArchivePage() {
   const { data: archives = [], isLoading, error } = useArchives(selectedCategory || undefined);
   const { data: allArchives = [] } = useArchives();
   const deleteArchive = useDeleteArchive();
+
+  // Load archive for editing when edit ID is in URL
+  useEffect(() => {
+    if (editId && allArchives.length > 0) {
+      const archiveToEdit = allArchives.find(a => a.id === editId);
+      if (archiveToEdit) {
+        setEditingArchive(archiveToEdit);
+        setShowForm(true);
+      }
+    }
+  }, [editId, allArchives]);
 
   const fetchPageContent = async () => {
     try {
@@ -459,5 +474,13 @@ export default function ArchivePage() {
       />
 
     </div>
+  );
+}
+
+export default function ArchivePage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
+      <ArchivePageContent />
+    </Suspense>
   );
 }
