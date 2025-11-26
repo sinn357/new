@@ -19,6 +19,8 @@ export const ImageGallery = Node.create<ImageGalleryOptions>({
 
   group: 'block',
 
+  atom: true,
+
   addOptions() {
     return {
       HTMLAttributes: {},
