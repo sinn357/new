@@ -8,11 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAdmin } from '@/contexts/AdminContext';
 import { isImageFile, isVideoFile, isAudioFile, isPdfFile, getFileIcon, getFileTypeLabel, getFileName } from '@/lib/file-utils';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import StarRating from '@/components/StarRating';
-import { RenderMarkdownWithSpoilers } from '@/lib/spoiler-parser';
-import { ClickableImage } from '@/components/ImageLightbox';
 import ImageLightbox from '@/components/ImageLightbox';
 import ShareButtons from '@/components/ShareButtons';
 
@@ -165,85 +161,9 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
               />
             </div>
 
-            <RenderMarkdownWithSpoilers
-              content={archive.content}
+            <div
               className="prose prose-lg max-w-none dark:prose-invert"
-              markdownComponents={{
-                code({ inline, className, children, ...props }: any) {
-                  const match = /language-(\w+)/.exec(className || '');
-                  const language = match ? match[1] : '';
-
-                  return !inline && language ? (
-                    <SyntaxHighlighter
-                      style={oneDark}
-                      language={language}
-                      PreTag="div"
-                      {...props}
-                    >
-                      {String(children).replace(/\n$/, '')}
-                    </SyntaxHighlighter>
-                  ) : (
-                    <code className={className} {...props}>
-                      {children}
-                    </code>
-                  );
-                },
-                h1: ({ children }: any) => (
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 border-b pb-2">
-                    {children}
-                  </h1>
-                ),
-                h2: ({ children }: any) => (
-                  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3 mt-6">
-                    {children}
-                  </h2>
-                ),
-                h3: ({ children }: any) => (
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2 mt-4">
-                    {children}
-                  </h3>
-                ),
-                p: ({ children }: any) => (
-                  <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                    {children}
-                  </p>
-                ),
-                ul: ({ children }: any) => (
-                  <ul className="list-disc list-inside mb-4 text-gray-700 dark:text-gray-300 space-y-2">
-                    {children}
-                  </ul>
-                ),
-                ol: ({ children }: any) => (
-                  <ol className="list-decimal list-inside mb-4 text-gray-700 dark:text-gray-300 space-y-2">
-                    {children}
-                  </ol>
-                ),
-                li: ({ children }: any) => (
-                  <li className="ml-4">{children}</li>
-                ),
-                blockquote: ({ children }: any) => (
-                  <blockquote className="border-l-4 border-purple-500 dark:border-purple-400 pl-4 py-2 mb-4 bg-purple-50 dark:bg-purple-900/20 text-gray-700 dark:text-gray-300 italic">
-                    {children}
-                  </blockquote>
-                ),
-                a: ({ href, children }: any) => (
-                  <a
-                    href={href}
-                    className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {children}
-                  </a>
-                ),
-                img: ({ src, alt }: any) => (
-                  <ClickableImage
-                    src={src}
-                    alt={alt}
-                    className="max-w-full h-auto rounded-lg shadow-md mb-4"
-                  />
-                )
-              }}
+              dangerouslySetInnerHTML={{ __html: archive.content }}
             />
 
             {archive.tags && archive.tags.length > 0 && (

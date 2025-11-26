@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import MarkdownEditor from '@/components/MarkdownEditor';
+import RichTextEditor from '@/components/RichTextEditor';
 import { useEffect } from 'react';
 
 interface WorkFormProps {
@@ -190,19 +190,18 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
             )}
           />
 
-          {/* Content (Markdown) */}
+          {/* Content (Rich Text) */}
           <FormField
             control={form.control}
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>설명 * (마크다운 지원)</FormLabel>
+                <FormLabel>설명 *</FormLabel>
                 <FormControl>
-                  <MarkdownEditor
+                  <RichTextEditor
                     value={field.value}
                     onChange={field.onChange}
-                    placeholder="프로젝트에 대한 상세 설명을 마크다운으로 작성하세요..."
-                    rows={8}
+                    placeholder="프로젝트에 대한 상세 설명을 작성하세요..."
                   />
                 </FormControl>
                 <FormMessage />

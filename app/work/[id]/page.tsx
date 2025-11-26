@@ -8,10 +8,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAdmin } from '@/contexts/AdminContext';
 import { isImageFile, isVideoFile, isAudioFile, isPdfFile, getFileIcon, getFileTypeLabel, getFileName } from '@/lib/file-utils';
-import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { ClickableImage } from '@/components/ImageLightbox';
 import ImageLightbox from '@/components/ImageLightbox';
 import ShareButtons from '@/components/ShareButtons';
 
@@ -255,88 +251,10 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                   />
                 </div>
 
-                <div className="prose prose-lg max-w-none dark:prose-invert mb-8">
-                  <ReactMarkdown
-                    components={{
-                      code({ inline, className, children, ...props }: any) {
-                        const match = /language-(\w+)/.exec(className || '');
-                        const language = match ? match[1] : '';
-                        
-                        return !inline && language ? (
-                          <SyntaxHighlighter
-                            style={oneDark}
-                            language={language}
-                            PreTag="div"
-                            {...props}
-                          >
-                            {String(children).replace(/\n$/, '')}
-                          </SyntaxHighlighter>
-                        ) : (
-                          <code className={className} {...props}>
-                            {children}
-                          </code>
-                        );
-                      },
-                      h1: ({ children }) => (
-                        <h1 className="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">
-                          {children}
-                        </h1>
-                      ),
-                      h2: ({ children }) => (
-                        <h2 className="text-xl font-semibold text-gray-800 mb-3 mt-6">
-                          {children}
-                        </h2>
-                      ),
-                      h3: ({ children }) => (
-                        <h3 className="text-lg font-semibold text-gray-800 mb-2 mt-4">
-                          {children}
-                        </h3>
-                      ),
-                      p: ({ children }) => (
-                        <p className="text-gray-700 mb-4 leading-relaxed">
-                          {children}
-                        </p>
-                      ),
-                      ul: ({ children }) => (
-                        <ul className="list-disc list-inside mb-4 text-gray-700 space-y-2">
-                          {children}
-                        </ul>
-                      ),
-                      ol: ({ children }) => (
-                        <ol className="list-decimal list-inside mb-4 text-gray-700 space-y-2">
-                          {children}
-                        </ol>
-                      ),
-                      li: ({ children }) => (
-                        <li className="ml-4">{children}</li>
-                      ),
-                      blockquote: ({ children }) => (
-                        <blockquote className="border-l-4 border-blue-500 pl-4 py-2 mb-4 bg-blue-50 text-gray-700 italic">
-                          {children}
-                        </blockquote>
-                      ),
-                      a: ({ href, children }) => (
-                        <a 
-                          href={href} 
-                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {children}
-                        </a>
-                      ),
-                      img: ({ src, alt }: any) => (
-                        <ClickableImage
-                          src={src}
-                          alt={alt}
-                          className="max-w-full h-auto rounded-lg shadow-md mb-4"
-                        />
-                      )
-                    }}
-                  >
-                    {work.content}
-                  </ReactMarkdown>
-                </div>
+                <div
+                  className="prose prose-lg max-w-none dark:prose-invert mb-8"
+                  dangerouslySetInnerHTML={{ __html: work.content }}
+                />
 
                 {/* Tech Stack */}
                 {work.techStack && work.techStack.length > 0 && (

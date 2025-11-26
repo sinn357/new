@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import MarkdownEditor from '@/components/MarkdownEditor';
+import RichTextEditor from '@/components/RichTextEditor';
 import StarRating from '@/components/StarRating';
 import { useEffect } from 'react';
 
@@ -185,13 +185,12 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>내용 * (마크다운 지원)</FormLabel>
+                <FormLabel>내용 *</FormLabel>
                 <FormControl>
-                  <MarkdownEditor
+                  <RichTextEditor
                     value={field.value}
                     onChange={field.onChange}
-                    placeholder="내용을 마크다운으로 작성하세요..."
-                    rows={10}
+                    placeholder="내용을 작성하세요..."
                   />
                 </FormControl>
                 <FormMessage />
