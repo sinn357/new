@@ -148,9 +148,13 @@
   padding-left: 0;
 }
 
+.ProseMirror ul[data-type="taskList"] li {
+  padding-left: 0;
+}
+
 .ProseMirror li[data-type="taskItem"] {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
 }
 
@@ -160,6 +164,8 @@
   flex-shrink: 0;
   margin: 0;
   width: auto;
+  user-select: none;
+  cursor: pointer;
 }
 
 .ProseMirror li[data-type="taskItem"] > div {
@@ -173,7 +179,6 @@
 
 .ProseMirror li[data-type="taskItem"] > div > p {
   margin: 0;
-  display: inline;
 }
 
 .ProseMirror li[data-type="taskItem"] > div > p + p {

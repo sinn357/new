@@ -1,4 +1,5 @@
 import { mergeAttributes, Node } from '@tiptap/core';
+import { TextSelection } from '@tiptap/pm/state';
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -60,21 +61,31 @@ export const CollapsibleBlock = Node.create({
     return {
       insertCollapsible:
         () =>
-        ({ commands }) =>
-          commands.insertContent({
-            type: this.name,
-            attrs: { open: true },
-            content: [
-              {
-                type: 'collapsibleSummary',
-                content: [{ type: 'text', text: '접기 제목' }],
-              },
-              {
-                type: 'paragraph',
-                content: [{ type: 'text', text: '내용을 입력하세요.' }],
-              },
-            ],
-          }),
+        ({ state, dispatch }) => {
+          const { schema } = state;
+          const summaryNode = schema.nodes.collapsibleSummary.create(
+            null,
+            schema.text('접기 제목')
+          );
+          const bodyNode = schema.nodes.paragraph.create(
+            null,
+            schema.text('내용을 입력하세요.')
+          );
+          const collapsibleNode = schema.nodes.collapsible.create(
+            { open: true },
+            [summaryNode, bodyNode]
+          );
+
+          const { from } = state.selection;
+          const tr = state.tr.insert(from, collapsibleNode);
+          const summarySize = summaryNode.nodeSize;
+          const bodyPos = from + 1 + summarySize + 1;
+          tr.setSelection(TextSelection.near(tr.doc.resolve(bodyPos), 1));
+          if (dispatch) {
+            dispatch(tr.scrollIntoView());
+          }
+          return true;
+        },
       toggleCollapsible:
         () =>
         ({ state, dispatch }) => {
@@ -107,6 +118,29 @@ export const CollapsibleBlock = Node.create({
         dom.setAttribute('open', 'open');
       }
 
+      const handleClick = (event: MouseEvent) => {
+        const target = event.target as HTMLElement | null;
+        if (!target || !target.closest('summary')) return;
+        event.preventDefault();
+        const open = !dom.hasAttribute('open');
+        if (open) {
+          dom.setAttribute('open', 'open');
+        } else {
+          dom.removeAttribute('open');
+        }
+        if (typeof getPos !== 'function') return;
+        const pos = getPos();
+        if (typeof pos !== 'number') return;
+        editor.commands.command(({ tr }) => {
+          const current = editor.state.doc.nodeAt(pos);
+          const attrs = current ? { ...current.attrs, open } : { open };
+          tr.setNodeMarkup(pos, undefined, attrs);
+          return true;
+        });
+      };
+
+      dom.addEventListener('click', handleClick);
+
       const handleToggle = () => {
         const open = dom.hasAttribute('open');
         if (typeof getPos !== 'function') return;
@@ -135,6 +169,7 @@ export const CollapsibleBlock = Node.create({
           return true;
         },
         destroy() {
+          dom.removeEventListener('click', handleClick);
           dom.removeEventListener('toggle', handleToggle);
         },
       };
