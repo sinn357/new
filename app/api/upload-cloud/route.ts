@@ -17,9 +17,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file received.' }, { status: 400 });
     }
 
-    // File size limit (10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File size exceeds 10MB limit.' }, { status: 400 });
+    // File size limit (50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      return NextResponse.json({ error: 'File size exceeds 50MB limit.' }, { status: 400 });
     }
 
     // Allowed file types

@@ -125,7 +125,7 @@ export default function FileUpload({
       
       {!currentUrl && (
         <p className="text-xs text-gray-500">
-          지원 형식: 이미지, 비디오, PDF, ZIP (최대 10MB)
+          지원 형식: 이미지, 비디오, PDF, ZIP (최대 50MB)
         </p>
       )}
     </div>

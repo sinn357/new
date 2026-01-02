@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file received.' }, { status: 400 });
     }
 
-    // File size limit (4MB for Vercel)
-    const maxSize = 4 * 1024 * 1024; // 4MB
+    // File size limit
+    const maxSize = 50 * 1024 * 1024; // 50MB
     if (file.size > maxSize) {
       return NextResponse.json({
         error: `파일 크기가 너무 큽니다. 최대 ${Math.floor(maxSize / 1024 / 1024)}MB까지 업로드 가능합니다.`
