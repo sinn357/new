@@ -154,7 +154,7 @@
 
 .ProseMirror .task-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.5rem;
 }
 
@@ -169,7 +169,7 @@
 }
 
 .ProseMirror .task-item__checkbox {
-  margin: 0.2rem 0 0;
+  margin: 0;
 }
 
 .ProseMirror .task-item__content {
@@ -188,7 +188,7 @@
   margin-top: 0.25rem;
 }
 
-.ProseMirror li[data-type="taskItem"][data-checked="true"] .task-item__content > p {
+.ProseMirror li[data-type="taskItem"][data-checked="true"] .task-item__content {
   text-decoration: line-through;
   color: #9ca3af;
 }
@@ -280,10 +280,12 @@
   margin: 0;
   user-select: none;
   line-height: 1.5;
+  cursor: default;
 }
 
 .prose li[data-type="taskItem"] > label input {
-  margin: 0.2rem 0 0;
+  margin: 0;
+  pointer-events: none;
 }
 
 .prose li[data-type="taskItem"] > div {
@@ -301,7 +303,7 @@
   margin-top: 0.25rem;
 }
 
-.prose li[data-type="taskItem"][data-checked="true"] > div > p {
+.prose li[data-type="taskItem"][data-checked="true"] > div {
   text-decoration: line-through;
   color: #9ca3af;
 }

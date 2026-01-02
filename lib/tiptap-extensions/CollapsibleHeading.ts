@@ -76,6 +76,9 @@ export const CollapsibleHeading = Heading.extend({
           if (updatedNode.type.name !== 'heading') return false;
           dom.setAttribute('data-collapsed', updatedNode.attrs.collapsed ? 'true' : 'false');
           button.textContent = updatedNode.attrs.collapsed ? '▸' : '▾';
+          if (editor?.view?.dom) {
+            requestAnimationFrame(() => applyHeadingCollapse(editor.view.dom));
+          }
           return true;
         },
       };
