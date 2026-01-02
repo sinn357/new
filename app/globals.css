@@ -134,16 +134,66 @@
 
 .ProseMirror li[data-type="taskItem"] {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.5rem;
 }
 
 .ProseMirror li[data-type="taskItem"] > label {
-  margin-top: 0.2rem;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin: 0;
 }
 
 .ProseMirror li[data-type="taskItem"] > div {
   flex: 1;
+}
+
+.ProseMirror li[data-type="taskItem"] > label input {
+  margin: 0;
+}
+
+.ProseMirror li[data-type="taskItem"] > div > p {
+  margin: 0;
+}
+
+.ProseMirror details[data-collapsible],
+.prose details[data-collapsible] {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin: 0.75rem 0;
+  background: #f9fafb;
+}
+
+.ProseMirror details[data-collapsible] > summary,
+.prose details[data-collapsible] > summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+
+.ProseMirror details[data-collapsible] > summary::-webkit-details-marker,
+.prose details[data-collapsible] > summary::-webkit-details-marker {
+  display: none;
+}
+
+.ProseMirror details[data-collapsible] > summary::before,
+.prose details[data-collapsible] > summary::before {
+  content: '▸';
+  display: inline-block;
+  margin-right: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.ProseMirror details[data-collapsible][open] > summary::before,
+.prose details[data-collapsible][open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.ProseMirror details[data-collapsible] > summary + *,
+.prose details[data-collapsible] > summary + * {
+  margin-top: 0.5rem;
 }
 
 

@@ -20,6 +20,7 @@ import { useState, useEffect, useRef } from 'react';
 import FileUpload from './FileUpload';
 import { ImageGallery } from '@/lib/tiptap-extensions/ImageGallery';
 import { AppleNotesShortcuts } from '@/lib/tiptap-extensions/AppleNotesShortcuts';
+import { CollapsibleBlock, CollapsibleSummary } from '@/lib/tiptap-extensions/CollapsibleBlock';
 
 interface RichTextEditorProps {
   value: string;
@@ -151,6 +152,8 @@ export default function RichTextEditor({
           };
         },
       }),
+      CollapsibleSummary,
+      CollapsibleBlock,
       Placeholder.configure({
         placeholder
       }),
@@ -356,6 +359,14 @@ export default function RichTextEditor({
             title="본문"
           >
             P
+          </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().insertCollapsible().run()}
+            className="px-2 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            title="접기 블록"
+          >
+            ▸
           </button>
         </div>
 
