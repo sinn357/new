@@ -39,6 +39,9 @@ export default function RichTextEditor({
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
   const editor = useEditor({
+    immediatelyRender: false,
+    editable: true,
+    shouldRerenderOnTransaction: false,
     extensions: [
       StarterKit,
       Underline,

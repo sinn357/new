@@ -24,9 +24,6 @@ import { Extension } from '@tiptap/core';
 export const AppleNotesShortcuts = Extension.create({
   name: 'appleNotesShortcuts',
 
-  // 우선순위를 높여서 StarterKit의 기본 단축키를 덮어씀
-  priority: 1000,
-
   addKeyboardShortcuts() {
     return {
       // 리스트 단축키 (숫자 키는 Shift와 함께 사용하면 특수문자가 되므로 두 가지 모두 처리)
