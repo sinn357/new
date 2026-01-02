@@ -4,6 +4,7 @@ declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     collapsibleBlock: {
       insertCollapsible: () => ReturnType;
+      toggleCollapsible: () => ReturnType;
     };
   }
 }
@@ -62,7 +63,7 @@ export const CollapsibleBlock = Node.create({
         ({ commands }) =>
           commands.insertContent({
             type: this.name,
-            attrs: { open: false },
+            attrs: { open: true },
             content: [
               {
                 type: 'collapsibleSummary',
@@ -74,6 +75,27 @@ export const CollapsibleBlock = Node.create({
               },
             ],
           }),
+      toggleCollapsible:
+        () =>
+        ({ state, dispatch }) => {
+          const { $from } = state.selection;
+          for (let depth = $from.depth; depth > 0; depth--) {
+            const node = $from.node(depth);
+            if (node.type.name === this.name) {
+              const pos = $from.before(depth);
+              const open = !node.attrs.open;
+              const tr = state.tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                open,
+              });
+              if (dispatch) {
+                dispatch(tr);
+              }
+              return true;
+            }
+          }
+          return false;
+        },
     };
   },
 

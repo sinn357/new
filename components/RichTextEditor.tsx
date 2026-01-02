@@ -368,6 +368,14 @@ export default function RichTextEditor({
           >
             ▸
           </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleCollapsible().run()}
+            className="px-2 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            title="접기 토글"
+          >
+            ⏷
+          </button>
         </div>
 
         {/* 정렬 */}

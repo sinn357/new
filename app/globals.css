@@ -54,6 +54,22 @@
   list-style: decimal;
 }
 
+.ProseMirror ul ul {
+  list-style: circle;
+}
+
+.ProseMirror ul ul ul {
+  list-style: square;
+}
+
+.ProseMirror ol ol {
+  list-style: lower-alpha;
+}
+
+.ProseMirror ol ol ol {
+  list-style: lower-roman;
+}
+
 .ProseMirror li {
   margin: 0.25rem 0;
 }
@@ -143,10 +159,12 @@
   align-items: center;
   flex-shrink: 0;
   margin: 0;
+  width: auto;
 }
 
 .ProseMirror li[data-type="taskItem"] > div {
   flex: 1;
+  min-width: 0;
 }
 
 .ProseMirror li[data-type="taskItem"] > label input {
@@ -155,6 +173,17 @@
 
 .ProseMirror li[data-type="taskItem"] > div > p {
   margin: 0;
+  display: inline;
+}
+
+.ProseMirror li[data-type="taskItem"] > div > p + p {
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.ProseMirror li[data-type="taskItem"][data-checked="true"] > div > p {
+  text-decoration: line-through;
+  color: #9ca3af;
 }
 
 .ProseMirror details[data-collapsible],
@@ -194,6 +223,11 @@
 .ProseMirror details[data-collapsible] > summary + *,
 .prose details[data-collapsible] > summary + * {
   margin-top: 0.5rem;
+}
+
+.ProseMirror details[data-collapsible]:not([open]) > :not(summary),
+.prose details[data-collapsible]:not([open]) > :not(summary) {
+  display: none;
 }
 
 
