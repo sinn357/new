@@ -342,6 +342,10 @@
   display: inline;
 }
 
+.ProseMirror .heading-collapsed {
+  display: none;
+}
+
 .ProseMirror details[data-collapsible],
 .prose details[data-collapsible] {
   border: 1px solid #e5e7eb;

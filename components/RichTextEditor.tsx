@@ -21,7 +21,7 @@ import FileUpload from './FileUpload';
 import { ImageGallery } from '@/lib/tiptap-extensions/ImageGallery';
 import { AppleNotesShortcuts } from '@/lib/tiptap-extensions/AppleNotesShortcuts';
 import { CollapsibleHeading } from '@/lib/tiptap-extensions/CollapsibleHeading';
-import { applyHeadingCollapse } from '@/lib/heading-collapse';
+import { CollapsibleHeadingPlugin } from '@/lib/tiptap-extensions/CollapsibleHeadingPlugin';
 
 interface RichTextEditorProps {
   value: string;
@@ -51,6 +51,7 @@ export default function RichTextEditor({
         heading: false,
       }),
       CollapsibleHeading,
+      CollapsibleHeadingPlugin,
       TaskList,
       TaskItemNodeView.configure({
         nested: true,
@@ -165,15 +166,9 @@ export default function RichTextEditor({
     content: value,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
-      if (editor?.view?.dom) {
-        requestAnimationFrame(() => applyHeadingCollapse(editor.view.dom));
-      }
     },
     onCreate: ({ editor }) => {
       editorRef.current = editor;
-      if (editor?.view?.dom) {
-        requestAnimationFrame(() => applyHeadingCollapse(editor.view.dom));
-      }
     },
     onDestroy: () => {
       editorRef.current = null;

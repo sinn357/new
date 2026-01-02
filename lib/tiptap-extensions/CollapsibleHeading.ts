@@ -1,6 +1,5 @@
 import { mergeAttributes } from '@tiptap/core';
 import Heading from '@tiptap/extension-heading';
-import { applyHeadingCollapse } from '@/lib/heading-collapse';
 
 export const CollapsibleHeading = Heading.extend({
   addAttributes() {
@@ -59,9 +58,6 @@ export const CollapsibleHeading = Heading.extend({
           tr.setNodeMarkup(pos, undefined, { ...node.attrs, collapsed });
           return true;
         });
-        if (editor?.view?.dom) {
-          requestAnimationFrame(() => applyHeadingCollapse(editor.view.dom));
-        }
       });
 
       const content = document.createElement('span');
@@ -77,9 +73,6 @@ export const CollapsibleHeading = Heading.extend({
           if (updatedNode.type.name !== 'heading') return false;
           dom.setAttribute('data-collapsed', updatedNode.attrs.collapsed ? 'true' : 'false');
           button.textContent = updatedNode.attrs.collapsed ? '▸' : '▾';
-          if (editor?.view?.dom) {
-            requestAnimationFrame(() => applyHeadingCollapse(editor.view.dom));
-          }
           return true;
         },
       };
