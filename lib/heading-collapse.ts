@@ -24,18 +24,25 @@ const shouldStopAtHeading = (heading: HTMLElement, currentLevel: HeadingLevel) =
   return nextLevel <= currentLevel;
 };
 
-const hideSection = (heading: HTMLElement, currentLevel: HeadingLevel) => {
-  let sibling = heading.nextElementSibling as HTMLElement | null;
-  while (sibling) {
-    const tag = sibling.tagName.toLowerCase();
+const hideSection = (
+  container: HTMLElement,
+  heading: HTMLElement,
+  currentLevel: HeadingLevel
+) => {
+  const children = Array.from(container.children) as HTMLElement[];
+  const startIndex = children.indexOf(heading);
+  if (startIndex === -1) return;
+
+  for (let i = startIndex + 1; i < children.length; i += 1) {
+    const element = children[i];
+    const tag = element.tagName.toLowerCase();
     if (tag === 'h1' || tag === 'h2' || tag === 'h3') {
-      if (shouldStopAtHeading(sibling, currentLevel)) {
+      if (shouldStopAtHeading(element, currentLevel)) {
         break;
       }
     }
-    sibling.setAttribute('data-hidden-by-heading', 'true');
-    sibling.style.display = 'none';
-    sibling = sibling.nextElementSibling as HTMLElement | null;
+    element.setAttribute('data-hidden-by-heading', 'true');
+    element.style.display = 'none';
   }
 };
 
@@ -91,7 +98,7 @@ export const applyHeadingCollapse = (
     setToggleState(heading, toggleButton);
 
     if (collapsed) {
-      hideSection(heading, level);
+      hideSection(container, heading, level);
     }
   });
 };

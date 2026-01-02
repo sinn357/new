@@ -161,23 +161,22 @@
 .ProseMirror li[data-type="taskItem"] > label {
   display: flex;
   align-items: center;
-  flex-shrink: 0;
   flex: 0 0 auto;
   margin: 0;
-  width: auto;
   user-select: none;
-  pointer-events: none;
+  cursor: pointer;
+  line-height: 1.5;
 }
 
 .ProseMirror li[data-type="taskItem"] > div {
   flex: 1 1 auto;
   min-width: 0;
   cursor: text;
+  line-height: 1.5;
 }
 
 .ProseMirror li[data-type="taskItem"] > label input {
-  margin: 0;
-  pointer-events: auto;
+  margin: 0 0.5rem 0 0;
 }
 
 .ProseMirror li[data-type="taskItem"] > div > p {
@@ -192,6 +191,75 @@
 .ProseMirror li[data-type="taskItem"][data-checked="true"] > div > p {
   text-decoration: line-through;
   color: #9ca3af;
+}
+
+.prose h1 {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  margin: 1rem 0 0.75rem;
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  margin: 0.9rem 0 0.6rem;
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  margin: 0.8rem 0 0.5rem;
+}
+
+.prose p {
+  margin: 0.5rem 0;
+}
+
+.prose blockquote {
+  border-left: 4px solid #3b82f6;
+  padding: 0.5rem 1rem;
+  margin: 0.75rem 0;
+  background: #eff6ff;
+  color: #374151;
+  font-style: italic;
+}
+
+.prose pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.prose code {
+  background: #f1f5f9;
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.prose pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+}
+
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.75rem 0;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
 }
 
 .ProseMirror h1[data-collapsible],
