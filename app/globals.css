@@ -162,19 +162,22 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  flex: 0 0 auto;
   margin: 0;
   width: auto;
   user-select: none;
-  cursor: pointer;
+  pointer-events: none;
 }
 
 .ProseMirror li[data-type="taskItem"] > div {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
+  cursor: text;
 }
 
 .ProseMirror li[data-type="taskItem"] > label input {
   margin: 0;
+  pointer-events: auto;
 }
 
 .ProseMirror li[data-type="taskItem"] > div > p {
@@ -189,6 +192,40 @@
 .ProseMirror li[data-type="taskItem"][data-checked="true"] > div > p {
   text-decoration: line-through;
   color: #9ca3af;
+}
+
+.ProseMirror h1[data-collapsible],
+.ProseMirror h2[data-collapsible],
+.ProseMirror h3[data-collapsible],
+.prose h1[data-collapsible],
+.prose h2[data-collapsible],
+.prose h3[data-collapsible] {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror .heading-toggle,
+.prose .heading-toggle {
+  position: absolute;
+  left: 0;
+  top: 0.2rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.ProseMirror .heading-toggle:hover,
+.prose .heading-toggle:hover {
+  color: #111827;
+}
+
+.ProseMirror .heading-toggle__text {
+  display: inline;
 }
 
 .ProseMirror details[data-collapsible],

@@ -11,6 +11,7 @@ import { isImageFile, isVideoFile, isAudioFile, isPdfFile, getFileIcon, getFileT
 import StarRating from '@/components/StarRating';
 import ImageLightbox from '@/components/ImageLightbox';
 import ShareButtons from '@/components/ShareButtons';
+import CollapsibleContent from '@/components/CollapsibleContent';
 
 export default function ArchiveDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -170,9 +171,9 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
               />
             </div>
 
-            <div
+            <CollapsibleContent
+              html={archive.content}
               className="prose prose-lg max-w-none dark:prose-invert"
-              dangerouslySetInnerHTML={{ __html: archive.content }}
             />
 
             {archive.tags && archive.tags.length > 0 && (

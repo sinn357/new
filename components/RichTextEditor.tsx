@@ -20,7 +20,8 @@ import { useState, useEffect, useRef } from 'react';
 import FileUpload from './FileUpload';
 import { ImageGallery } from '@/lib/tiptap-extensions/ImageGallery';
 import { AppleNotesShortcuts } from '@/lib/tiptap-extensions/AppleNotesShortcuts';
-import { CollapsibleBlock, CollapsibleSummary } from '@/lib/tiptap-extensions/CollapsibleBlock';
+import { CollapsibleHeading } from '@/lib/tiptap-extensions/CollapsibleHeading';
+import { applyHeadingCollapse } from '@/lib/heading-collapse';
 
 interface RichTextEditorProps {
   value: string;
@@ -46,7 +47,10 @@ export default function RichTextEditor({
     editable: true,
     shouldRerenderOnTransaction: false,
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        heading: false,
+      }),
+      CollapsibleHeading,
       TaskList,
       TaskItem.configure({
         nested: true,
@@ -152,8 +156,6 @@ export default function RichTextEditor({
           };
         },
       }),
-      CollapsibleSummary,
-      CollapsibleBlock,
       Placeholder.configure({
         placeholder
       }),
@@ -163,9 +165,15 @@ export default function RichTextEditor({
     content: value,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
+      if (editor?.view?.dom) {
+        requestAnimationFrame(() => applyHeadingCollapse(editor.view.dom));
+      }
     },
     onCreate: ({ editor }) => {
       editorRef.current = editor;
+      if (editor?.view?.dom) {
+        requestAnimationFrame(() => applyHeadingCollapse(editor.view.dom));
+      }
     },
     onDestroy: () => {
       editorRef.current = null;
@@ -359,22 +367,6 @@ export default function RichTextEditor({
             title="본문"
           >
             P
-          </button>
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().insertCollapsible().run()}
-            className="px-2 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            title="접기 블록"
-          >
-            ▸
-          </button>
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleCollapsible().run()}
-            className="px-2 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            title="접기 토글"
-          >
-            ⏷
           </button>
         </div>
 

@@ -10,6 +10,7 @@ import { useAdmin } from '@/contexts/AdminContext';
 import { isImageFile, isVideoFile, isAudioFile, isPdfFile, getFileIcon, getFileTypeLabel, getFileName } from '@/lib/file-utils';
 import ImageLightbox from '@/components/ImageLightbox';
 import ShareButtons from '@/components/ShareButtons';
+import CollapsibleContent from '@/components/CollapsibleContent';
 
 const statusLabels = {
   'completed': '완료됨',
@@ -260,9 +261,9 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
                   />
                 </div>
 
-                <div
+                <CollapsibleContent
+                  html={work.content}
                   className="prose prose-lg max-w-none dark:prose-invert mb-8"
-                  dangerouslySetInnerHTML={{ __html: work.content }}
                 />
 
                 {/* Tech Stack */}
