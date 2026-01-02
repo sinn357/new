@@ -1,6 +1,6 @@
 'use client';
 
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 import { Color } from '@tiptap/extension-color';
@@ -16,7 +16,7 @@ import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import FileUpload from './FileUpload';
 import { ImageGallery } from '@/lib/tiptap-extensions/ImageGallery';
 import { AppleNotesShortcuts } from '@/lib/tiptap-extensions/AppleNotesShortcuts';
@@ -37,6 +37,8 @@ export default function RichTextEditor({
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHighlightPicker, setShowHighlightPicker] = useState(false);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
+
+  const editorRef = useRef<Editor | null>(null);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -159,13 +161,20 @@ export default function RichTextEditor({
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
+    onCreate: ({ editor }) => {
+      editorRef.current = editor;
+    },
+    onDestroy: () => {
+      editorRef.current = null;
+    },
     editorProps: {
       attributes: {
         class: 'focus:outline-none min-h-[300px] p-4'
       },
       handleDOMEvents: {
         keydown: (_view, event) => {
-          if (!editor) return false;
+          const activeEditor = editorRef.current;
+          if (!activeEditor) return false;
           const isMod = event.metaKey || event.ctrlKey;
           if (!isMod) return false;
 
@@ -174,32 +183,32 @@ export default function RichTextEditor({
 
           if (!isShift && !isAlt && event.code === 'KeyB') {
             event.preventDefault();
-            return editor.chain().focus().toggleBold().run();
+            return activeEditor.chain().focus().toggleBold().run();
           }
 
           if (!isShift && !isAlt && event.code === 'KeyI') {
             event.preventDefault();
-            return editor.chain().focus().toggleItalic().run();
+            return activeEditor.chain().focus().toggleItalic().run();
           }
 
           if (!isShift && !isAlt && event.code === 'KeyU') {
             event.preventDefault();
-            return editor.chain().focus().toggleUnderline().run();
+            return activeEditor.chain().focus().toggleUnderline().run();
           }
 
           if (isShift && !isAlt && event.code === 'Digit7') {
             event.preventDefault();
-            return editor.chain().focus().toggleBulletList().run();
+            return activeEditor.chain().focus().toggleBulletList().run();
           }
 
           if (isShift && !isAlt && event.code === 'Digit8') {
             event.preventDefault();
-            return editor.chain().focus().toggleBulletList().run();
+            return activeEditor.chain().focus().toggleBulletList().run();
           }
 
           if (isShift && !isAlt && event.code === 'Digit9') {
             event.preventDefault();
-            return editor.chain().focus().toggleOrderedList().run();
+            return activeEditor.chain().focus().toggleOrderedList().run();
           }
 
           return false;
