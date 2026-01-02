@@ -88,10 +88,12 @@ export const CollapsibleBlock = Node.create({
       const handleToggle = () => {
         const open = dom.hasAttribute('open');
         if (typeof getPos !== 'function') return;
+        const pos = getPos();
+        if (typeof pos !== 'number') return;
         editor.commands.command(({ tr }) => {
-          const current = editor.state.doc.nodeAt(getPos());
+          const current = editor.state.doc.nodeAt(pos);
           const attrs = current ? { ...current.attrs, open } : { open };
-          tr.setNodeMarkup(getPos(), undefined, attrs);
+          tr.setNodeMarkup(pos, undefined, attrs);
           return true;
         });
       };
