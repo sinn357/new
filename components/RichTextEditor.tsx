@@ -165,7 +165,7 @@ export default function RichTextEditor({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-lg max-w-none focus:outline-none min-h-[300px] p-4'
+        class: 'focus:outline-none min-h-[300px] p-4'
       }
     }
   });
