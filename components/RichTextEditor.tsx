@@ -347,6 +347,16 @@ export default function RichTextEditor({
           >
             H3
           </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().setParagraph().run()}
+            className={`px-2 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
+              editor.isActive('paragraph') ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' : ''
+            }`}
+            title="본문"
+          >
+            P
+          </button>
         </div>
 
         {/* 정렬 */}
@@ -488,6 +498,16 @@ export default function RichTextEditor({
 
         {/* 기타 */}
         <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+            className={`px-2 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
+              editor.isActive('codeBlock') ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' : ''
+            }`}
+            title="코드 블록"
+          >
+            {'</>'}
+          </button>
           <button
             type="button"
             onClick={addLink}

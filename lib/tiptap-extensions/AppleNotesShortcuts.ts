@@ -12,11 +12,6 @@ import { Extension } from '@tiptap/core';
  * - Cmd+K: Add Link
  * - Cmd+': Block Quote
  * - Cmd+U: Underline
- * - Shift+Cmd+T: Title (Heading 1)
- * - Shift+Cmd+H: Heading (Heading 2)
- * - Shift+Cmd+J: Subheading (Heading 3)
- * - Shift+Cmd+B: Body (Paragraph)
- * - Shift+Cmd+M: Monospaced (Code Block)
  * - Option+Cmd+T: Insert Table
  * - Cmd+]: Indent (Sink List Item)
  * - Cmd+[: Outdent (Lift List Item)
@@ -52,13 +47,6 @@ export const AppleNotesShortcuts = Extension.create({
 
       // Underline (Cmd+U)
       'Mod-U': () => this.editor.commands.toggleUnderline(),
-
-      // 텍스트 스타일
-      'Mod-Shift-T': () => this.editor.commands.setHeading({ level: 1 }), // Title
-      'Mod-Shift-H': () => this.editor.commands.setHeading({ level: 2 }), // Heading
-      'Mod-Shift-J': () => this.editor.commands.setHeading({ level: 3 }), // Subheading
-      'Mod-Shift-B': () => this.editor.commands.setParagraph(), // Body
-      'Mod-Shift-M': () => this.editor.commands.toggleCodeBlock(), // Monospaced
 
       // 테이블
       'Alt-Mod-T': () => this.editor.commands.insertTable({ rows: 3, cols: 3, withHeaderRow: true }),
