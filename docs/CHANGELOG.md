@@ -1,5 +1,40 @@
 # Blog Web Changelog
 
+## 2026-01-02
+
+### Added
+- **Rich text 접기/펼치기 (Heading 기반)**: H1/H2/H3 토글 버튼 + 접힘 상태 저장
+- **TaskList NodeView**: 체크박스/텍스트 레이아웃 강제 고정
+
+### Fixed
+- **리치 텍스트 단축키 안정화**: Cmd/Ctrl+B/I/U 및 리스트 단축키 반영
+- **리치 텍스트 리스트/블록 스타일 표시**: editor/reader 모두 가시성 복구
+- **체크리스트 취소선 처리**: 편집 모드 즉시 반영
+- **읽기 모드 체크박스 비활성화**
+
+### Changed
+- **업로드 최대 용량 상향**: 50MB (API/안내 문구 동기화)
+
+### Commits
+- `660512d`: fix: restore editor shortcuts and list styling
+- `82b0b12`: fix: avoid editor self-reference in key handler
+- `634f2c1`: feat: add paragraph/code buttons and drop style shortcuts
+- `09e928e`: fix: style rich text blocks and task lists
+- `78b057a`: feat: add collapsible blocks for rich text
+- `bd39ba0`: fix: guard collapsible node position
+- `dd0e905`: fix: improve lists, checklists, and collapsible blocks
+- `f1729cf`: fix: improve collapsible behavior and task list layout
+- `ac7689d`: feat: add heading-based collapsible sections
+- `262fc5d`: fix: adjust heading collapse and prose styles
+- `91a0193`: fix: enable editor heading toggle and task items
+- `00cf379`: fix: stabilize heading toggle and task list alignment
+- `e96606a`: fix: sync editor collapse state and disable read checkboxes
+- `2a359f4`: fix: make editor heading collapse reactive
+- `e732c9a`: fix: persist heading collapse on toggle
+- `a674dca`: chore: raise upload size limit to 50MB
+
+---
+
 ## 2025-01-24
 
 ### Fixed
