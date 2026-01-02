@@ -8,9 +8,18 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Image } from '@tiptap/extension-image';
 import { Placeholder } from '@tiptap/extension-placeholder';
+import Underline from '@tiptap/extension-underline';
+import Link from '@tiptap/extension-link';
+import TaskList from '@tiptap/extension-task-list';
+import TaskItem from '@tiptap/extension-task-item';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { TableHeader } from '@tiptap/extension-table-header';
 import { useState, useEffect } from 'react';
 import FileUpload from './FileUpload';
 import { ImageGallery } from '@/lib/tiptap-extensions/ImageGallery';
+import { AppleNotesShortcuts } from '@/lib/tiptap-extensions/AppleNotesShortcuts';
 
 interface RichTextEditorProps {
   value: string;
@@ -32,6 +41,20 @@ export default function RichTextEditor({
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Underline,
+      Link.configure({
+        openOnClick: false,
+      }),
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+      }),
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableCell,
+      TableHeader,
       TextAlign.configure({
         types: ['heading', 'paragraph']
       }),
@@ -130,7 +153,8 @@ export default function RichTextEditor({
       Placeholder.configure({
         placeholder
       }),
-      ImageGallery
+      ImageGallery,
+      AppleNotesShortcuts
     ],
     content: value,
     onUpdate: ({ editor }) => {
@@ -317,7 +341,7 @@ export default function RichTextEditor({
             className={`px-2 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
               editor.isActive('bulletList') ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' : ''
             }`}
-            title="불릿 리스트"
+            title="불릿 리스트 (Shift+Cmd+7)"
           >
             •••
           </button>
@@ -327,9 +351,19 @@ export default function RichTextEditor({
             className={`px-2 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
               editor.isActive('orderedList') ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' : ''
             }`}
-            title="숫자 리스트"
+            title="숫자 리스트 (Shift+Cmd+9)"
           >
             123
+          </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleTaskList().run()}
+            className={`px-2 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
+              editor.isActive('taskList') ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' : ''
+            }`}
+            title="체크리스트 (Shift+Cmd+L)"
+          >
+            ☑
           </button>
         </div>
 
@@ -410,7 +444,7 @@ export default function RichTextEditor({
             className={`px-2 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
               editor.isActive('link') ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' : ''
             }`}
-            title="링크"
+            title="링크 (Cmd+K)"
           >
             🔗
           </button>
@@ -420,9 +454,19 @@ export default function RichTextEditor({
             className={`px-2 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
               editor.isActive('blockquote') ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' : ''
             }`}
-            title="인용구"
+            title="인용구 (Cmd+')"
           >
             💬
+          </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+            className={`px-2 py-1 text-sm rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ${
+              editor.isActive('table') ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' : ''
+            }`}
+            title="테이블 (Option+Cmd+T)"
+          >
+            📊
           </button>
           <button
             type="button"
