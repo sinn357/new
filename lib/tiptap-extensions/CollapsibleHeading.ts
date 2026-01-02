@@ -49,15 +49,19 @@ export const CollapsibleHeading = Heading.extend({
 
       button.addEventListener('click', (event) => {
         event.preventDefault();
+        event.stopPropagation();
         if (typeof getPos !== 'function') return;
         const pos = getPos();
         if (typeof pos !== 'number') return;
-        const collapsed = !node.attrs.collapsed;
+        const current = editor.state.doc.nodeAt(pos);
+        if (!current) return;
+        const collapsed = !current.attrs.collapsed;
         dom.setAttribute('data-collapsed', collapsed ? 'true' : 'false');
-        editor.commands.command(({ tr }) => {
-          tr.setNodeMarkup(pos, undefined, { ...node.attrs, collapsed });
-          return true;
+        const tr = editor.state.tr.setNodeMarkup(pos, undefined, {
+          ...current.attrs,
+          collapsed,
         });
+        editor.view.dispatch(tr);
       });
 
       const content = document.createElement('span');
