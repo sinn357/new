@@ -14,6 +14,10 @@ export default function CollapsibleContent({ html, className = '' }: Collapsible
   useEffect(() => {
     if (!containerRef.current) return;
     applyHeadingCollapse(containerRef.current, { addToggleButtons: true });
+    const inputs = containerRef.current.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+    inputs.forEach((input) => {
+      input.disabled = true;
+    });
   }, [html]);
 
   return (

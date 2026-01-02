@@ -54,6 +54,7 @@ export const CollapsibleHeading = Heading.extend({
         const pos = getPos();
         if (typeof pos !== 'number') return;
         const collapsed = !node.attrs.collapsed;
+        dom.setAttribute('data-collapsed', collapsed ? 'true' : 'false');
         editor.commands.command(({ tr }) => {
           tr.setNodeMarkup(pos, undefined, { ...node.attrs, collapsed });
           return true;
