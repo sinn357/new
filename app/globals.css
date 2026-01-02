@@ -152,13 +152,13 @@
   padding-left: 0;
 }
 
-.ProseMirror li[data-type="taskItem"] {
+.ProseMirror .task-item {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
 }
 
-.ProseMirror li[data-type="taskItem"] > label {
+.ProseMirror .task-item__label {
   display: flex;
   align-items: center;
   flex: 0 0 auto;
@@ -168,27 +168,27 @@
   line-height: 1.5;
 }
 
-.ProseMirror li[data-type="taskItem"] > div {
+.ProseMirror .task-item__checkbox {
+  margin: 0.2rem 0 0;
+}
+
+.ProseMirror .task-item__content {
   flex: 1 1 auto;
   min-width: 0;
   cursor: text;
   line-height: 1.5;
 }
 
-.ProseMirror li[data-type="taskItem"] > label input {
-  margin: 0 0.5rem 0 0;
-}
-
-.ProseMirror li[data-type="taskItem"] > div > p {
+.ProseMirror .task-item__content > p {
   margin: 0;
 }
 
-.ProseMirror li[data-type="taskItem"] > div > p + p {
+.ProseMirror .task-item__content > p + p {
   display: block;
   margin-top: 0.25rem;
 }
 
-.ProseMirror li[data-type="taskItem"][data-checked="true"] > div > p {
+.ProseMirror li[data-type="taskItem"][data-checked="true"] .task-item__content > p {
   text-decoration: line-through;
   color: #9ca3af;
 }
@@ -260,6 +260,50 @@
   border: 1px solid #e5e7eb;
   padding: 0.5rem 0.75rem;
   text-align: left;
+}
+
+.prose ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.prose li[data-type="taskItem"] {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.prose li[data-type="taskItem"] > label {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  margin: 0;
+  user-select: none;
+  line-height: 1.5;
+}
+
+.prose li[data-type="taskItem"] > label input {
+  margin: 0.2rem 0 0;
+}
+
+.prose li[data-type="taskItem"] > div {
+  flex: 1 1 auto;
+  min-width: 0;
+  line-height: 1.5;
+}
+
+.prose li[data-type="taskItem"] > div > p {
+  margin: 0;
+}
+
+.prose li[data-type="taskItem"] > div > p + p {
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.prose li[data-type="taskItem"][data-checked="true"] > div > p {
+  text-decoration: line-through;
+  color: #9ca3af;
 }
 
 .ProseMirror h1[data-collapsible],

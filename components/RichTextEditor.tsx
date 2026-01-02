@@ -11,7 +11,7 @@ import { Placeholder } from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
 import TaskList from '@tiptap/extension-task-list';
-import TaskItem from '@tiptap/extension-task-item';
+import { TaskItemNodeView } from '@/lib/tiptap-extensions/TaskItemNodeView';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
@@ -52,7 +52,7 @@ export default function RichTextEditor({
       }),
       CollapsibleHeading,
       TaskList,
-      TaskItem.configure({
+      TaskItemNodeView.configure({
         nested: true,
       }),
       Table.configure({
