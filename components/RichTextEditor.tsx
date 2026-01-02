@@ -162,6 +162,48 @@ export default function RichTextEditor({
     editorProps: {
       attributes: {
         class: 'focus:outline-none min-h-[300px] p-4'
+      },
+      handleDOMEvents: {
+        keydown: (_view, event) => {
+          if (!editor) return false;
+          const isMod = event.metaKey || event.ctrlKey;
+          if (!isMod) return false;
+
+          const isShift = event.shiftKey;
+          const isAlt = event.altKey;
+
+          if (!isShift && !isAlt && event.code === 'KeyB') {
+            event.preventDefault();
+            return editor.chain().focus().toggleBold().run();
+          }
+
+          if (!isShift && !isAlt && event.code === 'KeyI') {
+            event.preventDefault();
+            return editor.chain().focus().toggleItalic().run();
+          }
+
+          if (!isShift && !isAlt && event.code === 'KeyU') {
+            event.preventDefault();
+            return editor.chain().focus().toggleUnderline().run();
+          }
+
+          if (isShift && !isAlt && event.code === 'Digit7') {
+            event.preventDefault();
+            return editor.chain().focus().toggleBulletList().run();
+          }
+
+          if (isShift && !isAlt && event.code === 'Digit8') {
+            event.preventDefault();
+            return editor.chain().focus().toggleBulletList().run();
+          }
+
+          if (isShift && !isAlt && event.code === 'Digit9') {
+            event.preventDefault();
+            return editor.chain().focus().toggleOrderedList().run();
+          }
+
+          return false;
+        }
       }
     }
   });

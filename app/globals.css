@@ -41,6 +41,23 @@
   animation-delay: 4s;
 }
 
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.5rem;
+}
+
+.ProseMirror ul {
+  list-style: disc;
+}
+
+.ProseMirror ol {
+  list-style: decimal;
+}
+
+.ProseMirror li {
+  margin: 0.25rem 0;
+}
+
 
 
 @layer base {
