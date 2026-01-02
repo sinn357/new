@@ -44,10 +44,6 @@ export default function RichTextEditor({
     shouldRerenderOnTransaction: false,
     extensions: [
       StarterKit,
-      Underline,
-      Link.configure({
-        openOnClick: false,
-      }),
       TaskList,
       TaskItem.configure({
         nested: true,
