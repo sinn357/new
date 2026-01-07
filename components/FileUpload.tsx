@@ -107,7 +107,13 @@ export default function FileUpload({
       console.log('Full Response:', result);
       console.log('================================');
 
+      console.log('🔵 onFileUpload 콜백 호출 시작');
+      console.log('전달할 URL:', result.secure_url);
+      console.log('onFileUpload 함수:', onFileUpload);
+
       onFileUpload(result.secure_url);
+
+      console.log('✅ onFileUpload 콜백 호출 완료');
 
       // Clear the input
       e.target.value = '';
