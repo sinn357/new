@@ -8,8 +8,6 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Image } from '@tiptap/extension-image';
 import { Placeholder } from '@tiptap/extension-placeholder';
-import Underline from '@tiptap/extension-underline';
-import Link from '@tiptap/extension-link';
 import TaskList from '@tiptap/extension-task-list';
 import { TaskItemNodeView } from '@/lib/tiptap-extensions/TaskItemNodeView';
 import { Table } from '@tiptap/extension-table';
@@ -168,8 +166,6 @@ export default function RichTextEditor({
           controls: true,
         }
       }),
-      Underline,
-      Link,
       ImageGallery,
       AppleNotesShortcuts
     ],

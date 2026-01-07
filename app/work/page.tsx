@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Work, WORK_CATEGORIES } from '@/lib/work-store';
 import { useAdmin } from '@/contexts/AdminContext';
@@ -13,8 +12,20 @@ import AnimatedCard from '@/components/AnimatedCard';
 import WorkForm from '@/components/WorkForm';
 import { useWorks, useDeleteWork } from '@/lib/hooks/useWorks';
 
-// Helper function to extract first image from HTML
-function extractFirstImage(html: string): string | null {
+type MediaPreview = {
+  url: string;
+  type: 'image' | 'video';
+};
+
+function getVideoThumbnailUrl(videoUrl: string): string {
+  const transformed = videoUrl.includes('/upload/')
+    ? videoUrl.replace('/upload/', '/upload/so_0,f_jpg/')
+    : videoUrl;
+  return transformed.replace(/\.(mp4|mov|webm|avi|m4v|ogg)(\?.*)?$/i, '.jpg');
+}
+
+// Helper function to extract first media from HTML
+function extractFirstMedia(html: string): MediaPreview | null {
   // Try to extract from gallery first
   const galleryRegex = /data-images="([^"]+)"/;
   const galleryMatch = html.match(galleryRegex);
@@ -22,7 +33,7 @@ function extractFirstImage(html: string): string | null {
     try {
       const images = JSON.parse(galleryMatch[1].replace(/&quot;/g, '"'));
       if (Array.isArray(images) && images.length > 0) {
-        return images[0];
+        return { url: images[0], type: 'image' };
       }
     } catch (e) {
       // Fallback to img tag
@@ -31,8 +42,18 @@ function extractFirstImage(html: string): string | null {
 
   // Fallback to regular img tag
   const imgRegex = /<img[^>]+src="([^">]+)"/;
-  const match = html.match(imgRegex);
-  return match ? match[1] : null;
+  const imgMatch = html.match(imgRegex);
+  if (imgMatch) return { url: imgMatch[1], type: 'image' };
+
+  const videoRegex = /<video[^>]+src="([^">]+)"/;
+  const videoMatch = html.match(videoRegex);
+  if (videoMatch) return { url: videoMatch[1], type: 'video' };
+
+  const sourceRegex = /<video[^>]*>[\s\S]*?<source[^>]+src="([^">]+)"/;
+  const sourceMatch = html.match(sourceRegex);
+  if (sourceMatch) return { url: sourceMatch[1], type: 'video' };
+
+  return null;
 }
 
 // Helper function to strip HTML tags for preview
@@ -400,16 +421,27 @@ function WorkPageContent() {
                     </div>
                   )}
                   {(() => {
-                    const firstImage = extractFirstImage(work.content);
-                    return firstImage ? (
-                      <div className="h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                    const media = extractFirstMedia(work.content);
+                    if (!media) return null;
+                    const previewSrc = media.type === 'video' ? getVideoThumbnailUrl(media.url) : media.url;
+                    return (
+                      <div className="relative h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
                         <img
-                          src={firstImage}
+                          src={previewSrc}
                           alt={work.title}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
+                        {media.type === 'video' && (
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div className="flex items-center justify-center w-12 h-12 bg-black/50 rounded-full">
+                              <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="currentColor">
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    ) : null;
+                    );
                   })()}
 
                   <div className="p-6">

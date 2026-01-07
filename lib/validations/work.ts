@@ -20,9 +20,9 @@ export const workSchema = z.object({
       // HTML에서 태그 제거하고 텍스트만 추출
       const textContent = val.replace(/<[^>]*>/g, '').trim();
       // 텍스트가 없어도 이미지나 갤러리가 있으면 OK
-      const hasMedia = val.includes('<img') || val.includes('data-type="image-gallery"');
+      const hasMedia = val.includes('<img') || val.includes('<video') || val.includes('data-type="image-gallery"');
       return textContent.length > 0 || hasMedia;
-    }, '텍스트 또는 이미지를 추가하세요'),
+    }, '텍스트, 이미지 또는 동영상을 추가하세요'),
 
   category: z.enum(['product', 'media', 'photography'], {
     message: '올바른 카테고리를 선택하세요'

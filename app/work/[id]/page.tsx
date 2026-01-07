@@ -209,7 +209,7 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
             
             {/* Work Info */}
             <div className={`order-1 ${work.imageUrl ? 'lg:order-2' : 'lg:col-span-2'}`}>
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800 p-4 border-t border-gray-200 dark:border-gray-700 md:rounded-2xl md:shadow-lg md:p-8 md:border md:border-gray-100 md:dark:border-gray-700">
                 <div className="flex justify-between items-start mb-6">
                   <div className="flex items-center gap-4">
                     <span className={`px-4 py-2 rounded-full text-sm font-medium ${statusColors[work.status]}`}>
