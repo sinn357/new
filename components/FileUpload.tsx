@@ -24,6 +24,20 @@ export default function FileUpload({
     if (!file) return;
 
     setUploadError('');
+
+    // 파일 크기 검증
+    const sizeMB = file.size / 1024 / 1024;
+    const isImage = file.type.startsWith('image/');
+    const maxSize = isImage ? 10 : 100;
+
+    if (sizeMB > maxSize) {
+      setUploadError(
+        `파일 크기가 너무 큽니다. ${isImage ? '이미지' : '동영상/PDF/ZIP'}는 최대 ${maxSize}MB까지 업로드 가능합니다. (현재: ${sizeMB.toFixed(2)}MB)`
+      );
+      e.target.value = '';
+      return;
+    }
+
     setUploading(true);
     setUploadProgress(0);
 
@@ -34,8 +48,7 @@ export default function FileUpload({
 
       const paramsToSign = {
         timestamp,
-        folder,
-        upload_preset: 'unsigned_preset' // Cloudinary에서 설정 필요
+        folder
       };
 
       const signatureResponse = await fetch('/api/cloudinary-signature', {
@@ -68,7 +81,18 @@ export default function FileUpload({
 
       if (!uploadResponse.ok) {
         const errorData = await uploadResponse.json();
-        throw new Error(errorData.error?.message || 'Upload failed');
+        const errorMessage = errorData.error?.message || 'Upload failed';
+
+        // Cloudinary 에러 메시지 개선
+        if (errorMessage.includes('File size too large')) {
+          throw new Error(`파일 크기 제한 초과: ${isImage ? '이미지는 10MB' : '동영상/PDF/ZIP은 100MB'}까지 가능`);
+        } else if (errorMessage.includes('Invalid image file')) {
+          throw new Error('유효하지 않은 이미지 파일입니다.');
+        } else if (errorMessage.includes('Invalid Signature')) {
+          throw new Error('업로드 인증 실패. 잠시 후 다시 시도해주세요.');
+        }
+
+        throw new Error(errorMessage);
       }
 
       const result = await uploadResponse.json();
