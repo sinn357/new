@@ -164,6 +164,19 @@
 
 ---
 
+## 2026-01-07
+
+### Added
+- Cloudinary 동영상 썸네일 미리보기 (홈/Work/Archive 리스트)
+- 동영상 플레이 오버레이 표시
+
+### Fixed
+- RichTextEditor 중복 extension 경고 제거 (Link, Underline)
+- Work/Archive validation에 동영상 `<video>` 허용
+- 모바일 상세 페이지 레이아웃 전체 폭 사용
+
+---
+
 ## 2025-11-12
 
 ### Added
@@ -172,4 +185,4 @@
 
 ---
 
-**Last Updated**: 2025-11-18
+**Last Updated**: 2026-01-07
