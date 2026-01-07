@@ -96,11 +96,18 @@ export default function FileUpload({
       }
 
       const result = await uploadResponse.json();
-      onFileUpload(result.secure_url);
 
-      // 업로드 성공 로그
+      // 업로드 성공 로그 (디버깅용)
       const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-      console.log(`✅ 업로드 완료: ${file.name} (${sizeMB}MB)`);
+      console.log('=== Cloudinary Upload Result ===');
+      console.log('File:', file.name, `(${sizeMB}MB)`);
+      console.log('Secure URL:', result.secure_url);
+      console.log('Public ID:', result.public_id);
+      console.log('Resource Type:', result.resource_type);
+      console.log('Full Response:', result);
+      console.log('================================');
+
+      onFileUpload(result.secure_url);
 
       // Clear the input
       e.target.value = '';

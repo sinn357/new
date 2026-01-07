@@ -41,13 +41,23 @@ export default function MarkdownEditor({
   };
 
   const handleMediaUpload = (url: string) => {
+    console.log('=== MarkdownEditor 미디어 업로드 ===');
+    console.log('받은 URL:', url);
+
     const fileExtension = url.split('.').pop()?.toLowerCase();
     const isVideo = ['mp4', 'webm', 'ogg', 'mov', 'avi'].includes(fileExtension || '');
 
+    console.log('파일 확장자:', fileExtension);
+    console.log('비디오 여부:', isVideo);
+
     if (isVideo) {
-      insertText(`\n![동영상](${url})\n\n`);
+      const markdownText = `\n![동영상](${url})\n\n`;
+      console.log('삽입할 마크다운:', markdownText);
+      insertText(markdownText);
     } else {
-      insertText(`\n![이미지](${url})\n\n`);
+      const markdownText = `\n![이미지](${url})\n\n`;
+      console.log('삽입할 마크다운:', markdownText);
+      insertText(markdownText);
     }
 
     setShowMediaUpload(false);
