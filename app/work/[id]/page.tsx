@@ -105,8 +105,8 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Navigation */}
-      <section className="px-6 py-8">
-        <div className="max-w-6xl mx-auto">
+      <section className="px-4 py-8 md:px-6">
+        <div className="w-full md:max-w-6xl md:mx-auto">
           <Link 
             href="/work" 
             className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
@@ -125,8 +125,8 @@ export default function WorkDetailPage({ params }: { params: Promise<{ id: strin
       )}
 
       {/* Work Hero Section */}
-      <section className="px-6 pb-16">
-        <div className="max-w-6xl mx-auto">
+      <section className="px-4 pb-16 md:px-6">
+        <div className="w-full md:max-w-6xl md:mx-auto">
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Work Media */}
             {work.imageUrl && (

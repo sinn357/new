@@ -96,8 +96,8 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Navigation */}
-      <section className="px-6 py-8">
-        <div className="max-w-4xl mx-auto">
+      <section className="px-4 py-8 md:px-6">
+        <div className="w-full md:max-w-4xl md:mx-auto">
           <Link 
             href="/archive" 
             className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
@@ -116,8 +116,8 @@ export default function ArchiveDetailPage({ params }: { params: Promise<{ id: st
       )}
 
       {/* Archive Content */}
-      <section className="px-6 pb-16">
-        <div className="max-w-4xl mx-auto">
+      <section className="px-4 pb-16 md:px-6">
+        <div className="w-full md:max-w-4xl md:mx-auto">
           <article className="bg-white dark:bg-gray-800 p-4 border-t border-gray-200 dark:border-gray-700 md:rounded-2xl md:shadow-lg md:p-8 md:border md:border-gray-100 md:dark:border-gray-700 mb-8">
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
