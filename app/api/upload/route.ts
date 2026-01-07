@@ -1,3 +1,12 @@
+/**
+ * DEPRECATED: 이 엔드포인트는 더 이상 사용되지 않습니다.
+ * FileUpload 컴포넌트는 이제 Cloudinary 직접 업로드를 사용합니다.
+ * (/api/cloudinary-signature 사용)
+ *
+ * 이유: Vercel Serverless Function Body Size 제한 우회 (10MB → 100MB)
+ * 날짜: 2026-01-07
+ */
+
 import { writeFile } from 'fs/promises';
 import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
