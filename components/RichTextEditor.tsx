@@ -22,6 +22,7 @@ import { ImageGallery } from '@/lib/tiptap-extensions/ImageGallery';
 import { AppleNotesShortcuts } from '@/lib/tiptap-extensions/AppleNotesShortcuts';
 import { CollapsibleHeading } from '@/lib/tiptap-extensions/CollapsibleHeading';
 import { CollapsibleHeadingPlugin } from '@/lib/tiptap-extensions/CollapsibleHeadingPlugin';
+import { Video } from '@/lib/tiptap-extensions/Video';
 
 interface RichTextEditorProps {
   value: string;
@@ -160,6 +161,15 @@ export default function RichTextEditor({
       Placeholder.configure({
         placeholder
       }),
+      Video.configure({
+        HTMLAttributes: {
+          class: 'rounded-lg',
+          style: 'max-width: 100%; height: auto;',
+          controls: true,
+        }
+      }),
+      Underline,
+      Link,
       ImageGallery,
       AppleNotesShortcuts
     ],
@@ -231,10 +241,29 @@ export default function RichTextEditor({
   }, [value, editor]);
 
   const handleImageUpload = (url: string) => {
-    if (editor) {
+    if (!editor) return;
+
+    console.log('=== RichTextEditor 미디어 업로드 ===');
+    console.log('받은 URL:', url);
+
+    // 파일 확장자로 동영상/이미지 구분
+    const videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'm4v'];
+    const fileExtension = url.split('.').pop()?.toLowerCase();
+    const isVideo = videoExtensions.includes(fileExtension || '');
+
+    console.log('파일 확장자:', fileExtension);
+    console.log('비디오 여부:', isVideo);
+
+    if (isVideo) {
+      console.log('동영상 삽입 중...');
+      editor.chain().focus().setVideo({ src: url }).run();
+    } else {
+      console.log('이미지 삽입 중...');
       editor.chain().focus().setImage({ src: url }).run();
-      setShowImageUpload(false);
     }
+
+    setShowImageUpload(false);
+    console.log('미디어 삽입 완료');
   };
 
   const handleGalleryImageUpload = (url: string) => {
