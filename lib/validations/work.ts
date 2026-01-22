@@ -42,13 +42,6 @@ export const workSchema = z.object({
       return val.split(',').map(s => s.trim()).filter(s => s.length > 0);
     }),
 
-  githubUrl: z.string()
-    .optional()
-    .refine(
-      (val) => !val || val === '' || z.string().url().safeParse(val).success,
-      { message: '올바른 GitHub URL을 입력하세요' }
-    ),
-
   demoUrl: z.string()
     .optional()
     .refine(

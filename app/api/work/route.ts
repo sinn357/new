@@ -77,7 +77,6 @@ export async function POST(request: Request) {
         content: data.content,
         category: data.category,
         techStack: data.techStack, // Already array from Zod transform
-        githubUrl: data.githubUrl || null,
         demoUrl: data.demoUrl || null,
         youtubeUrl: data.youtubeUrl || null,
         instagramUrl: data.instagramUrl || null,

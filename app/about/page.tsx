@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import emailjs from '@emailjs/browser';
 import { useAdmin } from '@/contexts/AdminContext';
 import InlineEdit from '@/components/InlineEdit';
-import { FaGithub, FaEnvelope, FaGlobe } from 'react-icons/fa';
+import { FaEnvelope, FaGlobe } from 'react-icons/fa';
 
 interface FormData {
   name: string;
@@ -30,7 +30,6 @@ interface PageContent {
     role?: string;
     bio?: string;
     email?: string;
-    github?: string;
     website?: string;
     skills?: string[];
     experience?: Array<{
@@ -60,7 +59,6 @@ export default function AboutPage() {
   const role = pageContent?.sections?.role || '풀스택 개발자';
   const bio = pageContent?.sections?.bio || '안녕하세요! 개발과 지식 공유를 사랑하는 개발자입니다.';
   const email = pageContent?.sections?.email || 'your.email@example.com';
-  const github = pageContent?.sections?.github || 'https://github.com';
   const website = pageContent?.sections?.website || 'https://your-site.com';
   const skills = pageContent?.sections?.skills || [];
   const experience = pageContent?.sections?.experience || [];
@@ -350,14 +348,6 @@ export default function AboutPage() {
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-100 to-indigo-200 dark:from-indigo-900/50 dark:to-indigo-800/50 text-indigo-700 dark:text-indigo-300 rounded-full hover:scale-105 transition-transform"
               >
                 <FaEnvelope /> Email
-              </a>
-              <a
-                href={github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900/50 dark:to-purple-800/50 text-purple-700 dark:text-purple-300 rounded-full hover:scale-105 transition-transform"
-              >
-                <FaGithub /> GitHub
               </a>
             </div>
           </motion.div>

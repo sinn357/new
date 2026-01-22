@@ -47,7 +47,6 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
       content: '',
       category: 'product',
       techStack: '',
-      githubUrl: '',
       demoUrl: '',
       youtubeUrl: '',
       instagramUrl: '',
@@ -67,7 +66,6 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
         content: editingWork.content,
         category: editingWork.category,
         techStack: editingWork.techStack?.join(', ') || '',
-        githubUrl: editingWork.githubUrl || '',
         demoUrl: editingWork.demoUrl || '',
         youtubeUrl: editingWork.youtubeUrl || '',
         instagramUrl: editingWork.instagramUrl || '',
@@ -237,25 +235,6 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
           <div className="space-y-6">
             {selectedCategory === 'product' && (
               <div className="grid md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="githubUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>GitHub URL</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="url"
-                          placeholder="https://github.com/username/repo"
-                          {...field}
-                          className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <FormField
                   control={form.control}
                   name="demoUrl"

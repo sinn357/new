@@ -1,6 +1,6 @@
 'use client'
 
-import { FaGithub, FaEnvelope } from 'react-icons/fa'
+import { FaEnvelope } from 'react-icons/fa'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 
@@ -11,13 +11,6 @@ export default function Footer() {
       href: 'mailto:sinn357@naver.com',
       label: 'Email',
       color: 'hover:text-teal-400'
-    },
-    {
-      icon: <FaGithub />,
-      href: 'https://github.com/sinn357/new',
-      label: 'GitHub',
-      color: 'hover:text-purple-400',
-      external: true
     },
   ]
 
@@ -69,8 +62,6 @@ export default function Footer() {
                 <motion.a
                   key={social.label}
                   href={social.href}
-                  target={social.external ? "_blank" : undefined}
-                  rel={social.external ? "noopener noreferrer" : undefined}
                   aria-label={social.label}
                   whileHover={{ scale: 1.2, y: -4 }}
                   whileTap={{ scale: 0.9 }}
