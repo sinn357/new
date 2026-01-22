@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import FileUpload from './FileUpload';
+import { getCloudinaryImageUrl } from '@/lib/cloudinary';
 
 interface MarkdownEditorProps {
   value: string;
@@ -280,9 +281,10 @@ export default function MarkdownEditor({
                       </a>
                     ),
                     img: ({ src, alt }: any) => {
+                      const safeSrc = getCloudinaryImageUrl(src) ?? src;
                       // 비디오 파일 확장자 체크
                       const videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi'];
-                      const fileExtension = src?.split('.').pop()?.toLowerCase();
+                      const fileExtension = safeSrc?.split('.').pop()?.toLowerCase();
                       const isVideo = videoExtensions.includes(fileExtension || '');
 
                       if (isVideo) {
@@ -292,7 +294,7 @@ export default function MarkdownEditor({
                             className="max-w-full h-auto rounded-lg shadow-md mb-4"
                             style={{ maxWidth: '600px', width: '100%' }}
                           >
-                            <source src={src} type={`video/${fileExtension}`} />
+                            <source src={safeSrc} type={`video/${fileExtension}`} />
                             동영상을 재생할 수 없습니다.
                           </video>
                         );
@@ -300,7 +302,7 @@ export default function MarkdownEditor({
 
                       return (
                         <img
-                          src={src}
+                          src={safeSrc}
                           alt={alt}
                           className="max-w-full h-auto rounded-lg shadow-md mb-4"
                         />

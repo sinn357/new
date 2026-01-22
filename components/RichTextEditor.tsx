@@ -16,6 +16,7 @@ import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
 import { useState, useEffect, useRef } from 'react';
 import FileUpload from './FileUpload';
+import { getCloudinaryImageUrl } from '@/lib/cloudinary';
 import { ImageGallery } from '@/lib/tiptap-extensions/ImageGallery';
 import { AppleNotesShortcuts } from '@/lib/tiptap-extensions/AppleNotesShortcuts';
 import { CollapsibleHeading } from '@/lib/tiptap-extensions/CollapsibleHeading';
@@ -104,7 +105,7 @@ export default function RichTextEditor({
             container.className = 'relative inline-block group';
 
             const img = document.createElement('img');
-            img.src = node.attrs.src;
+            img.src = getCloudinaryImageUrl(node.attrs.src) ?? node.attrs.src;
             img.alt = node.attrs.alt || '';
             img.className = 'rounded-lg max-w-full h-auto';
             if (node.attrs.width) img.style.width = `${node.attrs.width}px`;

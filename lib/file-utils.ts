@@ -10,7 +10,7 @@ export function getFileName(url: string): string {
 }
 
 export function isImageFile(url: string): boolean {
-  const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico'];
+  const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'heic', 'heif'];
   const extension = getFileExtension(url);
   return imageExtensions.includes(extension);
 }

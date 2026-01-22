@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
 import Image from 'next/image';
+import { getCloudinaryImageUrl } from '@/lib/cloudinary';
 
 interface ImageLightboxProps {
   src: string;
@@ -26,6 +27,7 @@ export default function ImageLightbox({
   style
 }: ImageLightboxProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const displaySrc = getCloudinaryImageUrl(src) ?? src;
 
   return (
     <>
@@ -35,7 +37,7 @@ export default function ImageLightbox({
         style={style}
       >
         <Image
-          src={src}
+          src={displaySrc}
           alt={alt}
           width={width}
           height={height}
@@ -47,7 +49,7 @@ export default function ImageLightbox({
       <Lightbox
         open={isOpen}
         close={() => setIsOpen(false)}
-        slides={[{ src }]}
+        slides={[{ src: displaySrc }]}
         render={{
           buttonPrev: () => null,
           buttonNext: () => null,
@@ -97,11 +99,12 @@ interface ClickableImageProps {
  */
 export function ClickableImage({ src, alt, className = '' }: ClickableImageProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const displaySrc = getCloudinaryImageUrl(src) ?? src;
 
   return (
     <>
       <img
-        src={src}
+        src={displaySrc}
         alt={alt}
         onClick={() => setIsOpen(true)}
         className={`cursor-pointer hover:opacity-90 transition-opacity ${className}`}
@@ -110,7 +113,7 @@ export function ClickableImage({ src, alt, className = '' }: ClickableImageProps
       <Lightbox
         open={isOpen}
         close={() => setIsOpen(false)}
-        slides={[{ src }]}
+        slides={[{ src: displaySrc }]}
         render={{
           buttonPrev: () => null,
           buttonNext: () => null,

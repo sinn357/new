@@ -12,6 +12,7 @@ import AnimatedCard from '@/components/AnimatedCard';
 import ArchiveForm from '@/components/ArchiveForm';
 import { useArchives, useDeleteArchive } from '@/lib/hooks/useArchives';
 import StarRating from '@/components/StarRating';
+import { getCloudinaryImageUrl } from '@/lib/cloudinary';
 
 type MediaPreview = {
   url: string;
@@ -395,7 +396,9 @@ function ArchivePageContent() {
                     {(() => {
                       const media = extractFirstMedia(archive.content);
                       if (!media) return null;
-                      const previewSrc = media.type === 'video' ? getVideoThumbnailUrl(media.url) : media.url;
+                      const previewSrc = media.type === 'video'
+                        ? getVideoThumbnailUrl(media.url)
+                        : (getCloudinaryImageUrl(media.url) ?? media.url);
                       return (
                         <div className="relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-700">
                           <img

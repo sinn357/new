@@ -11,6 +11,7 @@ import InlineEdit from '@/components/InlineEdit';
 import AnimatedCard from '@/components/AnimatedCard';
 import WorkForm from '@/components/WorkForm';
 import { useWorks, useDeleteWork } from '@/lib/hooks/useWorks';
+import { getCloudinaryImageUrl } from '@/lib/cloudinary';
 
 type MediaPreview = {
   url: string;
@@ -423,7 +424,9 @@ function WorkPageContent() {
                   {(() => {
                     const media = extractFirstMedia(work.content);
                     if (!media) return null;
-                    const previewSrc = media.type === 'video' ? getVideoThumbnailUrl(media.url) : media.url;
+                    const previewSrc = media.type === 'video'
+                      ? getVideoThumbnailUrl(media.url)
+                      : (getCloudinaryImageUrl(media.url) ?? media.url);
                     return (
                       <div className="relative h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
                         <img

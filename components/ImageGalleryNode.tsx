@@ -2,6 +2,7 @@
 
 import { NodeViewWrapper, NodeViewProps } from '@tiptap/react';
 import { useState } from 'react';
+import { getCloudinaryImageUrl } from '@/lib/cloudinary';
 
 export default function ImageGalleryNode({
   node,
@@ -74,7 +75,7 @@ export default function ImageGalleryNode({
           {(images as string[]).map((src: string, index: number) => (
             <div key={index} className="relative group">
               <img
-                src={src}
+                src={getCloudinaryImageUrl(src) ?? src}
                 alt={`Gallery image ${index + 1}`}
                 className="w-full h-auto rounded-lg object-cover"
                 style={{ aspectRatio: '4/3' }}
