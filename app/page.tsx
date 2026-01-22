@@ -70,6 +70,8 @@ interface PageContent {
   content: string;
   sections?: {
     statusLine?: string;
+    homeAboutTitle?: string;
+    homeAboutContent?: string;
   };
 }
 
@@ -81,9 +83,12 @@ export default function Home() {
   const [totalWorks, setTotalWorks] = useState(0);
   const [loading, setLoading] = useState(true);
   const [pageContent, setPageContent] = useState<PageContent | null>(null);
-  const [aboutContent, setAboutContent] = useState<PageContent | null>(null);
   const [contentReady, setContentReady] = useState(false);
   const statusLine = pageContent?.sections?.statusLine || 'Currently building amazing things';
+  const homeAboutTitle = pageContent?.sections?.homeAboutTitle || 'About This Space';
+  const homeAboutContent =
+    pageContent?.sections?.homeAboutContent ||
+    '개발하며 배운 것들을 기록하고, 프로젝트를 정리하는 공간입니다.';
 
   const fetchPageContent = async () => {
     try {
@@ -94,16 +99,6 @@ export default function Home() {
       console.error('Failed to fetch page content:', error);
     } finally {
       setContentReady(true);
-    }
-  };
-
-  const fetchAboutContent = async () => {
-    try {
-      const response = await fetch('/api/page-content?page=about');
-      const data = await response.json();
-      setAboutContent(data.content);
-    } catch (error) {
-      console.error('Failed to fetch about content:', error);
     }
   };
 
@@ -152,7 +147,6 @@ export default function Home() {
 
     fetchData();
     fetchPageContent();
-    fetchAboutContent();
     fetchArchives();
   }, []);
 
@@ -198,23 +192,29 @@ export default function Home() {
     setPageContent(result.pageContent);
   };
 
-  const saveAboutTitle = async (newTitle: string) => {
+  const saveHomeAboutTitle = async (newTitle: string) => {
+    const nextSections = {
+      ...(pageContent?.sections || {}),
+      homeAboutTitle: newTitle
+    };
+
     const response = await fetch('/api/page-content', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        page: 'about',
-        title: newTitle,
-        content: aboutContent?.content || '개발하며 배운 것들을 기록하고, 프로젝트를 정리하는 공간입니다.'
+        page: 'home',
+        title: pageContent?.title || 'Welcome to My Blog',
+        content: pageContent?.content || '',
+        sections: nextSections
       })
     });
 
     if (!response.ok) {
-      throw new Error('Failed to save about title');
+      throw new Error('Failed to save home about title');
     }
 
     const result = await response.json();
-    setAboutContent(result.pageContent);
+    setPageContent(result.pageContent);
   };
 
   const saveStatusLine = async (newStatusLine: string) => {
@@ -242,23 +242,29 @@ export default function Home() {
     setPageContent(result.pageContent);
   };
 
-  const saveAboutContent = async (newContent: string) => {
+  const saveHomeAboutContent = async (newContent: string) => {
+    const nextSections = {
+      ...(pageContent?.sections || {}),
+      homeAboutContent: newContent
+    };
+
     const response = await fetch('/api/page-content', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        page: 'about',
-        title: aboutContent?.title || 'About This Space',
-        content: newContent
+        page: 'home',
+        title: pageContent?.title || 'Welcome to My Blog',
+        content: pageContent?.content || '',
+        sections: nextSections
       })
     });
 
     if (!response.ok) {
-      throw new Error('Failed to save about content');
+      throw new Error('Failed to save home about content');
     }
 
     const result = await response.json();
-    setAboutContent(result.pageContent);
+    setPageContent(result.pageContent);
   };
 
   return (
@@ -686,22 +692,22 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center">
           {isAdmin ? (
             <InlineEdit
-              text={aboutContent?.title || 'About This Space'}
-              onSave={saveAboutTitle}
+              text={homeAboutTitle}
+              onSave={saveHomeAboutTitle}
               className="mb-6"
               textClassName="text-3xl font-bold text-gray-800 dark:text-gray-100"
               placeholder="제목을 입력하세요"
             />
           ) : (
             <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">
-              {aboutContent?.title || 'About This Space'}
+              {homeAboutTitle}
             </h2>
           )}
 
           {isAdmin ? (
             <InlineEdit
-              text={aboutContent?.content || '개발하며 배운 것들을 기록하고, 프로젝트를 정리하는 공간입니다.'}
-              onSave={saveAboutContent}
+              text={homeAboutContent}
+              onSave={saveHomeAboutContent}
               className="mb-12 max-w-2xl mx-auto"
               textClassName="text-lg text-gray-600 dark:text-gray-300"
               isTextarea={true}
@@ -709,7 +715,7 @@ export default function Home() {
             />
           ) : (
             <p className="text-lg text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
-              {aboutContent?.content || '개발하며 배운 것들을 기록하고, 프로젝트를 정리하는 공간입니다.'}
+              {homeAboutContent}
             </p>
           )}
 
