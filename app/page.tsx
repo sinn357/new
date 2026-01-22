@@ -82,6 +82,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [pageContent, setPageContent] = useState<PageContent | null>(null);
   const [aboutContent, setAboutContent] = useState<PageContent | null>(null);
+  const [contentReady, setContentReady] = useState(false);
   const statusLine = pageContent?.sections?.statusLine || 'Currently building amazing things';
 
   const fetchPageContent = async () => {
@@ -91,6 +92,8 @@ export default function Home() {
       setPageContent(data.content);
     } catch (error) {
       console.error('Failed to fetch page content:', error);
+    } finally {
+      setContentReady(true);
     }
   };
 
@@ -260,6 +263,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className={`transition-opacity duration-200 ${contentReady ? 'opacity-100' : 'opacity-0'}`}>
       {/* Hero Section */}
       <section className="relative px-6 py-32 overflow-hidden">
         {/* Tech Grid + Nodes */}
@@ -731,7 +735,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+      </div>
     </div>
   );
 }
