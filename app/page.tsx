@@ -262,52 +262,46 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
       <section className="relative px-6 py-32 overflow-hidden">
-        {/* Animated Background Blobs */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/30 dark:bg-indigo-500/20 rounded-full blur-3xl animate-blob" />
-          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-teal-500/30 dark:bg-teal-500/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
-          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-purple-500/30 dark:bg-purple-500/20 rounded-full blur-3xl animate-blob animation-delay-4000" />
-        </div>
-
         {/* Tech Grid + Nodes */}
         <div className="absolute inset-0 -z-10 pointer-events-none">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(30,64,175,0.18)_1px,transparent_0)] [background-size:64px_64px] opacity-25 dark:opacity-20" />
+          <div className="absolute -top-24 left-1/2 h-80 w-[560px] -translate-x-1/2 rounded-full bg-gradient-to-r from-indigo-400/20 via-sky-400/20 to-teal-400/20 blur-3xl" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.08)_1px,transparent_1px)] [background-size:64px_64px] opacity-35 dark:opacity-25" />
           <svg
-            className="absolute inset-0 h-full w-full opacity-40"
+            className="absolute inset-0 h-full w-full opacity-55"
             viewBox="0 0 1200 600"
             aria-hidden="true"
           >
             <path
               d="M120 120 L340 200 L520 160 L740 260 L980 210"
-              stroke="rgba(14,165,233,0.35)"
-              strokeWidth="1.2"
+              stroke="rgba(14,165,233,0.45)"
+              strokeWidth="1.4"
               fill="none"
             />
             <path
               d="M220 420 L420 360 L660 420 L880 360 L1080 420"
-              stroke="rgba(99,102,241,0.3)"
-              strokeWidth="1"
+              stroke="rgba(99,102,241,0.4)"
+              strokeWidth="1.2"
               fill="none"
             />
             <path
               d="M320 140 L320 360 L640 360 L640 180"
-              stroke="rgba(45,212,191,0.25)"
-              strokeWidth="1"
+              stroke="rgba(45,212,191,0.35)"
+              strokeWidth="1.2"
               fill="none"
             />
           </svg>
           <motion.span
-            className="absolute left-[18%] top-[22%] h-2 w-2 rounded-full bg-teal-400/80 shadow-[0_0_12px_rgba(45,212,191,0.6)]"
+            className="absolute left-[18%] top-[22%] h-2.5 w-2.5 rounded-full bg-teal-400 shadow-[0_0_14px_rgba(45,212,191,0.7)]"
             animate={{ opacity: [0.4, 1, 0.4] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.span
-            className="absolute right-[20%] top-[30%] h-2 w-2 rounded-full bg-sky-400/80 shadow-[0_0_12px_rgba(56,189,248,0.6)]"
+            className="absolute right-[20%] top-[30%] h-2.5 w-2.5 rounded-full bg-sky-400 shadow-[0_0_14px_rgba(56,189,248,0.7)]"
             animate={{ opacity: [0.3, 1, 0.3] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.span
-            className="absolute left-[35%] bottom-[25%] h-2 w-2 rounded-full bg-indigo-400/80 shadow-[0_0_12px_rgba(129,140,248,0.6)]"
+            className="absolute left-[35%] bottom-[25%] h-2.5 w-2.5 rounded-full bg-indigo-400 shadow-[0_0_14px_rgba(129,140,248,0.7)]"
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
           />
