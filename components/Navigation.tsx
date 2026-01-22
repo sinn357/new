@@ -48,9 +48,23 @@ export default function Navigation() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Link href="/">
-                <div className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent">
-                  HOME
+              <Link href="/" aria-label="Home">
+                <div className="flex items-center justify-center h-10 w-10 rounded-full border border-indigo-200/60 dark:border-indigo-400/40 bg-white/40 dark:bg-gray-900/40 backdrop-blur">
+                  <svg
+                    viewBox="0 0 48 48"
+                    className="h-6 w-6 text-indigo-600 dark:text-indigo-300"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M10 36V12" />
+                    <path d="M38 36V12" />
+                    <path d="M10 24H38" />
+                    <circle cx="24" cy="24" r="3" />
+                  </svg>
                 </div>
               </Link>
             </motion.div>

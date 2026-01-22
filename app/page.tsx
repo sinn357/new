@@ -68,6 +68,9 @@ interface PageContent {
   page: string;
   title: string;
   content: string;
+  sections?: {
+    statusLine?: string;
+  };
 }
 
 export default function Home() {
@@ -79,6 +82,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [pageContent, setPageContent] = useState<PageContent | null>(null);
   const [aboutContent, setAboutContent] = useState<PageContent | null>(null);
+  const statusLine = pageContent?.sections?.statusLine || 'Currently building amazing things';
 
   const fetchPageContent = async () => {
     try {
@@ -150,13 +154,15 @@ export default function Home() {
   }, []);
 
   const saveTitle = async (newTitle: string) => {
+    const sections = pageContent?.sections;
     const response = await fetch('/api/page-content', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         page: 'home',
         title: newTitle,
-        content: pageContent?.content || ''
+        content: pageContent?.content || '',
+        ...(sections ? { sections } : {})
       })
     });
 
@@ -169,13 +175,15 @@ export default function Home() {
   };
 
   const saveContent = async (newContent: string) => {
+    const sections = pageContent?.sections;
     const response = await fetch('/api/page-content', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         page: 'home',
         title: pageContent?.title || 'Welcome to My Blog',
-        content: newContent
+        content: newContent,
+        ...(sections ? { sections } : {})
       })
     });
 
@@ -204,6 +212,31 @@ export default function Home() {
 
     const result = await response.json();
     setAboutContent(result.pageContent);
+  };
+
+  const saveStatusLine = async (newStatusLine: string) => {
+    const nextSections = {
+      ...(pageContent?.sections || {}),
+      statusLine: newStatusLine
+    };
+
+    const response = await fetch('/api/page-content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        page: 'home',
+        title: pageContent?.title || 'Welcome to My Blog',
+        content: pageContent?.content || '',
+        sections: nextSections
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save status line');
+    }
+
+    const result = await response.json();
+    setPageContent(result.pageContent);
   };
 
   const saveAboutContent = async (newContent: string) => {
@@ -236,38 +269,49 @@ export default function Home() {
           <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-purple-500/30 dark:bg-purple-500/20 rounded-full blur-3xl animate-blob animation-delay-4000" />
         </div>
 
-        {/* Floating Icons */}
-        <motion.div
-          className="absolute top-20 left-10 md:left-20 text-4xl opacity-60"
-          animate={{ y: [0, -20, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-        >
-          💻
-        </motion.div>
-
-        <motion.div
-          className="absolute top-40 right-10 md:right-20 text-4xl opacity-60"
-          animate={{ y: [0, 20, 0], rotate: [0, 10, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        >
-          ✨
-        </motion.div>
-
-        <motion.div
-          className="absolute bottom-40 left-1/4 text-3xl opacity-60"
-          animate={{ y: [0, -15, 0], rotate: [0, -10, 0] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        >
-          🚀
-        </motion.div>
-
-        <motion.div
-          className="absolute bottom-32 right-1/3 text-3xl opacity-60"
-          animate={{ y: [0, 15, 0] }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-        >
-          📱
-        </motion.div>
+        {/* Tech Grid + Nodes */}
+        <div className="absolute inset-0 -z-10 pointer-events-none">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(30,64,175,0.18)_1px,transparent_0)] [background-size:64px_64px] opacity-25 dark:opacity-20" />
+          <svg
+            className="absolute inset-0 h-full w-full opacity-40"
+            viewBox="0 0 1200 600"
+            aria-hidden="true"
+          >
+            <path
+              d="M120 120 L340 200 L520 160 L740 260 L980 210"
+              stroke="rgba(14,165,233,0.35)"
+              strokeWidth="1.2"
+              fill="none"
+            />
+            <path
+              d="M220 420 L420 360 L660 420 L880 360 L1080 420"
+              stroke="rgba(99,102,241,0.3)"
+              strokeWidth="1"
+              fill="none"
+            />
+            <path
+              d="M320 140 L320 360 L640 360 L640 180"
+              stroke="rgba(45,212,191,0.25)"
+              strokeWidth="1"
+              fill="none"
+            />
+          </svg>
+          <motion.span
+            className="absolute left-[18%] top-[22%] h-2 w-2 rounded-full bg-teal-400/80 shadow-[0_0_12px_rgba(45,212,191,0.6)]"
+            animate={{ opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.span
+            className="absolute right-[20%] top-[30%] h-2 w-2 rounded-full bg-sky-400/80 shadow-[0_0_12px_rgba(56,189,248,0.6)]"
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.span
+            className="absolute left-[35%] bottom-[25%] h-2 w-2 rounded-full bg-indigo-400/80 shadow-[0_0_12px_rgba(129,140,248,0.6)]"
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
 
         {/* Main Content */}
         <div className="max-w-4xl mx-auto text-center relative z-10">
@@ -324,8 +368,18 @@ export default function Home() {
           >
             <div className="backdrop-blur-lg bg-white/10 dark:bg-gray-800/10 border border-white/20 dark:border-gray-700/20 rounded-2xl px-8 py-4 shadow-2xl">
               <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
-                <span className="text-2xl">✨</span>
-                <span>Currently building amazing things</span>
+                <span className="h-2.5 w-2.5 rounded-full bg-gradient-to-r from-indigo-400 to-teal-400 shadow-[0_0_10px_rgba(94,234,212,0.45)]" />
+                {isAdmin ? (
+                  <InlineEdit
+                    text={statusLine}
+                    onSave={saveStatusLine}
+                    className="min-w-[220px]"
+                    textClassName="text-sm text-gray-700 dark:text-gray-300"
+                    placeholder="상태 문구를 입력하세요"
+                  />
+                ) : (
+                  <span>{statusLine}</span>
+                )}
               </div>
             </div>
           </motion.div>
