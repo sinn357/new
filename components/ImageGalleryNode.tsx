@@ -74,12 +74,16 @@ export default function ImageGalleryNode({
         <div className={`grid ${gridColsClass} gap-4`}>
           {(images as string[]).map((src: string, index: number) => (
             <div key={index} className="relative group">
-              <img
-                src={getCloudinaryImageUrl(src) ?? src}
-                alt={`Gallery image ${index + 1}`}
-                className="w-full h-auto rounded-lg object-cover"
+              <div
+                className="relative w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800"
                 style={{ aspectRatio: '4/3' }}
-              />
+              >
+                <img
+                  src={getCloudinaryImageUrl(src) ?? src}
+                  alt={`Gallery image ${index + 1}`}
+                  className="absolute inset-0 h-full w-full object-contain"
+                />
+              </div>
               {editor.isEditable && (
                 <button
                   type="button"
