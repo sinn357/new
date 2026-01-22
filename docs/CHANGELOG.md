@@ -1,5 +1,30 @@
 # Blog Web Changelog
 
+## 2026-01-23
+
+### Added
+- **홈 상태 문구 인라인 편집**: 관리자 모드에서 "Currently building..." 문구 직접 수정
+- **홈 상단 아이콘화**: HOME 텍스트 대신 추상 H 아이콘 적용
+
+### Fixed
+- **Cloudinary 이미지 호환성**: 이미지 URL 자동 최적화로 관리자/읽기 모드 이미지 엑박 방지
+- **모바일 이미지 플리커 완화**: 이미지 URL 정규화 적용
+- **About/Home 기본 텍스트 플래시 제거**: 데이터 로드 전 콘텐츠 페이드 인 처리
+- **갤러리 이미지 크롭 제거**: 편집/읽기 모드 모두 object-contain 적용
+- **홈 히어로 배경 표시**: 테크 그리드 레이어 z-index 수정
+
+### Changed
+- **홈 히어로 배경 리디자인**: 테크 그리드 + 회로 라인 + 노드 글로우로 교체
+
+### Commits
+- `20ad643`: fix: normalize cloudinary image urls
+- `347e48a`: feat: refine home hero visuals and editable status
+- `20336e4`: fix: strengthen hero grid and avoid about flash
+- `8b03cd6`: fix: ensure hero grid renders above page background
+- `842fa25`: fix: avoid home content flash on load
+- `7e3e1df`: fix: avoid gallery image cropping
+- `ab5652c`: fix: prevent gallery crop in read mode
+
 ## 2026-01-02
 
 ### Added
