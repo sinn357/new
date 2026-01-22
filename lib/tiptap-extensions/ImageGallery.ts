@@ -72,9 +72,14 @@ export const ImageGallery = Node.create<ImageGalleryOptions>({
       4: 'grid-cols-2 md:grid-cols-4',
     } as Record<number, string>)[columns] || 'grid-cols-3';
 
-    const imagesHTML = images.map((src: string) =>
-      ['img', { src, class: 'w-full h-auto rounded-lg object-cover', style: 'aspect-ratio: 4/3' }]
-    );
+    const imagesHTML = images.map((src: string) => ([
+      'div',
+      {
+        class: 'relative w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800',
+        style: 'aspect-ratio: 4/3'
+      },
+      ['img', { src, class: 'absolute inset-0 h-full w-full object-contain' }]
+    ]));
 
     return [
       'div',
