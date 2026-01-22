@@ -263,7 +263,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative px-6 py-32 overflow-hidden">
         {/* Tech Grid + Nodes */}
-        <div className="absolute inset-0 -z-10 pointer-events-none">
+        <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute -top-24 left-1/2 h-80 w-[560px] -translate-x-1/2 rounded-full bg-gradient-to-r from-indigo-400/20 via-sky-400/20 to-teal-400/20 blur-3xl" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.08)_1px,transparent_1px)] [background-size:64px_64px] opacity-35 dark:opacity-25" />
           <svg
