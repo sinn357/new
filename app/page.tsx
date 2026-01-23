@@ -416,9 +416,10 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-8">
               {featuredWorks.map((work, index) => (
                 <AnimatedCard key={work.id} delay={index * 0.1}>
-                  <article
-                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group border-2 border-indigo-200 dark:border-indigo-900"
-                  >
+                  <Link href={`/work/${work.id}`} className="block">
+                    <article
+                      className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group border-2 border-indigo-200 dark:border-indigo-900"
+                    >
                     <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10">
                       ⭐ FEATURED
                     </div>
@@ -475,15 +476,10 @@ export default function Home() {
                         <span className="text-sm text-gray-400 dark:text-gray-500">
                           {new Date(work.createdAt).toLocaleDateString('ko-KR')}
                         </span>
-                        <Link
-                          href={`/work/${work.id}`}
-                          className="text-indigo-500 dark:text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 font-medium text-sm"
-                        >
-                          자세히 보기 →
-                        </Link>
                       </div>
                     </div>
-                  </article>
+                    </article>
+                  </Link>
                 </AnimatedCard>
               ))}
             </div>
@@ -516,9 +512,10 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-8">
               {works.map((work, index) => (
                 <AnimatedCard key={work.id} delay={index * 0.1}>
-                  <article
-                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
-                  >
+                  <Link href={`/work/${work.id}`} className="block">
+                    <article
+                      className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
+                    >
                     {(() => {
                       const media = extractFirstMedia(work.content);
                       if (!media) return null;
@@ -555,15 +552,10 @@ export default function Home() {
                         <span className="text-sm text-gray-400 dark:text-gray-500">
                           {new Date(work.createdAt).toLocaleDateString('ko-KR')}
                         </span>
-                        <Link
-                          href={`/work/${work.id}`}
-                          className="text-indigo-500 dark:text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 font-medium text-sm"
-                        >
-                          자세히 보기 →
-                        </Link>
                       </div>
                     </div>
-                  </article>
+                    </article>
+                  </Link>
                 </AnimatedCard>
               ))}
             </div>
@@ -613,9 +605,10 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-8">
               {archives.map((archive, index) => (
                 <AnimatedCard key={archive.id} delay={index * 0.1}>
-                  <article
-                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
-                  >
+                  <Link href={`/archive/${archive.id}`} className="block">
+                    <article
+                      className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
+                    >
                     {(() => {
                       const media = extractFirstMedia(archive.content);
                       if (!media) return null;
@@ -657,15 +650,10 @@ export default function Home() {
                         <span className="text-sm text-gray-400 dark:text-gray-500">
                           {new Date(archive.createdAt).toLocaleDateString('ko-KR')}
                         </span>
-                        <Link
-                          href={`/archive/${archive.id}`}
-                          className="text-teal-500 dark:text-teal-400 hover:text-teal-600 dark:hover:text-teal-300 font-medium text-sm"
-                        >
-                          자세히 보기 →
-                        </Link>
                       </div>
                     </div>
-                  </article>
+                    </article>
+                  </Link>
                 </AnimatedCard>
               ))}
             </div>

@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Work, WORK_CATEGORIES } from '@/lib/work-store';
 import { useAdmin } from '@/contexts/AdminContext';
@@ -88,6 +87,7 @@ interface PageContent {
 function WorkPageContent() {
   const { isAdmin } = useAdmin();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const editId = searchParams?.get('edit');
 
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -410,11 +410,24 @@ function WorkPageContent() {
               {sortedWorks.map((work, index) => (
                 <AnimatedCard key={work.id} delay={index * 0.1}>
                   <article
-                    className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group ${
+                    className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer ${
                       (work as any).isFeatured
                         ? 'border-2 border-yellow-400 dark:border-yellow-500'
                         : 'border border-gray-100 dark:border-gray-700'
                     }`}
+                    role="link"
+                    tabIndex={0}
+                    onClick={(event) => {
+                      if ((event.target as HTMLElement).closest('a, button')) return;
+                      router.push(`/work/${work.id}`);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.target !== event.currentTarget) return;
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        router.push(`/work/${work.id}`);
+                      }
+                    }}
                   >
                   {(work as any).isFeatured && (
                     <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
@@ -485,9 +498,7 @@ function WorkPageContent() {
                     </div>
 
                     <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                      <Link href={`/work/${work.id}`}>
-                        {work.title}
-                      </Link>
+                      {work.title}
                     </h3>
 
                     <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">

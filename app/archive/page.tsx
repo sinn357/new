@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Archive, ARCHIVE_CATEGORIES, ArchiveCategory } from '@/lib/archive-store';
 import { useAdmin } from '@/contexts/AdminContext';
@@ -77,6 +76,7 @@ interface PageContent {
 function ArchivePageContent() {
   const { isAdmin } = useAdmin();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const editId = searchParams?.get('edit');
 
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -390,9 +390,22 @@ function ArchivePageContent() {
                 const categoryInfo = ARCHIVE_CATEGORIES[archive.category as ArchiveCategory];
                 return (
                   <AnimatedCard key={archive.id} delay={index * 0.1}>
-                    <article
-                      className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group overflow-hidden"
-                    >
+                  <article
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group overflow-hidden cursor-pointer"
+                    role="link"
+                    tabIndex={0}
+                    onClick={(event) => {
+                      if ((event.target as HTMLElement).closest('a, button')) return;
+                      router.push(`/archive/${archive.id}`);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.target !== event.currentTarget) return;
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        router.push(`/archive/${archive.id}`);
+                      }
+                    }}
+                  >
                     {(() => {
                       const media = extractFirstMedia(archive.content);
                       if (!media) return null;
@@ -452,11 +465,9 @@ function ArchivePageContent() {
                       )}
                     </div>
 
-                    <Link href={`/archive/${archive.id}`}>
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors cursor-pointer">
-                        {archive.title}
-                      </h2>
-                    </Link>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                      {archive.title}
+                    </h2>
 
                     {(archive as any).rating && (
                       <div className="mb-4">
@@ -499,12 +510,6 @@ function ArchivePageContent() {
                       </div>
                     )}
 
-                    <Link
-                      href={`/archive/${archive.id}`}
-                      className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium text-sm transition-colors"
-                    >
-                      더 읽기 →
-                    </Link>
                     </div>
                   </article>
                   </AnimatedCard>
