@@ -35,17 +35,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ogImage = extractFirstImage(work.content) || work.imageUrl;
 
   return {
-    title: `${work.title} | 신우철 포트폴리오`,
+    title: `${work.title} | SHIN 포트폴리오`,
     description,
     openGraph: {
       title: work.title,
       description,
       type: 'article',
       publishedTime: work.createdAt.toISOString(),
-      authors: ['신우철'],
+      authors: ['SHIN'],
       url: `${baseUrl}/work/${id}`,
       images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : [],
-      siteName: '신우철 블로그',
+      siteName: 'SHIN 블로그',
       locale: 'ko_KR',
     },
     twitter: {
@@ -80,7 +80,7 @@ export default async function WorkDetailPage({ params }: Props) {
     datePublished: work.createdAt.toISOString(),
     author: {
       '@type': 'Person',
-      name: '신우철',
+      name: 'SHIN',
     },
     description: stripHtml(work.content),
     url: `${baseUrl}/work/${id}`,

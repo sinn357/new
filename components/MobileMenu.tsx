@@ -103,7 +103,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           {/* 푸터 */}
           <div className="p-6 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-              © {new Date().getFullYear()} 신우철
+              © {new Date().getFullYear()} SHIN
             </p>
           </div>
         </div>

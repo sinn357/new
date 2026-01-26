@@ -35,17 +35,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ogImage = extractFirstImage(archive.content) || archive.imageUrl;
 
   return {
-    title: `${archive.title} | 신우철 블로그`,
+    title: `${archive.title} | SHIN 블로그`,
     description,
     openGraph: {
       title: archive.title,
       description,
       type: 'article',
       publishedTime: archive.createdAt.toISOString(),
-      authors: ['신우철'],
+      authors: ['SHIN'],
       url: `${baseUrl}/archive/${id}`,
       images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : [],
-      siteName: '신우철 블로그',
+      siteName: 'SHIN 블로그',
       locale: 'ko_KR',
     },
     twitter: {
@@ -81,11 +81,11 @@ export default async function ArchiveDetailPage({ params }: Props) {
     dateModified: archive.createdAt.toISOString(),
     author: {
       '@type': 'Person',
-      name: '신우철',
+      name: 'SHIN',
     },
     publisher: {
       '@type': 'Person',
-      name: '신우철',
+      name: 'SHIN',
     },
     description: stripHtml(archive.content),
     url: `${baseUrl}/archive/${id}`,

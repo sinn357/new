@@ -77,7 +77,7 @@ export default function Footer() {
           <div className="border-t border-gray-300 dark:border-gray-700 pt-6">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
               <p>
-                © {new Date().getFullYear()} 신우철. All rights reserved.
+                © {new Date().getFullYear()} SHIN. All rights reserved.
               </p>
               <p className="flex items-center gap-2">
                 Made with <span className="text-red-500">❤️</span> using <span className="font-semibold text-gray-800 dark:text-gray-200">Next.js 15</span>
