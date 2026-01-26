@@ -1,358 +1,121 @@
-'use client';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { prisma } from '@/lib/db';
+import ArchiveDetailClient from './ArchiveDetailClient';
 
-import { useState, useEffect, useCallback, use } from 'react';
-import { useRouter } from 'next/navigation';
-import { Archive, ARCHIVE_CATEGORIES, ArchiveCategory } from '@/lib/archive-store';
-import DeleteConfirmModal from '@/components/DeleteConfirmModal';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useAdmin } from '@/contexts/AdminContext';
-import { isImageFile, isVideoFile, isAudioFile, isPdfFile, getFileIcon, getFileTypeLabel, getFileName } from '@/lib/file-utils';
-import StarRating from '@/components/StarRating';
-import ImageLightbox from '@/components/ImageLightbox';
-import ShareButtons from '@/components/ShareButtons';
-import CollapsibleContent from '@/components/CollapsibleContent';
+interface Props {
+  params: Promise<{ id: string }>;
+}
 
-export default function ArchiveDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-  const router = useRouter();
-  const { isAdmin } = useAdmin();
-  const [archive, setArchive] = useState<Archive | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [deleteModal, setDeleteModal] = useState<{
-    isOpen: boolean;
-    type: 'archive';
-    id: string;
-    title: string;
-    message: string;
-  }>({
-    isOpen: false,
-    type: 'archive',
-    id: '',
-    title: '',
-    message: ''
+// HTML 태그 제거 함수
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, '').substring(0, 160);
+}
+
+// 첫 번째 이미지 추출 함수
+function extractFirstImage(html: string): string | undefined {
+  const match = html.match(/<img[^>]+src="([^">]+)"/);
+  return match ? match[1] : undefined;
+}
+
+// 동적 메타데이터 생성
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://testshinblog.vercel.app';
+
+  const archive = await prisma.archive.findUnique({
+    where: { id },
   });
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  const fetchArchive = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/archive/${id}`);
-      if (!response.ok) {
-        throw new Error('Archive not found');
-      }
-      const data = await response.json();
-      setArchive(data.archive);
-    } catch {
-      setError('Failed to fetch archive');
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
+  if (!archive) {
+    return { title: '글을 찾을 수 없습니다' };
+  }
 
-  useEffect(() => {
-    fetchArchive();
-  }, [id, fetchArchive]);
+  const description = stripHtml(archive.content);
+  const ogImage = extractFirstImage(archive.content) || archive.imageUrl;
 
-  const handleDeleteArchive = () => {
-    setDeleteModal({
-      isOpen: true,
-      type: 'archive',
-      id: id,
-      title: '글 삭제',
-      message: '이 글을 삭제하시겠습니까?'
-    });
+  return {
+    title: `${archive.title} | 신우철 블로그`,
+    description,
+    openGraph: {
+      title: archive.title,
+      description,
+      type: 'article',
+      publishedTime: archive.createdAt.toISOString(),
+      authors: ['신우철'],
+      url: `${baseUrl}/archive/${id}`,
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : [],
+      siteName: '신우철 블로그',
+      locale: 'ko_KR',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: archive.title,
+      description,
+      images: ogImage ? [ogImage] : [],
+    },
+    alternates: {
+      canonical: `${baseUrl}/archive/${id}`,
+    },
+  };
+}
+
+export default async function ArchiveDetailPage({ params }: Props) {
+  const { id } = await params;
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://testshinblog.vercel.app';
+
+  const archive = await prisma.archive.findUnique({
+    where: { id },
+  });
+
+  if (!archive) {
+    notFound();
+  }
+
+  // JSON-LD 구조화 데이터
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: archive.title,
+    datePublished: archive.createdAt.toISOString(),
+    dateModified: archive.createdAt.toISOString(),
+    author: {
+      '@type': 'Person',
+      name: '신우철',
+    },
+    publisher: {
+      '@type': 'Person',
+      name: '신우철',
+    },
+    description: stripHtml(archive.content),
+    url: `${baseUrl}/archive/${id}`,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${baseUrl}/archive/${id}`,
+    },
+    image: extractFirstImage(archive.content) || archive.imageUrl,
   };
 
-  const handleConfirmDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const response = await fetch(`/api/archive/${deleteModal.id}`, {
-        method: 'DELETE'
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete archive');
-      }
-
-      router.push('/archive');
-      setDeleteModal({ isOpen: false, type: 'archive', id: '', title: '', message: '' });
-    } catch {
-      setError('Failed to delete archive');
-    } finally {
-      setIsDeleting(false);
-    }
+  // Prisma 객체를 일반 객체로 변환
+  const archiveData = {
+    id: archive.id,
+    title: archive.title,
+    content: archive.content,
+    category: archive.category,
+    tags: archive.tags,
+    imageUrl: archive.imageUrl,
+    fileUrl: archive.fileUrl,
+    rating: archive.rating,
+    createdAt: archive.createdAt.toISOString(),
   };
-
-  const handleCancelDelete = () => {
-    setDeleteModal({ isOpen: false, type: 'archive', id: '', title: '', message: '' });
-  };
-
-  if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
-  if (!archive) return <div className="flex justify-center p-8 text-red-500">Archive not found</div>;
-
-  const categoryInfo = ARCHIVE_CATEGORIES[archive.category as ArchiveCategory];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Navigation */}
-      <section className="px-4 py-8 md:px-6">
-        <div className="w-full md:max-w-4xl md:mx-auto">
-          <Link 
-            href="/archive" 
-            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-          >
-            ← 아카이브 목록으로 돌아가기
-          </Link>
-        </div>
-      </section>
-
-      {error && (
-        <div className="max-w-4xl mx-auto px-6 mb-6">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            {error}
-          </div>
-        </div>
-      )}
-
-      {/* Archive Content */}
-      <section className="px-4 pb-16 md:px-6">
-        <div className="w-full md:max-w-4xl md:mx-auto">
-          <article className="bg-white dark:bg-gray-800 p-4 border-t border-gray-200 dark:border-gray-700 md:rounded-2xl md:shadow-lg md:p-8 md:border md:border-gray-100 md:dark:border-gray-700 mb-8">
-            <div className="flex justify-between items-start mb-6">
-              <div className="flex items-center gap-4">
-                <span className={`px-4 py-2 rounded-full text-sm font-medium ${categoryInfo?.color || 'bg-gray-100 text-gray-800'}`}>
-                  {categoryInfo?.icon} {categoryInfo?.label || archive.category}
-                </span>
-                <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                  {new Date(archive.createdAt).toLocaleDateString('ko-KR', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    weekday: 'long'
-                  })}
-                </span>
-              </div>
-              {isAdmin && (
-                <div className="flex gap-2">
-                  <Link
-                    href={`/archive?edit=${id}`}
-                    className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                    title="글 수정"
-                  >
-                    ✏️
-                  </Link>
-                  <button
-                    onClick={handleDeleteArchive}
-                    className="text-red-500 hover:text-red-700 p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                    title="글 삭제"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-              {archive.title}
-            </h1>
-
-            {(archive as any).rating && (
-              <div className="mb-6">
-                <StarRating value={(archive as any).rating} readonly size="md" />
-              </div>
-            )}
-
-            <div className="flex justify-end mb-8">
-              <ShareButtons
-                url={typeof window !== 'undefined' ? window.location.href : ''}
-                title={archive.title}
-                description={archive.content.substring(0, 150)}
-              />
-            </div>
-
-            <CollapsibleContent
-              html={archive.content}
-              className="prose prose-lg max-w-none dark:prose-invert"
-            />
-
-            {archive.tags && archive.tags.length > 0 && (
-              <div className="mt-8 pt-8 border-t border-gray-200">
-                <h3 className="text-sm font-semibold text-gray-600 mb-3">태그</h3>
-                <div className="flex flex-wrap gap-2">
-                  {archive.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-full"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* File attachments */}
-            {(archive.imageUrl || archive.fileUrl) && (
-              <div className="mt-8 pt-8 border-t border-gray-200">
-                <h3 className="text-sm font-semibold text-gray-600 mb-3">첨부 파일</h3>
-                <div className="grid gap-4">
-                  {archive.imageUrl && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className="text-2xl">{getFileIcon(archive.imageUrl)}</span>
-                        <div>
-                          <h4 className="font-medium text-gray-900 dark:text-white">{getFileTypeLabel(archive.imageUrl)}</h4>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{getFileName(archive.imageUrl)}</p>
-                        </div>
-                        <a 
-                          href={archive.imageUrl} 
-                          download
-                          className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
-                        >
-                          다운로드
-                        </a>
-                      </div>
-                      
-                      {/* Image preview */}
-                      {isImageFile(archive.imageUrl) && (
-                        <div className="inline-block">
-                          <ImageLightbox
-                            src={archive.imageUrl}
-                            alt="첨부 이미지"
-                            width={400}
-                            height={300}
-                            style={{ maxHeight: '300px', objectFit: 'contain' }}
-                          />
-                        </div>
-                      )}
-                      
-                      {/* Video preview */}
-                      {isVideoFile(archive.imageUrl) && (
-                        <video 
-                          controls 
-                          className="w-full max-w-md rounded-md border border-gray-200"
-                          style={{ maxHeight: '300px' }}
-                        >
-                          <source src={archive.imageUrl} />
-                          Your browser does not support the video tag.
-                        </video>
-                      )}
-                      
-                      {/* Audio preview */}
-                      {isAudioFile(archive.imageUrl) && (
-                        <audio controls className="w-full max-w-md">
-                          <source src={archive.imageUrl} />
-                          Your browser does not support the audio tag.
-                        </audio>
-                      )}
-                      
-                      {/* PDF preview */}
-                      {isPdfFile(archive.imageUrl) && (
-                        <div className="mt-3">
-                          <a 
-                            href={archive.imageUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium transition-colors"
-                          >
-                            <span>📄</span>
-                            PDF 열어보기
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  
-                  {archive.fileUrl && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className="text-2xl">{getFileIcon(archive.fileUrl)}</span>
-                        <div className="flex-1">
-                          <h4 className="font-medium text-gray-900 dark:text-white">{getFileTypeLabel(archive.fileUrl)}</h4>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{getFileName(archive.fileUrl)}</p>
-                        </div>
-                        <a 
-                          href={archive.fileUrl} 
-                          download
-                          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                        >
-                          다운로드
-                        </a>
-                      </div>
-                      
-                      {/* Image preview */}
-                      {isImageFile(archive.fileUrl) && (
-                        <a 
-                          href={archive.fileUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="inline-block"
-                        >
-                          <div className="relative max-w-full" style={{ maxHeight: '300px' }}>
-                            <Image 
-                              src={archive.fileUrl} 
-                              alt="첨부 파일"
-                              width={400}
-                              height={300}
-                              className="rounded-md border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer object-contain"
-                              style={{ maxHeight: '300px', width: 'auto' }}
-                            />
-                          </div>
-                        </a>
-                      )}
-                      
-                      {/* Video preview */}
-                      {isVideoFile(archive.fileUrl) && (
-                        <video 
-                          controls 
-                          className="w-full max-w-md rounded-md border border-gray-200"
-                          style={{ maxHeight: '300px' }}
-                        >
-                          <source src={archive.fileUrl} />
-                          Your browser does not support the video tag.
-                        </video>
-                      )}
-                      
-                      {/* Audio preview */}
-                      {isAudioFile(archive.fileUrl) && (
-                        <audio controls className="w-full max-w-md">
-                          <source src={archive.fileUrl} />
-                          Your browser does not support the audio tag.
-                        </audio>
-                      )}
-                      
-                      {/* PDF preview */}
-                      {isPdfFile(archive.fileUrl) && (
-                        <div className="mt-3">
-                          <a 
-                            href={archive.fileUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium transition-colors"
-                          >
-                            <span>📄</span>
-                            PDF 열어보기
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </article>
-        </div>
-      </section>
-
-      <DeleteConfirmModal
-        isOpen={deleteModal.isOpen}
-        title={deleteModal.title}
-        message={deleteModal.message}
-        onConfirm={handleConfirmDelete}
-        onCancel={handleCancelDelete}
-        isDeleting={isDeleting}
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-    </div>
+      <ArchiveDetailClient archive={archiveData as any} id={id} />
+    </>
   );
 }
