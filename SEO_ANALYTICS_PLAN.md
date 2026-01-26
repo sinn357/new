@@ -613,26 +613,52 @@ export default function SearchBar() {
 
 ## 📋 우선순위 체크리스트
 
-### ✅ Phase 1: SEO (즉시 시작 가능)
-- [ ] Metadata API 적용 (archive, work, home)
-- [ ] sitemap.ts 생성
-- [ ] robots.ts 생성
-- [ ] JSON-LD 구조화 데이터
-- [ ] Google Search Console 등록
+### ✅ Phase 1: SEO (완료 - 2026-01-27)
+- [x] Metadata API 적용 (archive, work, home)
+- [x] sitemap.ts 생성 (`/sitemap.xml`)
+- [x] robots.ts 생성 (`/robots.txt`)
+- [x] JSON-LD 구조화 데이터
+- [x] Google Search Console 등록
+- [x] 네이버 서치어드바이저 등록
 
-### ✅ Phase 2: Analytics (1일)
-- [ ] Google Analytics 4 설치
-- [ ] 또는 Vercel Analytics 설치
-- [ ] 환경변수 설정
+### ✅ Phase 2: Analytics (완료 - 2026-01-27)
+- [x] Google Analytics 4 설치 (측정 ID: G-2R94FQ1FKC)
+- [x] Vercel Analytics 설치
+- [x] 환경변수 설정 (NEXT_PUBLIC_GA_ID)
 
-### ✅ Phase 3: 독자 참여 (2-3일)
-- [ ] RSS Feed 생성
+### 🔄 Phase 3: 독자 참여 (진행 중)
+- [x] RSS Feed 생성 (`/feed.xml`)
 - [ ] Giscus 댓글 시스템
-- [ ] 소셜 공유 버튼
+- [x] 소셜 공유 버튼 (기존에 구현됨)
 
 ### ⏳ Phase 4: 광고 & 검색 (트래픽 확보 후)
 - [ ] Google AdSense 신청 (콘텐츠 10+ 필요)
 - [ ] 사이트 내 검색 기능
+
+---
+
+## 🔗 외부 플랫폼 연동
+
+### Medium 연동
+- **현재 상태**: Import 기능 비활성화 (새 계정은 활동 필요)
+- **해결 방법**:
+  1. Medium에서 몇 개 글 작성 후 활동 쌓기
+  2. 수동으로 글 복사해서 게시
+  3. 활동 후 RSS Import 기능 활성화되면 `/feed.xml` 연동
+
+### Substack 연동
+- **현재 상태**: RSS 자동 import 기능 없음 (Substack은 뉴스레터 플랫폼)
+- **연동 방법**:
+  1. 수동: 블로그 새 글 → Substack 뉴스레터에 링크 포함
+  2. 자동화: Zapier로 RSS → Email 자동화 설정
+  3. 크로스 포스팅: 블로그 + Substack 둘 다 게시
+
+### 커스텀 도메인
+- **현재**: `testshinblog.vercel.app` (Vercel 서브도메인)
+- **권장**: 장기 운영/수익화 목표 시 커스텀 도메인 구매 추천
+- **장점**: SEO 유리, AdSense 승인 쉬움, 전문적 이미지
+- **구매처**: Namecheap, Porkbun, 가비아 등
+- **연결**: Vercel Dashboard → Settings → Domains에서 5분 내 설정 가능
 
 ---
 
@@ -657,10 +683,15 @@ export default function SearchBar() {
 **SEO:**
 - Next.js Metadata: https://nextjs.org/docs/app/building-your-application/optimizing/metadata
 - Google Search Console: https://search.google.com/search-console
+- 네이버 서치어드바이저: https://searchadvisor.naver.com
 
 **Analytics:**
 - Google Analytics: https://analytics.google.com
 - Vercel Analytics: https://vercel.com/docs/analytics
+
+**RSS & 연동:**
+- RSS Feed: `/feed.xml`
+- Zapier (자동화): https://zapier.com
 
 **댓글:**
 - Giscus: https://giscus.app
@@ -668,7 +699,11 @@ export default function SearchBar() {
 **광고:**
 - Google AdSense: https://adsense.google.com
 
+**도메인:**
+- Namecheap: https://namecheap.com
+- Porkbun: https://porkbun.com
+
 ---
 
 **작성일**: 2025-12-29
-**마지막 업데이트**: 2025-12-29
+**마지막 업데이트**: 2026-01-27
