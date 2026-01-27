@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     default: 'SHIN 블로그',
     template: '%s',
   },
-  description: 'SHIN의 개인 블로그 - 포트폴리오, 글, 리뷰, 여행기',
+  description: 'SHIN의 개인 공간 - 작업물, 글, 그리고 나',
   keywords: ['블로그', '포트폴리오', '개발', 'SHIN'],
   authors: [{ name: 'SHIN' }],
   creator: 'SHIN',
@@ -40,12 +40,12 @@ export const metadata: Metadata = {
     url: baseUrl,
     siteName: 'SHIN 블로그',
     title: 'SHIN 블로그',
-    description: 'SHIN의 개인 블로그 - 포트폴리오, 글, 리뷰, 여행기',
+    description: 'SHIN의 개인 공간 - 작업물, 글, 그리고 나',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'SHIN 블로그',
-    description: 'SHIN의 개인 블로그 - 포트폴리오, 글, 리뷰, 여행기',
+    description: 'SHIN의 개인 공간 - 작업물, 글, 그리고 나',
   },
   robots: {
     index: true,

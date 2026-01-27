@@ -655,10 +655,43 @@ export default function SearchBar() {
 
 ### 커스텀 도메인
 - **현재**: `testshinblog.vercel.app` (Vercel 서브도메인)
+- **후보 도메인명**: `Elaboropus` (Elaboro + Opus의 합성어)
+  - Elaboro (라틴어): 정교하게 빚어내다
+  - Opus (라틴어): 작품, 걸작
+  - 의미: "정교하게 빚어낸 작품" - input → 나를 통해 → output 공유
+  - 도메인 예시: `elaboropus.com`, `elaboropus.kr`
 - **권장**: 장기 운영/수익화 목표 시 커스텀 도메인 구매 추천
 - **장점**: SEO 유리, AdSense 승인 쉬움, 전문적 이미지
-- **구매처**: Namecheap, Porkbun, 가비아 등
+- **구매처**: Namecheap, Porkbun, 가비아, Cloudflare (원가 판매)
 - **연결**: Vercel Dashboard → Settings → Domains에서 5분 내 설정 가능
+
+### 도메인 비용 구조
+```
+사용자가 $12/년 지불 시:
+├── ICANN (인터넷 관리기관)  →  $0.18/년
+├── Registry (Verisign)     →  $8~9/년 (독점 수익)
+└── Registrar (중개업체)    →  $2~4/년 (마진)
+```
+- **영구 소유 불가**: ICANN 정책상 도메인은 "임대" 개념
+- **최대 10년** 선불 가능, 갱신 안 하면 만료 후 누구나 등록 가능
+- **팁**: Cloudflare Registrar는 마진 없이 원가 판매 ($8.57/년 for .com)
+
+### 개인 이메일 설정 (sinn357@elaboropus.com)
+도메인 구매 시 개인 이메일 주소 생성 가능
+
+**설정 방법:**
+| 방법 | 비용 | 특징 |
+|------|------|------|
+| Google Workspace | $6/월 | Gmail UI, 안정적 |
+| Zoho Mail | 무료~$1/월 | 가성비 좋음 |
+| Cloudflare 포워딩 | 무료 | sinn357@elaboropus.com → Gmail로 전달 |
+
+**추천 (가성비)**: Cloudflare 도메인 + 무료 이메일 포워딩
+- 도메인: ~$10/년
+- 이메일: 무료 포워딩 → Gmail에서 "다른 주소로 보내기" 설정
+
+**장점**: 전문적 이미지, 브랜딩 통일, 평생 소유 (도메인 유지 시)
+**단점**: 연간 비용, 도메인 갱신 필수, 초기 DNS 설정 필요
 
 ---
 

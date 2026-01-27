@@ -88,7 +88,7 @@ export default function Home() {
   const homeAboutTitle = pageContent?.sections?.homeAboutTitle || 'About This Space';
   const homeAboutContent =
     pageContent?.sections?.homeAboutContent ||
-    '개발하며 배운 것들을 기록하고, 프로젝트를 정리하는 공간입니다.';
+    'SHIN의 개인 공간 - 작업물, 글, 그리고 나';
 
   const fetchPageContent = async () => {
     try {
