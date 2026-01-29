@@ -90,10 +90,11 @@ export async function verifyPassword(password: string, hashedPassword: string): 
 /**
  * 환경변수에서 관리자 이메일을 가져옵니다
  */
-export function getAdminEmail(): string {
+export function getAdminEmail(): string | null {
   const email = process.env.ADMIN_EMAIL;
   if (!email) {
-    throw new Error('ADMIN_EMAIL environment variable is not set');
+    console.error('[Auth] ADMIN_EMAIL environment variable is not set');
+    return null;
   }
   return email;
 }
@@ -114,6 +115,10 @@ export function getAdminPasswordHash(): string {
  */
 export function verifyAdminEmail(email: string): boolean {
   const adminEmail = getAdminEmail();
+  if (!adminEmail) {
+    console.error('[Auth] Cannot verify email - ADMIN_EMAIL not configured');
+    return false;
+  }
   return email.toLowerCase().trim() === adminEmail.toLowerCase().trim();
 }
 

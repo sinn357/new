@@ -28,6 +28,29 @@ async function getClientIP(): Promise<string> {
 
 export async function POST(request: Request) {
   try {
+    // 환경변수 체크
+    if (!process.env.ADMIN_EMAIL) {
+      console.error('[Auth] ADMIN_EMAIL environment variable is not set');
+      return Response.json(
+        { error: "Server configuration error", message: "서버 설정 오류: ADMIN_EMAIL이 설정되지 않았습니다." },
+        { status: 500 }
+      );
+    }
+    if (!process.env.ADMIN_PASSWORD_HASH) {
+      console.error('[Auth] ADMIN_PASSWORD_HASH environment variable is not set');
+      return Response.json(
+        { error: "Server configuration error", message: "서버 설정 오류: ADMIN_PASSWORD_HASH가 설정되지 않았습니다." },
+        { status: 500 }
+      );
+    }
+    if (!process.env.JWT_SECRET) {
+      console.error('[Auth] JWT_SECRET environment variable is not set');
+      return Response.json(
+        { error: "Server configuration error", message: "서버 설정 오류: JWT_SECRET이 설정되지 않았습니다." },
+        { status: 500 }
+      );
+    }
+
     const clientIP = await getClientIP();
 
     // Rate Limiting 체크
