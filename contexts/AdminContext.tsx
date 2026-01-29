@@ -2,9 +2,16 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+interface LoginResult {
+  success: boolean;
+  message?: string;
+  remainingAttempts?: number;
+  lockedUntil?: number;
+}
+
 interface AdminContextType {
   isAdmin: boolean;
-  login: (password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<LoginResult>;
   logout: () => Promise<void>;
   showLoginModal: boolean;
   setShowLoginModal: (show: boolean) => void;
@@ -44,25 +51,32 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = async (password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<LoginResult> => {
     try {
       const response = await fetch('/api/admin/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // 쿠키 포함
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ email, password })
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         setIsAdmin(true);
         setShowLoginModal(false);
-        return true;
+        return { success: true };
       } else {
-        return false;
+        return {
+          success: false,
+          message: data.message || '로그인에 실패했습니다.',
+          remainingAttempts: data.remainingAttempts,
+          lockedUntil: data.lockedUntil
+        };
       }
     } catch (error) {
       console.error('Login error:', error);
-      return false;
+      return { success: false, message: '네트워크 오류가 발생했습니다.' };
     }
   };
 

@@ -9,8 +9,8 @@
 - **Repo Root:** /Users/woocheolshin/Documents/Vibecoding_1/my-site
 - **GitHub:** https://github.com/sinn357/new.git
 - **Owner:** Partner
-- **Last Updated:** 2025-11-17 (KST)
-- **Session Goal (Today):** ✅ 다크모드 구현 완료 (Indigo + Teal 컬러 스킴)
+- **Last Updated:** 2026-01-29 (KST)
+- **Session Goal (Today):** ✅ 관리자 인증 보안 강화 (이메일+비밀번호+Rate Limiting)
 
 ---
 
@@ -124,9 +124,10 @@ my-site/
 
 ## 12) Tasks (Single Source of Truth)
 ### Active (in this session)
-- **세션 완료**: 다크모드 구현 완료 (Indigo + Teal 컬러 스킴)
+- **세션 완료**: 관리자 인증 보안 강화 (이메일+비밀번호+Rate Limiting)
 
 ### Recent Done
+- **T-007:** 관리자 인증 보안 강화 ✅ (2026-01-29) - 단일 비밀번호 → 이메일+비밀번호 2요소 인증, Rate Limiting 추가 (5회 실패 시 15분 잠금), IP 기반 브루트포스 방지, 로그인 시도 로깅, AdminLoginModal/AdminContext/auth API 전면 개선
 - **T-006:** 전체 사이트 다크모드 구현 ✅ (2025-11-17) - Indigo + Teal 컬러 스킴으로 전체 컴포넌트와 페이지에 다크모드 적용, Tailwind darkMode 설정 수정 (commits: 9f307b5, 2c5e6b5, 9792cff)
 - **T-005:** 로고 텍스트 변경 ✅ (2025-11-17) - Navigation 컴포넌트에서 "신우철" → "HOME" 변경 (commit: 9f307b5)
 - **T-004:** Phase 4 인터랙티브 애니메이션 구현 ✅ (2025-11-12) - framer-motion 설치, AnimatedCard/AnimatedHero/ScrollProgress 컴포넌트 생성, 홈/Work/Archive 페이지 애니메이션 적용 (commit: ce820c9)
@@ -141,6 +142,7 @@ my-site/
 - **B-004:** 아카이브 카테고리 시스템 개선
 - **B-005:** 댓글 시스템 구현
 - **B-006:** SEO 최적화
+- **B-007:** 🔒 2FA 인증 추가 (향후 검토) - Google Authenticator 또는 이메일 OTP 방식
 
 > 원칙: **세션당 Active ≤ 2**.
 
@@ -230,6 +232,32 @@ my-site/
     - ThemeProvider를 루트 레이아웃에 적용
   - **브랜드 일관성**: Indigo + Teal 조합을 라이트/다크 모드 모두에서 유지하여 브랜드 정체성 강화
   - **접근성**: WCAG 기준 충족하는 명암 대비 확보
+
+### ADR-006: 관리자 인증 보안 강화
+- Date: 2026-01-29
+- Context: 기존 비밀번호만 사용하는 단일 요소 인증의 보안 취약점 해결 필요
+- Options:
+  - Option 1: Rate Limiting만 추가
+  - Option 2: 이메일+비밀번호 + Rate Limiting (선택)
+  - Option 3: 2FA (Google Authenticator/이메일 OTP) 추가
+- Decision: Option 2 선택, Option 3은 향후 검토 (Backlog B-007)
+- Consequences:
+  - **보안 강화**:
+    - 이메일+비밀번호 2요소 인증으로 접근 난이도 상승
+    - IP 기반 Rate Limiting (5회 실패 시 15분 잠금)
+    - 브루트포스 공격 시 자동 계정 잠금
+    - 로그인 시도 서버 로깅 (공격 감지 가능)
+  - **구현 내용**:
+    - `lib/auth.ts`: Rate limiting 함수 추가 (checkRateLimit, recordFailedAttempt, clearLoginAttempts)
+    - `app/api/admin/auth/route.ts`: 이메일 검증 + Rate limiting 적용
+    - `contexts/AdminContext.tsx`: login 함수 시그니처 변경 (email, password)
+    - `components/AdminLoginModal.tsx`: 이메일 입력 필드 추가, 잠금 상태 UI
+  - **환경변수 추가**:
+    - `ADMIN_EMAIL`: 관리자 이메일 주소
+    - `ADMIN_PASSWORD_HASH`: bcrypt 해시된 비밀번호 (기존)
+    - `JWT_SECRET`: JWT 서명 키 (기존)
+  - **보안 등급**: B- → A (중간 → 양호)
+  - **향후 계획**: 2FA 추가 시 A+ 등급 달성 가능 (Backlog B-007)
 
 ---
 

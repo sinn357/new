@@ -4,6 +4,75 @@ import { cookies } from 'next/headers';
 
 const SALT_ROUNDS = 12; // 높은 보안을 위한 강력한 해싱
 
+// ===== Rate Limiting 설정 =====
+const MAX_LOGIN_ATTEMPTS = 5; // 최대 로그인 시도 횟수
+const LOCKOUT_DURATION = 15 * 60 * 1000; // 15분 (밀리초)
+
+// 메모리 기반 Rate Limiting (프로덕션에서는 Redis 권장)
+interface LoginAttempt {
+  count: number;
+  lastAttempt: number;
+  lockedUntil: number | null;
+}
+
+const loginAttempts = new Map<string, LoginAttempt>();
+
+/**
+ * Rate Limiting 체크 - IP 기반
+ */
+export function checkRateLimit(identifier: string): { allowed: boolean; remainingAttempts: number; lockedUntil: number | null } {
+  const now = Date.now();
+  const attempt = loginAttempts.get(identifier);
+
+  if (!attempt) {
+    return { allowed: true, remainingAttempts: MAX_LOGIN_ATTEMPTS, lockedUntil: null };
+  }
+
+  // 잠금 상태 확인
+  if (attempt.lockedUntil && now < attempt.lockedUntil) {
+    return { allowed: false, remainingAttempts: 0, lockedUntil: attempt.lockedUntil };
+  }
+
+  // 잠금 해제 또는 오래된 시도 초기화
+  if (attempt.lockedUntil && now >= attempt.lockedUntil) {
+    loginAttempts.delete(identifier);
+    return { allowed: true, remainingAttempts: MAX_LOGIN_ATTEMPTS, lockedUntil: null };
+  }
+
+  return {
+    allowed: attempt.count < MAX_LOGIN_ATTEMPTS,
+    remainingAttempts: MAX_LOGIN_ATTEMPTS - attempt.count,
+    lockedUntil: null
+  };
+}
+
+/**
+ * 로그인 실패 기록
+ */
+export function recordFailedAttempt(identifier: string): { locked: boolean; lockedUntil: number | null } {
+  const now = Date.now();
+  const attempt = loginAttempts.get(identifier) || { count: 0, lastAttempt: now, lockedUntil: null };
+
+  attempt.count += 1;
+  attempt.lastAttempt = now;
+
+  if (attempt.count >= MAX_LOGIN_ATTEMPTS) {
+    attempt.lockedUntil = now + LOCKOUT_DURATION;
+    loginAttempts.set(identifier, attempt);
+    return { locked: true, lockedUntil: attempt.lockedUntil };
+  }
+
+  loginAttempts.set(identifier, attempt);
+  return { locked: false, lockedUntil: null };
+}
+
+/**
+ * 로그인 성공 시 시도 기록 초기화
+ */
+export function clearLoginAttempts(identifier: string): void {
+  loginAttempts.delete(identifier);
+}
+
 /**
  * 비밀번호를 해시화합니다
  */
@@ -19,6 +88,17 @@ export async function verifyPassword(password: string, hashedPassword: string): 
 }
 
 /**
+ * 환경변수에서 관리자 이메일을 가져옵니다
+ */
+export function getAdminEmail(): string {
+  const email = process.env.ADMIN_EMAIL;
+  if (!email) {
+    throw new Error('ADMIN_EMAIL environment variable is not set');
+  }
+  return email;
+}
+
+/**
  * 환경변수에서 해시된 관리자 비밀번호를 가져옵니다
  */
 export function getAdminPasswordHash(): string {
@@ -27,6 +107,14 @@ export function getAdminPasswordHash(): string {
     throw new Error('ADMIN_PASSWORD_HASH environment variable is not set');
   }
   return hash;
+}
+
+/**
+ * 관리자 이메일 검증
+ */
+export function verifyAdminEmail(email: string): boolean {
+  const adminEmail = getAdminEmail();
+  return email.toLowerCase().trim() === adminEmail.toLowerCase().trim();
 }
 
 /**
