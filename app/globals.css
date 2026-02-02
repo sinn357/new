@@ -219,6 +219,12 @@
   white-space: pre-wrap;
 }
 
+/* 빈 단락도 높이를 가지도록 (줄 띄우기 반영) */
+.prose p:empty,
+.prose p:has(> br:only-child) {
+  min-height: 1.5em;
+}
+
 .prose blockquote {
   border-left: 4px solid #3b82f6;
   padding: 0.5rem 1rem;
