@@ -469,6 +469,11 @@ function WorkPageContent() {
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[work.status]}`}>
                           {statusLabels[work.status]}
                         </span>
+                        {isAdmin && !work.isPublished && (
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+                            숨김
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         {work.duration && (

@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import RichTextEditor from '@/components/RichTextEditor';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface WorkFormProps {
@@ -44,9 +44,10 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
   const [translationError, setTranslationError] = useState<string | null>(null);
   const [translationData, setTranslationData] = useState<{ translation: string; target: string } | null>(null);
   const [translateTarget, setTranslateTarget] = useState('en');
-  const [hasDraft, setHasDraft] = useState(false);
-  const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
-  const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
+  const [draftError, setDraftError] = useState<string | null>(null);
+  const [isDraftSaving, setIsDraftSaving] = useState(false);
+  const [draftId, setDraftId] = useState<string | null>(null);
 
   // Using any type to bypass Zod transform type inference issue with React Hook Form
   // Runtime behavior is correct but TypeScript can't infer types properly
@@ -64,7 +65,8 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
       fileUrl: '',
       status: 'completed',
       duration: '',
-      isFeatured: false
+      isFeatured: false,
+      isPublished: true
     }
   });
 
@@ -83,40 +85,29 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
         fileUrl: editingWork.fileUrl || '',
         status: editingWork.status,
         duration: editingWork.duration || '',
-        isFeatured: (editingWork as any).isFeatured || false
+        isFeatured: (editingWork as any).isFeatured || false,
+        isPublished: (editingWork as any).isPublished ?? true
       });
     }
   }, [editingWork, form]);
 
-  const draftKey = isEditing ? `work:draft:${editingWork?.id ?? 'edit'}` : 'work:draft:new';
-
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const raw = localStorage.getItem(draftKey);
-    if (!raw) {
-      setHasDraft(false);
-      setDraftSavedAt(null);
-      return;
-    }
-    try {
-      const parsed = JSON.parse(raw);
-      setHasDraft(true);
-      setDraftSavedAt(typeof parsed?.savedAt === 'number' ? parsed.savedAt : null);
-    } catch {
-      setHasDraft(false);
-      setDraftSavedAt(null);
-    }
-  }, [draftKey]);
+    setDraftId(editingWork?.id ?? null);
+  }, [editingWork?.id]);
 
   const onSubmit = async (data: WorkFormInput) => {
     try {
-      const url = isEditing ? `/api/work/${editingWork.id}` : '/api/work';
-      const method = isEditing ? 'PUT' : 'POST';
+      const targetId = isEditing ? editingWork.id : draftId;
+      const url = targetId ? `/api/work/${targetId}` : '/api/work';
+      const method = targetId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify({
+          ...data,
+          isPublished: typeof (data as any).isPublished === 'boolean' ? (data as any).isPublished : true
+        })
       });
 
       if (!response.ok) {
@@ -126,13 +117,9 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
       // Invalidate and refetch queries
       await queryClient.invalidateQueries({ queryKey: ['works'] });
 
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem(draftKey);
-      }
-      setHasDraft(false);
-      setDraftSavedAt(null);
-
       form.reset(); // 자동 리셋!
+      setDraftId(null);
+      setDraftSavedAt(null);
       onSuccess();
     } catch (error) {
       console.error('Form submission error:', error);
@@ -148,69 +135,45 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
     onCancel();
   };
 
-  const persistDraft = (values: WorkFormInput) => {
-    if (typeof window === 'undefined') return;
-    const payload = {
-      values,
-      savedAt: Date.now(),
-    };
-    localStorage.setItem(draftKey, JSON.stringify(payload));
-    setHasDraft(true);
-    setDraftSavedAt(payload.savedAt);
-  };
-
-  useEffect(() => {
-    const subscription = form.watch((values) => {
-      const title = typeof values.title === 'string' ? values.title.trim() : '';
-      const content = typeof values.content === 'string' ? values.content.trim() : '';
-      const hasContent = title.length > 0 || content.length > 0;
-      if (!hasContent) return;
-
-      if (draftTimerRef.current) {
-        clearTimeout(draftTimerRef.current);
-      }
-      draftTimerRef.current = setTimeout(() => {
-        persistDraft(values as WorkFormInput);
-      }, 800);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-      if (draftTimerRef.current) {
-        clearTimeout(draftTimerRef.current);
-      }
-    };
-  }, [form, draftKey]);
-
-  const handleSaveDraft = () => {
-    const values = form.getValues();
-    persistDraft(values as WorkFormInput);
-  };
-
-  const handleLoadDraft = () => {
-    if (typeof window === 'undefined') return;
-    const raw = localStorage.getItem(draftKey);
-    if (!raw) return;
+  const persistDraft = async (values: WorkFormInput) => {
+    setDraftError(null);
+    setIsDraftSaving(true);
     try {
-      const parsed = JSON.parse(raw);
-      if (parsed?.values) {
-        form.reset(parsed.values);
-        setDraftSavedAt(typeof parsed.savedAt === 'number' ? parsed.savedAt : null);
-        setHasDraft(true);
+      form.setValue('isPublished', false, { shouldDirty: true });
+      const targetId = draftId;
+      const response = await fetch(targetId ? `/api/work/${targetId}` : '/api/work', {
+        method: targetId ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...values,
+          isPublished: false
+        }),
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok) {
+        const message = result?.error || '임시 저장에 실패했습니다.';
+        setDraftError(message);
+        return;
       }
-    } catch {
-      // ignore invalid draft payload
+      const nextId = result?.work?.id ?? targetId;
+      if (nextId && nextId !== draftId) {
+        setDraftId(nextId);
+      }
+      setDraftSavedAt(new Date().toISOString());
+    } catch (error) {
+      console.error('Draft save error:', error);
+      setDraftError('임시 저장에 실패했습니다.');
+    } finally {
+      setIsDraftSaving(false);
     }
   };
 
-  const handleClearDraft = () => {
-    if (typeof window === 'undefined') return;
-    localStorage.removeItem(draftKey);
-    setHasDraft(false);
-    setDraftSavedAt(null);
+  const handleSaveDraft = async () => {
+    const values = form.getValues();
+    await persistDraft(values as WorkFormInput);
   };
 
-  const formatDraftTime = (timestamp: number | null) => {
+  const formatDraftTime = (timestamp: string | null) => {
     if (!timestamp) return '';
     return new Date(timestamp).toLocaleString('ko-KR', {
       month: '2-digit',
@@ -346,23 +309,19 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
         {isEditing ? '작업물 수정' : '새 작업물 추가'}
       </h2>
       <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
-        <Button type="button" variant="outline" size="sm" onClick={handleSaveDraft}>
-          임시 저장
+        <Button type="button" variant="outline" size="sm" onClick={handleSaveDraft} disabled={isDraftSaving}>
+          {isDraftSaving ? '저장 중...' : '임시 저장'}
         </Button>
-        {hasDraft && (
-          <>
-            <Button type="button" variant="outline" size="sm" onClick={handleLoadDraft}>
-              임시 저장 불러오기
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={handleClearDraft}>
-              임시 저장 삭제
-            </Button>
-          </>
-        )}
         {draftSavedAt && (
           <span>마지막 임시 저장: {formatDraftTime(draftSavedAt)}</span>
         )}
+        <span className="text-xs text-gray-400 dark:text-gray-500">
+          임시 저장은 숨김 상태로 저장됩니다.
+        </span>
       </div>
+      {draftError && (
+        <p className="text-sm text-red-600 dark:text-red-300 mb-4">{draftError}</p>
+      )}
 
       {form.formState.errors.root && (
         <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-6">
@@ -690,6 +649,29 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
               )}
             />
           </div>
+
+          <FormField
+            control={form.control}
+            name="isPublished"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">공개 상태</FormLabel>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    체크 해제 시 관리자만 볼 수 있습니다.
+                  </p>
+                </div>
+                <FormControl>
+                  <input
+                    type="checkbox"
+                    checked={field.value}
+                    onChange={field.onChange}
+                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
 
           {/* Submit & Cancel Buttons */}
           <div className="flex gap-4">

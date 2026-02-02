@@ -437,6 +437,11 @@ function ArchivePageContent() {
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${categoryInfo?.color || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}>
                           {categoryInfo?.icon} {categoryInfo?.label || archive.category}
                         </span>
+                        {isAdmin && !archive.isPublished && (
+                          <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+                            숨김
+                          </span>
+                        )}
                         <span className="text-sm text-gray-500 dark:text-gray-400">
                           {new Date(archive.createdAt).toLocaleDateString('ko-KR', {
                             month: 'short',

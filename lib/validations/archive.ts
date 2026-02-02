@@ -66,7 +66,56 @@ export const archiveSchema = z.object({
     .min(1, '평점은 1 이상이어야 합니다')
     .max(5, '평점은 5 이하여야 합니다')
     .optional()
-    .nullable()
+    .nullable(),
+
+  isPublished: z.boolean()
+    .optional()
+    .default(true)
+});
+
+/**
+ * Draft용 Archive 스키마 - 임시 저장 시 사용
+ * 제목/내용은 빈 문자열 허용
+ */
+export const archiveDraftSchema = z.object({
+  title: z.string()
+    .max(200, '제목은 200자 이하여야 합니다')
+    .optional()
+    .default(''),
+
+  content: z.string()
+    .max(50000, '내용은 50,000자 이하여야 합니다')
+    .optional()
+    .default(''),
+
+  category: z.enum(ARCHIVE_CATEGORY_KEYS, {
+    message: '올바른 카테고리를 선택하세요'
+  }).optional().default('essay'),
+
+  tags: z.union([
+      z.string(),
+      z.array(z.string())
+    ])
+    .optional()
+    .default('')
+    .transform((val) => {
+      if (Array.isArray(val)) return val;
+      if (!val || val.trim() === '') return [];
+      return val.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    }),
+
+  imageUrl: z.string().optional(),
+  fileUrl: z.string().optional(),
+  rating: z.number()
+    .int('평점은 정수여야 합니다')
+    .min(1, '평점은 1 이상이어야 합니다')
+    .max(5, '평점은 5 이하여야 합니다')
+    .optional()
+    .nullable(),
+
+  isPublished: z.boolean()
+    .optional()
+    .default(true)
 });
 
 /**

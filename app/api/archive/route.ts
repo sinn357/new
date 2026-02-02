@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { archiveSchema } from '@/lib/validations/archive';
+import { archiveSchema, archiveDraftSchema } from '@/lib/validations/archive';
 import { isAdminAuthenticated } from '@/lib/auth';
 
 export async function GET(request: Request) {
@@ -9,7 +9,10 @@ export async function GET(request: Request) {
   try {
     await prisma.$connect();
 
-    const where = category ? { category } : {};
+    const isAdmin = await isAdminAuthenticated();
+    const where: { category?: string; isPublished?: boolean } = {};
+    if (category) where.category = category;
+    if (!isAdmin) where.isPublished = true;
     const archives = await prisma.archive.findMany({
       where,
       orderBy: { createdAt: "desc" }
@@ -46,7 +49,8 @@ export async function POST(request: Request) {
     console.log('Request body:', body);
 
     // Zod validation
-    const validated = archiveSchema.safeParse(body);
+    const schema = body?.isPublished === false ? archiveDraftSchema : archiveSchema;
+    const validated = schema.safeParse(body);
 
     if (!validated.success) {
       console.log('Validation failed:', validated.error.format());
@@ -72,7 +76,8 @@ export async function POST(request: Request) {
         category: data.category,
         tags: data.tags, // Already array from Zod transform
         imageUrl: data.imageUrl || null,
-        fileUrl: data.fileUrl || null
+        fileUrl: data.fileUrl || null,
+        isPublished: data.isPublished ?? true
       }
     });
 

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { archiveSchema } from '@/lib/validations/archive';
+import { archiveSchema, archiveDraftSchema } from '@/lib/validations/archive';
 import { isAdminAuthenticated } from '@/lib/auth';
 
 export async function GET(
@@ -14,6 +14,14 @@ export async function GET(
     });
 
     if (!archive) {
+      return Response.json(
+        { error: "Archive not found" },
+        { status: 404 }
+      );
+    }
+
+    const isAdmin = await isAdminAuthenticated();
+    if (!isAdmin && !archive.isPublished) {
       return Response.json(
         { error: "Archive not found" },
         { status: 404 }
@@ -50,7 +58,8 @@ export async function PUT(
     console.log('PUT /api/archive/[id] - Request body:', body);
 
     // Zod validation
-    const validated = archiveSchema.safeParse(body);
+    const schema = body?.isPublished === false ? archiveDraftSchema : archiveSchema;
+    const validated = schema.safeParse(body);
 
     if (!validated.success) {
       console.log('Validation failed:', validated.error.format());
@@ -84,7 +93,8 @@ export async function PUT(
         category: data.category,
         tags: data.tags, // Already array from Zod transform
         imageUrl: data.imageUrl || null,
-        fileUrl: data.fileUrl || null
+        fileUrl: data.fileUrl || null,
+        isPublished: data.isPublished ?? true
       }
     });
 

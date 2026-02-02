@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { workSchema } from '@/lib/validations/work';
+import { workSchema, workDraftSchema } from '@/lib/validations/work';
 import { isAdminAuthenticated } from '@/lib/auth';
 
 export async function GET(request: Request) {
@@ -7,10 +7,13 @@ export async function GET(request: Request) {
     // 데이터베이스 연결 테스트
     await prisma.$connect();
 
+    const isAdmin = await isAdminAuthenticated();
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
 
-    const where = category ? { category } : {};
+    const where: { category?: string; isPublished?: boolean } = {};
+    if (category) where.category = category;
+    if (!isAdmin) where.isPublished = true;
 
     const works = await prisma.work.findMany({
       where,
@@ -51,7 +54,8 @@ export async function POST(request: Request) {
     console.log('Request body:', body);
 
     // Zod validation
-    const validated = workSchema.safeParse(body);
+    const schema = body?.isPublished === false ? workDraftSchema : workSchema;
+    const validated = schema.safeParse(body);
 
     if (!validated.success) {
       console.log('Validation failed:', validated.error.format());
@@ -83,7 +87,8 @@ export async function POST(request: Request) {
         imageUrl: data.imageUrl || null,
         fileUrl: data.fileUrl || null,
         status: data.status,
-        duration: data.duration || null
+        duration: data.duration || null,
+        isPublished: data.isPublished ?? true
       }
     });
 

@@ -12,6 +12,7 @@ export interface Work {
   fileUrl?: string;
   status: 'completed' | 'in-progress' | 'planned';
   duration?: string;
+  isPublished: boolean;
   createdAt: string;
 }
 
@@ -47,7 +48,8 @@ export function createWork({
   imageUrl, 
   fileUrl,
   status = 'completed', 
-  duration 
+  duration,
+  isPublished = true
 }: { 
   title: string; 
   content: string; 
@@ -61,6 +63,7 @@ export function createWork({
   fileUrl?: string;
   status?: 'completed' | 'in-progress' | 'planned';
   duration?: string;
+  isPublished?: boolean;
 }): Work {
   const work: Work = {
     id: crypto.randomUUID(),
@@ -76,6 +79,7 @@ export function createWork({
     fileUrl,
     status,
     duration,
+    isPublished,
     createdAt: new Date().toISOString()
   };
   

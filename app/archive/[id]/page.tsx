@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/db';
+import { isAdminAuthenticated } from '@/lib/auth';
 import ArchiveDetailClient from './ArchiveDetailClient';
 
 interface Props {
@@ -27,7 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     where: { id },
   });
 
-  if (!archive) {
+  const isAdmin = await isAdminAuthenticated();
+  if (!archive || (!isAdmin && !archive.isPublished)) {
     return { title: '글을 찾을 수 없습니다' };
   }
 
@@ -68,7 +70,8 @@ export default async function ArchiveDetailPage({ params }: Props) {
     where: { id },
   });
 
-  if (!archive) {
+  const isAdmin = await isAdminAuthenticated();
+  if (!archive || (!isAdmin && !archive.isPublished)) {
     notFound();
   }
 
@@ -106,6 +109,7 @@ export default async function ArchiveDetailPage({ params }: Props) {
     imageUrl: archive.imageUrl,
     fileUrl: archive.fileUrl,
     rating: archive.rating,
+    isPublished: archive.isPublished,
     createdAt: archive.createdAt.toISOString(),
   };
 

@@ -76,7 +76,83 @@ export const workSchema = z.object({
 
   isFeatured: z.boolean()
     .optional()
-    .default(false)
+    .default(false),
+
+  isPublished: z.boolean()
+    .optional()
+    .default(true)
+});
+
+/**
+ * Draft용 Work 스키마 - 임시 저장 시 사용
+ * 제목/내용은 빈 문자열 허용
+ */
+export const workDraftSchema = z.object({
+  title: z.string()
+    .max(200, '제목은 200자 이하여야 합니다')
+    .optional()
+    .default(''),
+
+  content: z.string()
+    .max(10000, '내용은 10,000자 이하여야 합니다')
+    .optional()
+    .default(''),
+
+  category: z.enum(['product', 'media', 'photography'], {
+    message: '올바른 카테고리를 선택하세요'
+  }).optional().default('product'),
+
+  techStack: z.union([
+      z.string(),
+      z.array(z.string())
+    ])
+    .optional()
+    .default('')
+    .transform((val) => {
+      if (Array.isArray(val)) return val;
+      if (!val || val.trim() === '') return [];
+      return val.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    }),
+
+  demoUrl: z.string()
+    .optional()
+    .refine(
+      (val) => !val || val === '' || z.string().url().safeParse(val).success,
+      { message: '올바른 데모 URL을 입력하세요' }
+    ),
+
+  youtubeUrl: z.string()
+    .optional()
+    .refine(
+      (val) => !val || val === '' || z.string().url().safeParse(val).success,
+      { message: '올바른 YouTube URL을 입력하세요' }
+    ),
+
+  instagramUrl: z.string()
+    .optional()
+    .refine(
+      (val) => !val || val === '' || z.string().url().safeParse(val).success,
+      { message: '올바른 Instagram URL을 입력하세요' }
+    ),
+
+  imageUrl: z.string().optional(),
+  fileUrl: z.string().optional(),
+
+  status: z.enum(['completed', 'in-progress', 'planned'], {
+    message: '올바른 상태를 선택하세요'
+  }).default('completed'),
+
+  duration: z.string()
+    .max(100, '기간은 100자 이하여야 합니다')
+    .optional(),
+
+  isFeatured: z.boolean()
+    .optional()
+    .default(false),
+
+  isPublished: z.boolean()
+    .optional()
+    .default(true)
 });
 
 /**

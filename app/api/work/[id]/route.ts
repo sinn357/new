@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { workSchema } from '@/lib/validations/work';
+import { workSchema, workDraftSchema } from '@/lib/validations/work';
 import { isAdminAuthenticated } from '@/lib/auth';
 
 export async function GET(
@@ -14,6 +14,14 @@ export async function GET(
     });
 
     if (!work) {
+      return Response.json(
+        { error: "Work not found" },
+        { status: 404 }
+      );
+    }
+
+    const isAdmin = await isAdminAuthenticated();
+    if (!isAdmin && !work.isPublished) {
       return Response.json(
         { error: "Work not found" },
         { status: 404 }
@@ -49,7 +57,8 @@ export async function PUT(
     const body = await request.json();
 
     // Zod validation
-    const validated = workSchema.safeParse(body);
+    const schema = body?.isPublished === false ? workDraftSchema : workSchema;
+    const validated = schema.safeParse(body);
 
     if (!validated.success) {
       console.log('Validation failed:', validated.error.format());
@@ -88,7 +97,8 @@ export async function PUT(
         imageUrl: data.imageUrl || null,
         fileUrl: data.fileUrl || null,
         status: data.status,
-        duration: data.duration || null
+        duration: data.duration || null,
+        isPublished: data.isPublished ?? true
       }
     });
 

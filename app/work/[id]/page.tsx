@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/db';
+import { isAdminAuthenticated } from '@/lib/auth';
 import WorkDetailClient from './WorkDetailClient';
 
 interface Props {
@@ -27,7 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     where: { id },
   });
 
-  if (!work) {
+  const isAdmin = await isAdminAuthenticated();
+  if (!work || (!isAdmin && !work.isPublished)) {
     return { title: '작업물을 찾을 수 없습니다' };
   }
 
@@ -68,7 +70,8 @@ export default async function WorkDetailPage({ params }: Props) {
     where: { id },
   });
 
-  if (!work) {
+  const isAdmin = await isAdminAuthenticated();
+  if (!work || (!isAdmin && !work.isPublished)) {
     notFound();
   }
 
@@ -103,6 +106,7 @@ export default async function WorkDetailPage({ params }: Props) {
     status: work.status as 'completed' | 'in-progress' | 'planned',
     duration: work.duration,
     isFeatured: work.isFeatured,
+    isPublished: work.isPublished,
     createdAt: work.createdAt.toISOString(),
   };
 

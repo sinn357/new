@@ -6,6 +6,7 @@ export interface Archive {
   tags: string[];
   imageUrl?: string;
   fileUrl?: string;
+  isPublished: boolean;
   createdAt: string;
 }
 
@@ -49,12 +50,14 @@ export function createArchive({
   title, 
   content, 
   category = 'business', 
-  tags = [] 
+  tags = [],
+  isPublished = true
 }: { 
   title: string; 
   content: string; 
   category?: string;
   tags?: string[];
+  isPublished?: boolean;
 }): Archive {
   const archive: Archive = {
     id: crypto.randomUUID(),
@@ -62,6 +65,7 @@ export function createArchive({
     content,
     category,
     tags,
+    isPublished,
     createdAt: new Date().toISOString()
   };
   
