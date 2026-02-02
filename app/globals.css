@@ -218,6 +218,10 @@
   margin: 0.5rem 0;
 }
 
+.prose {
+  white-space: pre-wrap;
+}
+
 .prose blockquote {
   border-left: 4px solid #3b82f6;
   padding: 0.5rem 1rem;
