@@ -1,5 +1,21 @@
 # Blog Web Changelog
 
+## 2026-02-02
+
+### Added
+- **임시저장=숨김 업로드 전환**: 임시저장 시 Work/Archive에 바로 저장하고 `isPublished=false`로 숨김 처리
+- **공개 상태 토글**: Work/Archive 폼에 공개 여부 설정 추가
+
+### Changed
+- **공개 노출 필터링**: 비관리자는 `isPublished=true`만 조회, 상세 페이지도 숨김 글은 404 처리
+- **Draft 관련 정리**: Draft API/모델 제거
+
+### Database
+- **isPublished 컬럼 추가**: Work/Archive에 공개 상태 컬럼 반영 (db push)
+
+### Commits
+- `49fe8d6`: feat: store drafts as hidden posts
+
 ## 2026-01-23
 
 ### Added
