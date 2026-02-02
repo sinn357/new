@@ -216,9 +216,6 @@
 
 .prose p {
   margin: 0.5rem 0;
-}
-
-.prose {
   white-space: pre-wrap;
 }
 
