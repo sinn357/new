@@ -124,7 +124,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
   };
 
   const upsertSummary = (content: string, summaryHtml: string) => {
-    const summaryRegex = /<div data-ai-summary=\"true\">[\\s\\S]*?<\\/div>/;
+    const summaryRegex = /<div data-ai-summary="true">[\\s\\S]*?<\\/div>/;
     if (summaryRegex.test(content)) {
       return content.replace(summaryRegex, summaryHtml);
     }
