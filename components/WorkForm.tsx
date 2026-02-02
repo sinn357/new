@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import RichTextEditor from '@/components/RichTextEditor';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface WorkFormProps {
@@ -37,6 +37,9 @@ type WorkFormInput = z.input<typeof workSchema>;
 export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormProps) {
   const isEditing = !!editingWork;
   const queryClient = useQueryClient();
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [summaryData, setSummaryData] = useState<{ summary: string; bullets: string[] } | null>(null);
 
   // Using any type to bypass Zod transform type inference issue with React Hook Form
   // Runtime behavior is correct but TypeScript can't infer types properly
@@ -110,6 +113,79 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
   const handleCancel = () => {
     form.reset();
     onCancel();
+  };
+
+  const stripHtml = (html: string) =>
+    html
+      .replace(/<style[^>]*>.*?<\/style>/gi, '')
+      .replace(/<script[^>]*>.*?<\/script>/gi, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  const buildSummaryHtml = (summary: string, bullets: string[]) => {
+    const safeSummary = summary.trim();
+    const safeBullets = bullets.filter((item) => item.trim().length > 0);
+    const bulletsHtml = safeBullets.length
+      ? `<ul>${safeBullets.map((item) => `<li>${item}</li>`).join('')}</ul>`
+      : '';
+
+    return `<div data-ai-summary=\"true\"><p><strong>TL;DR</strong></p>${bulletsHtml}<p>${safeSummary}</p></div>`;
+  };
+
+  const upsertSummary = (content: string, summaryHtml: string) => {
+    const summaryRegex = /<div data-ai-summary=\"true\">[\\s\\S]*?<\\/div>/;
+    if (summaryRegex.test(content)) {
+      return content.replace(summaryRegex, summaryHtml);
+    }
+    return `${summaryHtml}${content ? `\\n${content}` : ''}`;
+  };
+
+  const handleGenerateSummary = async () => {
+    setSummaryError(null);
+    setSummaryData(null);
+
+    const content = form.getValues('content') || '';
+    const text = stripHtml(content);
+
+    if (!text) {
+      setSummaryError('요약할 내용이 없습니다.');
+      return;
+    }
+
+    setIsSummarizing(true);
+    try {
+      const response = await fetch('/api/ai/summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        const message = result?.error || '요약 생성에 실패했습니다.';
+        setSummaryError(message);
+        return;
+      }
+
+      setSummaryData({
+        summary: result.data.summary,
+        bullets: Array.isArray(result.data.bullets) ? result.data.bullets : [],
+      });
+    } catch (error) {
+      console.error('Summary generation error:', error);
+      setSummaryError('요약 생성에 실패했습니다.');
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
+
+  const handleApplySummary = () => {
+    if (!summaryData) return;
+    const content = form.getValues('content') || '';
+    const summaryHtml = buildSummaryHtml(summaryData.summary, summaryData.bullets);
+    const nextContent = upsertSummary(content, summaryHtml);
+    form.setValue('content', nextContent, { shouldDirty: true });
   };
 
   const selectedCategory = form.watch('category');
@@ -199,7 +275,20 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>설명 *</FormLabel>
+                <FormLabel className="flex items-center justify-between gap-3">
+                  <span>설명 *</span>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleGenerateSummary}
+                      disabled={isSummarizing}
+                    >
+                      {isSummarizing ? '요약 중...' : 'AI TL;DR'}
+                    </Button>
+                  </div>
+                </FormLabel>
                 <FormControl>
                   <RichTextEditor
                     value={field.value}
@@ -207,6 +296,27 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
                     placeholder="프로젝트에 대한 상세 설명을 작성하세요..."
                   />
                 </FormControl>
+                {summaryError && (
+                  <p className="text-sm text-red-600 dark:text-red-300 mt-2">{summaryError}</p>
+                )}
+                {summaryData && (
+                  <div className="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-900 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-100">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-semibold">TL;DR 미리보기</span>
+                      <Button type="button" size="sm" onClick={handleApplySummary}>
+                        본문에 적용
+                      </Button>
+                    </div>
+                    <p className="mt-2">{summaryData.summary}</p>
+                    {summaryData.bullets.length > 0 && (
+                      <ul className="mt-2 list-disc pl-5">
+                        {summaryData.bullets.map((item, index) => (
+                          <li key={`${item}-${index}`}>{item}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
                 <FormMessage />
               </FormItem>
             )}
