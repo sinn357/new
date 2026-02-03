@@ -10,7 +10,6 @@ import { useAdmin } from '@/contexts/AdminContext'
 const menuItems = [
   { label: 'Work', href: '/work' },
   { label: 'Archive', href: '/archive' },
-  { label: 'About', href: '/about' },
 ]
 
 export default function Navigation() {

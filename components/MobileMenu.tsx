@@ -82,7 +82,6 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               {[
                 { label: 'Work', href: '/work' },
                 { label: 'Archive', href: '/archive' },
-                { label: 'About', href: '/about' },
               ].map((item) => (
                 <li key={item.href}>
                   <Link
