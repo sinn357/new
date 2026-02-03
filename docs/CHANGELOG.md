@@ -1,5 +1,13 @@
 # Blog Web Changelog
 
+## 2026-02-03
+
+### Changed
+- **About 페이지 숨김 처리**: 내비게이션 및 모바일 메뉴에서 제거, 사이트맵에서도 제외
+
+### Commits
+- `160eec3`: chore: hide about from navigation
+
 ## 2026-02-02
 
 ### Added
