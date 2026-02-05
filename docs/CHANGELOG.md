@@ -1,5 +1,25 @@
 # Blog Web Changelog
 
+## 2026-02-05
+
+### Added
+- **Archive/Work 이중 언어 토글**: 한국어/영어 전환 지원 (콘텐츠를 한 글에 분리 저장)
+- **작성 폼 언어 탭**: Archive/Work 폼에서 한국어/영어 본문을 분리 작성
+- **미디어 공유 도우미**: 한국어 본문 미디어를 영어 본문에 복사 버튼 제공
+
+### Changed
+- **목록/홈/피드 기본 언어 처리**: Archive/Work 요약/미리보기/메타데이터에 한국어 콘텐츠 사용
+
+### Fixed
+- **빌드 실패 해결**: 메타데이터에서 `contentForMeta` 누락으로 발생한 타입 오류 수정
+- **작성/수정 페이지 크래시**: `FormControl` 단일 자식 규칙 위반으로 발생한 런타임 오류 수정
+
+### Commits
+- `7b7b79b`: feat: add bilingual content toggle
+- `6f4159d`: fix: define archive metadata content
+- `88cb1c5`: fix: define work metadata content
+- `b12f850`: fix: avoid multiple children in form control
+
 ## 2026-02-03
 
 ### Changed
@@ -234,4 +254,4 @@
 
 ---
 
-**Last Updated**: 2026-01-07
+**Last Updated**: 2026-02-05

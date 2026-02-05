@@ -1,5 +1,45 @@
 # Blog Web - Error Fixes
 
+## 2026-02-05
+
+### Build Failures (TypeScript)
+
+**Error Message**:
+```
+Type error: Cannot find name 'contentForMeta'
+```
+
+**Affected**: `app/archive/[id]/page.tsx`, `app/work/[id]/page.tsx` (빌드 단계)
+
+**Root Cause**:
+- 메타데이터/JSON-LD에서 `contentForMeta`를 참조했으나 변수 정의가 누락됨
+
+**Solution**:
+- `const contentForMeta = getContentForLang(..., 'ko')` 정의 추가
+
+**Result**:
+- 타입 체크 통과 및 빌드 성공
+
+---
+
+### Archive/Work Form Crash (Client Runtime)
+
+**Error Message**:
+```
+React.Children.only expected to receive a single React element child.
+```
+
+**Affected**: Archive/Work 작성/수정 폼 (클라이언트 런타임)
+
+**Root Cause**:
+- `FormControl` 컴포넌트 내부에 `<input>`과 `RichTextEditor` 두 개의 자식이 들어감
+
+**Solution**:
+- 숨겨진 `<input>`을 `FormControl` 밖으로 이동
+
+**Result**:
+- 작성/수정 화면 정상 로드
+
 ## 2025-11-18
 
 ### Database Column Missing (Runtime Error)
@@ -33,4 +73,4 @@ The column Work.isFeatured does not exist in the current database.
 
 ---
 
-**Last Updated**: 2025-11-18
+**Last Updated**: 2026-02-05
