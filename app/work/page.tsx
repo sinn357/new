@@ -11,6 +11,7 @@ import AnimatedCard from '@/components/AnimatedCard';
 import WorkForm from '@/components/WorkForm';
 import { useWorks, useDeleteWork } from '@/lib/hooks/useWorks';
 import { getCloudinaryImageUrl } from '@/lib/cloudinary';
+import { getContentForLang } from '@/lib/bilingual-content';
 
 type MediaPreview = {
   url: string;
@@ -435,7 +436,8 @@ function WorkPageContent() {
                     </div>
                   )}
                   {(() => {
-                    const media = extractFirstMedia(work.content);
+                    const workContent = getContentForLang(work.content, 'ko');
+                    const media = extractFirstMedia(workContent);
                     if (!media) return null;
                     const previewSrc = media.type === 'video'
                       ? getVideoThumbnailUrl(media.url)
@@ -507,7 +509,7 @@ function WorkPageContent() {
                     </h3>
 
                     <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                      {stripHtml(work.content)}
+                      {stripHtml(getContentForLang(work.content, 'ko'))}
                     </p>
 
                     {work.techStack && work.techStack.length > 0 && (

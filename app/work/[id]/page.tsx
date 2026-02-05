@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import { isAdminAuthenticated } from '@/lib/auth';
 import WorkDetailClient from './WorkDetailClient';
+import { getContentForLang } from '@/lib/bilingual-content';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -33,8 +34,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: '작업물을 찾을 수 없습니다' };
   }
 
-  const description = stripHtml(work.content);
-  const ogImage = extractFirstImage(work.content) || work.imageUrl;
+  const contentForMeta = getContentForLang(work.content, 'ko');
+  const description = stripHtml(contentForMeta);
+  const ogImage = extractFirstImage(contentForMeta) || work.imageUrl;
 
   return {
     title: `${work.title} | SHIN 포트폴리오`,
@@ -85,9 +87,9 @@ export default async function WorkDetailPage({ params }: Props) {
       '@type': 'Person',
       name: 'SHIN',
     },
-    description: stripHtml(work.content),
+    description: stripHtml(contentForMeta),
     url: `${baseUrl}/work/${id}`,
-    image: extractFirstImage(work.content) || work.imageUrl,
+    image: extractFirstImage(contentForMeta) || work.imageUrl,
   };
 
   // Prisma 객체를 일반 객체로 변환

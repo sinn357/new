@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db';
+import { getContentForLang } from '@/lib/bilingual-content';
 
 export async function GET() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://testshinblog.vercel.app';
@@ -43,7 +44,7 @@ export async function GET() {
       <guid isPermaLink="true">${baseUrl}/archive/${post.id}</guid>
       <pubDate>${new Date(post.createdAt).toUTCString()}</pubDate>
       <category>${post.category}</category>
-      <description><![CDATA[${stripHtml(post.content)}...]]></description>
+      <description><![CDATA[${stripHtml(getContentForLang(post.content, 'ko'))}...]]></description>
     </item>`
       )
       .join('')}
@@ -56,7 +57,7 @@ export async function GET() {
       <guid isPermaLink="true">${baseUrl}/work/${work.id}</guid>
       <pubDate>${new Date(work.createdAt).toUTCString()}</pubDate>
       <category>work</category>
-      <description><![CDATA[${stripHtml(work.content)}...]]></description>
+      <description><![CDATA[${stripHtml(getContentForLang(work.content, 'ko'))}...]]></description>
     </item>`
       )
       .join('')}

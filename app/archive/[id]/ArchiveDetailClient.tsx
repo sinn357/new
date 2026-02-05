@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Archive, ARCHIVE_CATEGORIES, ArchiveCategory } from '@/lib/archive-store';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
@@ -12,6 +12,7 @@ import StarRating from '@/components/StarRating';
 import ImageLightbox from '@/components/ImageLightbox';
 import ShareButtons from '@/components/ShareButtons';
 import CollapsibleContent from '@/components/CollapsibleContent';
+import { getContentForLang, splitBilingualContent } from '@/lib/bilingual-content';
 
 interface ArchiveDetailClientProps {
   archive: Archive;
@@ -22,6 +23,7 @@ export default function ArchiveDetailClient({ archive, id }: ArchiveDetailClient
   const router = useRouter();
   const { isAdmin } = useAdmin();
   const [error, setError] = useState('');
+  const [language, setLanguage] = useState<'ko' | 'en'>('ko');
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     type: 'archive';
@@ -72,6 +74,20 @@ export default function ArchiveDetailClient({ archive, id }: ArchiveDetailClient
   };
 
   const categoryInfo = ARCHIVE_CATEGORIES[archive.category as ArchiveCategory];
+  const { ko, en, isBilingual } = splitBilingualContent(archive.content);
+  const showLanguageToggle = isBilingual && Boolean(ko.trim()) && Boolean(en.trim());
+  const displayContent = getContentForLang(archive.content, language);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('archiveLanguage');
+    if (stored === 'en' || stored === 'ko') {
+      setLanguage(stored);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('archiveLanguage', language);
+  }, [language]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -143,16 +159,42 @@ export default function ArchiveDetailClient({ archive, id }: ArchiveDetailClient
               </div>
             )}
 
-            <div className="flex justify-end mb-8">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
+              {showLanguageToggle && (
+                <div className="inline-flex rounded-full border border-gray-200 bg-white px-1 py-1 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                  <button
+                    type="button"
+                    onClick={() => setLanguage('ko')}
+                    className={`px-3 py-1 rounded-full transition-colors ${
+                      language === 'ko'
+                        ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+                        : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
+                    }`}
+                  >
+                    한국어
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLanguage('en')}
+                    className={`px-3 py-1 rounded-full transition-colors ${
+                      language === 'en'
+                        ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+                        : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
+                    }`}
+                  >
+                    English
+                  </button>
+                </div>
+              )}
               <ShareButtons
                 url={typeof window !== 'undefined' ? window.location.href : ''}
                 title={archive.title}
-                description={archive.content.substring(0, 150)}
+                description={displayContent.substring(0, 150)}
               />
             </div>
 
             <CollapsibleContent
-              html={archive.content}
+              html={displayContent}
               className="prose prose-lg max-w-none dark:prose-invert"
             />
 

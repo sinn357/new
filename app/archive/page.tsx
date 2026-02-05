@@ -12,6 +12,7 @@ import ArchiveForm from '@/components/ArchiveForm';
 import { useArchives, useDeleteArchive } from '@/lib/hooks/useArchives';
 import StarRating from '@/components/StarRating';
 import { getCloudinaryImageUrl } from '@/lib/cloudinary';
+import { getContentForLang } from '@/lib/bilingual-content';
 
 type MediaPreview = {
   url: string;
@@ -407,7 +408,8 @@ function ArchivePageContent() {
                     }}
                   >
                     {(() => {
-                      const media = extractFirstMedia(archive.content);
+                      const archiveContent = getContentForLang(archive.content, 'ko');
+                      const media = extractFirstMedia(archiveContent);
                       if (!media) return null;
                       const previewSrc = media.type === 'video'
                         ? getVideoThumbnailUrl(media.url)
@@ -481,7 +483,7 @@ function ArchivePageContent() {
                     )}
 
                     <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 line-clamp-2">
-                      {stripHtml(archive.content)}
+                      {stripHtml(getContentForLang(archive.content, 'ko'))}
                     </p>
 
                     {archive.tags && archive.tags.length > 0 && (

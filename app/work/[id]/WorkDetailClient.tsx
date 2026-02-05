@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Work } from '@/lib/work-store';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
@@ -11,6 +11,7 @@ import { isImageFile, isVideoFile, isAudioFile, isPdfFile, getFileIcon, getFileT
 import ImageLightbox from '@/components/ImageLightbox';
 import ShareButtons from '@/components/ShareButtons';
 import CollapsibleContent from '@/components/CollapsibleContent';
+import { getContentForLang, splitBilingualContent } from '@/lib/bilingual-content';
 
 const statusLabels = {
   'completed': '완료됨',
@@ -33,6 +34,7 @@ export default function WorkDetailClient({ work, id }: WorkDetailClientProps) {
   const router = useRouter();
   const { isAdmin } = useAdmin();
   const [error, setError] = useState('');
+  const [language, setLanguage] = useState<'ko' | 'en'>('ko');
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     type: 'work';
@@ -81,6 +83,21 @@ export default function WorkDetailClient({ work, id }: WorkDetailClientProps) {
   const handleCancelDelete = () => {
     setDeleteModal({ isOpen: false, type: 'work', id: '', title: '', message: '' });
   };
+
+  const { ko, en, isBilingual } = splitBilingualContent(work.content);
+  const showLanguageToggle = isBilingual && Boolean(ko.trim()) && Boolean(en.trim());
+  const displayContent = getContentForLang(work.content, language);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('workLanguage');
+    if (stored === 'en' || stored === 'ko') {
+      setLanguage(stored);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('workLanguage', language);
+  }, [language]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -234,15 +251,41 @@ export default function WorkDetailClient({ work, id }: WorkDetailClientProps) {
                       weekday: 'long'
                     })}
                   </div>
+                  {showLanguageToggle && (
+                    <div className="inline-flex rounded-full border border-gray-200 bg-white px-1 py-1 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                      <button
+                        type="button"
+                        onClick={() => setLanguage('ko')}
+                        className={`px-3 py-1 rounded-full transition-colors ${
+                          language === 'ko'
+                            ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+                            : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
+                        }`}
+                      >
+                        한국어
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setLanguage('en')}
+                        className={`px-3 py-1 rounded-full transition-colors ${
+                          language === 'en'
+                            ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+                            : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
+                        }`}
+                      >
+                        English
+                      </button>
+                    </div>
+                  )}
                   <ShareButtons
                     url={typeof window !== 'undefined' ? window.location.href : ''}
                     title={work.title}
-                    description={work.content.substring(0, 150)}
+                    description={displayContent.substring(0, 150)}
                   />
                 </div>
 
                 <CollapsibleContent
-                  html={work.content}
+                  html={displayContent}
                   className="prose prose-lg max-w-none dark:prose-invert mb-8"
                 />
 

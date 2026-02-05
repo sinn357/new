@@ -9,6 +9,7 @@ import InlineEdit from '@/components/InlineEdit';
 import AnimatedCard from '@/components/AnimatedCard';
 import { motion } from 'framer-motion';
 import { getCloudinaryImageUrl } from '@/lib/cloudinary';
+import { getContentForLang } from '@/lib/bilingual-content';
 
 type MediaPreview = {
   url: string;
@@ -424,7 +425,8 @@ export default function Home() {
                       ⭐ FEATURED
                     </div>
                     {(() => {
-                      const media = extractFirstMedia(work.content);
+                      const workContent = getContentForLang(work.content, 'ko');
+                      const media = extractFirstMedia(workContent);
                       if (!media) return null;
                       const previewSrc = media.type === 'video'
                         ? getVideoThumbnailUrl(media.url)
@@ -453,7 +455,7 @@ export default function Home() {
                         {work.title}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                        {stripHtml(work.content)}
+                        {stripHtml(getContentForLang(work.content, 'ko'))}
                       </p>
                       {work.techStack && work.techStack.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-4">
@@ -517,7 +519,8 @@ export default function Home() {
                       className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
                     >
                     {(() => {
-                      const media = extractFirstMedia(work.content);
+                      const workContent = getContentForLang(work.content, 'ko');
+                      const media = extractFirstMedia(workContent);
                       if (!media) return null;
                       const previewSrc = media.type === 'video'
                         ? getVideoThumbnailUrl(media.url)
@@ -546,7 +549,7 @@ export default function Home() {
                         {work.title}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                        {stripHtml(work.content)}
+                        {stripHtml(getContentForLang(work.content, 'ko'))}
                       </p>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-400 dark:text-gray-500">
@@ -610,7 +613,8 @@ export default function Home() {
                       className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700"
                     >
                     {(() => {
-                      const media = extractFirstMedia(archive.content);
+                      const archiveContent = getContentForLang(archive.content, 'ko');
+                      const media = extractFirstMedia(archiveContent);
                       if (!media) return null;
                       const previewSrc = media.type === 'video'
                         ? getVideoThumbnailUrl(media.url)
@@ -644,7 +648,7 @@ export default function Home() {
                         {archive.title}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                        {stripHtml(archive.content)}
+                        {stripHtml(getContentForLang(archive.content, 'ko'))}
                       </p>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-400 dark:text-gray-500">

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import { isAdminAuthenticated } from '@/lib/auth';
 import ArchiveDetailClient from './ArchiveDetailClient';
+import { getContentForLang } from '@/lib/bilingual-content';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -33,8 +34,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: '글을 찾을 수 없습니다' };
   }
 
-  const description = stripHtml(archive.content);
-  const ogImage = extractFirstImage(archive.content) || archive.imageUrl;
+  const contentForMeta = getContentForLang(archive.content, 'ko');
+  const description = stripHtml(contentForMeta);
+  const ogImage = extractFirstImage(contentForMeta) || archive.imageUrl;
 
   return {
     title: `${archive.title} | SHIN 블로그`,
@@ -90,13 +92,13 @@ export default async function ArchiveDetailPage({ params }: Props) {
       '@type': 'Person',
       name: 'SHIN',
     },
-    description: stripHtml(archive.content),
+    description: stripHtml(contentForMeta),
     url: `${baseUrl}/archive/${id}`,
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `${baseUrl}/archive/${id}`,
     },
-    image: extractFirstImage(archive.content) || archive.imageUrl,
+    image: extractFirstImage(contentForMeta) || archive.imageUrl,
   };
 
   // Prisma 객체를 일반 객체로 변환

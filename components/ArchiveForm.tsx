@@ -24,8 +24,9 @@ import {
 } from '@/components/ui/select';
 import RichTextEditor from '@/components/RichTextEditor';
 import StarRating from '@/components/StarRating';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { buildBilingualContent, splitBilingualContent } from '@/lib/bilingual-content';
 
 interface ArchiveFormProps {
   editingArchive?: Archive | null;
@@ -49,6 +50,9 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
   const [draftError, setDraftError] = useState<string | null>(null);
   const [isDraftSaving, setIsDraftSaving] = useState(false);
   const [draftId, setDraftId] = useState<string | null>(null);
+  const [activeLanguage, setActiveLanguage] = useState<'ko' | 'en'>('ko');
+  const [koContent, setKoContent] = useState('');
+  const [enContent, setEnContent] = useState('');
 
   // Using any type to bypass Zod transform type inference issue with React Hook Form
   // Runtime behavior is correct but TypeScript can't infer types properly
@@ -66,12 +70,26 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
     }
   });
 
+  const syncFormContent = useCallback(
+    (nextKo: string, nextEn: string, markDirty = true) => {
+      const combined = buildBilingualContent(nextKo, nextEn);
+      form.setValue('content', combined, { shouldDirty: markDirty });
+    },
+    [form]
+  );
+
   // 편집 모드일 때 폼 값 설정
   useEffect(() => {
     if (editingArchive) {
+      const split = splitBilingualContent(editingArchive.content || '');
+      const nextKo = split.isBilingual ? split.ko : editingArchive.content || '';
+      const nextEn = split.isBilingual ? split.en : '';
+      setKoContent(nextKo);
+      setEnContent(nextEn);
+      setActiveLanguage('ko');
       form.reset({
         title: editingArchive.title,
-        content: editingArchive.content,
+        content: buildBilingualContent(nextKo, nextEn),
         category: editingArchive.category as any,
         tags: editingArchive.tags?.join(', ') || '',
         imageUrl: editingArchive.imageUrl || '',
@@ -79,8 +97,18 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
         rating: (editingArchive as any).rating || null,
         isPublished: (editingArchive as any).isPublished ?? true
       });
+      syncFormContent(nextKo, nextEn, false);
     }
-  }, [editingArchive, form]);
+  }, [editingArchive, form, syncFormContent]);
+
+  useEffect(() => {
+    if (!editingArchive) {
+      setKoContent('');
+      setEnContent('');
+      setActiveLanguage('ko');
+      syncFormContent('', '', false);
+    }
+  }, [editingArchive, syncFormContent]);
 
   useEffect(() => {
     setDraftId(editingArchive?.id ?? null);
@@ -91,12 +119,14 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
       const targetId = isEditing ? editingArchive.id : draftId;
       const url = targetId ? `/api/archive/${targetId}` : '/api/archive';
       const method = targetId ? 'PUT' : 'POST';
+      const combinedContent = buildBilingualContent(koContent, enContent);
 
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...data,
+          content: combinedContent,
           isPublished: typeof (data as any).isPublished === 'boolean' ? (data as any).isPublished : true
         })
       });
@@ -109,6 +139,10 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
       await queryClient.invalidateQueries({ queryKey: ['archives'] });
 
       form.reset(); // 자동 리셋!
+      setKoContent('');
+      setEnContent('');
+      setActiveLanguage('ko');
+      syncFormContent('', '', false);
       setDraftId(null);
       setDraftSavedAt(null);
       onSuccess();
@@ -122,6 +156,10 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
 
   const handleCancel = () => {
     form.reset();
+    setKoContent('');
+    setEnContent('');
+    setActiveLanguage('ko');
+    syncFormContent('', '', false);
     onCancel();
   };
 
@@ -129,6 +167,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
     setDraftError(null);
     setIsDraftSaving(true);
     try {
+      const combinedContent = buildBilingualContent(koContent, enContent);
       form.setValue('isPublished', false, { shouldDirty: true });
       const targetId = draftId;
       const response = await fetch(targetId ? `/api/archive/${targetId}` : '/api/archive', {
@@ -136,6 +175,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...values,
+          content: combinedContent,
           isPublished: false
         }),
       });
@@ -174,6 +214,43 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
     });
   };
 
+  const getActiveContent = () => (activeLanguage === 'ko' ? koContent : enContent);
+
+  const setKoContentWithSync = (next: string) => {
+    setKoContent(next);
+    syncFormContent(next, enContent);
+  };
+
+  const setEnContentWithSync = (next: string) => {
+    setEnContent(next);
+    syncFormContent(koContent, next);
+  };
+
+  const setActiveContentWithSync = (next: string) => {
+    if (activeLanguage === 'ko') {
+      setKoContentWithSync(next);
+    } else {
+      setEnContentWithSync(next);
+    }
+  };
+
+  const getMediaTags = (html: string) => {
+    const tags: string[] = [];
+    const imgTags = html.match(/<img[^>]*>/g) ?? [];
+    const videoTags = html.match(/<video[\s\S]*?<\/video>/g) ?? [];
+    const audioTags = html.match(/<audio[\s\S]*?<\/audio>/g) ?? [];
+    tags.push(...imgTags, ...videoTags, ...audioTags);
+    return tags;
+  };
+
+  const handleCopyKoMediaToEn = () => {
+    const mediaTags = getMediaTags(koContent);
+    const missingTags = mediaTags.filter((tag) => !enContent.includes(tag));
+    if (missingTags.length === 0) return;
+    const nextContent = `${missingTags.join('')}${enContent ? `\n${enContent}` : ''}`;
+    setEnContentWithSync(nextContent);
+  };
+
   const stripHtml = (html: string) =>
     html
       .replace(/<style[^>]*>.*?<\/style>/gi, '')
@@ -204,7 +281,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
     setSummaryError(null);
     setSummaryData(null);
 
-    const content = form.getValues('content') || '';
+    const content = getActiveContent() || '';
     const text = stripHtml(content);
 
     if (!text) {
@@ -241,17 +318,17 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
 
   const handleApplySummary = () => {
     if (!summaryData) return;
-    const content = form.getValues('content') || '';
+    const content = getActiveContent() || '';
     const summaryHtml = buildSummaryHtml(summaryData.summary, summaryData.bullets);
     const nextContent = upsertSummary(content, summaryHtml);
-    form.setValue('content', nextContent, { shouldDirty: true });
+    setActiveContentWithSync(nextContent);
   };
 
   const handleGenerateTranslation = async () => {
     setTranslationError(null);
     setTranslationData(null);
 
-    const content = form.getValues('content') || '';
+    const content = getActiveContent() || '';
     const text = typeof content === 'string' ? content.trim() : '';
 
     if (!text) {
@@ -288,7 +365,15 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
 
   const handleApplyTranslation = () => {
     if (!translationData) return;
-    form.setValue('content', translationData.translation, { shouldDirty: true });
+    if (translationData.target === 'en') {
+      setEnContentWithSync(translationData.translation);
+      setActiveLanguage('en');
+      return;
+    }
+    if (translationData.target === 'ko') {
+      setKoContentWithSync(translationData.translation);
+      setActiveLanguage('ko');
+    }
   };
 
   return (
@@ -396,6 +481,41 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                 <FormLabel className="flex items-center justify-between gap-3">
                   <span>내용 *</span>
                   <div className="flex flex-wrap items-center gap-2">
+                    <div className="inline-flex rounded-full border border-gray-200 bg-white px-1 py-1 text-xs shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                      <button
+                        type="button"
+                        onClick={() => setActiveLanguage('ko')}
+                        className={`px-3 py-1 rounded-full transition-colors ${
+                          activeLanguage === 'ko'
+                            ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+                            : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
+                        }`}
+                      >
+                        한국어
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveLanguage('en')}
+                        className={`px-3 py-1 rounded-full transition-colors ${
+                          activeLanguage === 'en'
+                            ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+                            : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
+                        }`}
+                      >
+                        English
+                      </button>
+                    </div>
+                    {activeLanguage === 'en' && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleCopyKoMediaToEn}
+                        disabled={getMediaTags(koContent).length === 0}
+                      >
+                        한국어 미디어 복사
+                      </Button>
+                    )}
                     <Select value={translateTarget} onValueChange={setTranslateTarget}>
                       <SelectTrigger className="h-8 w-[150px] dark:bg-gray-700 dark:text-white dark:border-gray-600">
                         <SelectValue placeholder="번역 언어" />
@@ -421,7 +541,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                       variant="outline"
                       size="sm"
                       onClick={handleGenerateTranslation}
-                      disabled={isTranslating || translateTarget !== 'en'}
+                      disabled={isTranslating || translateTarget !== 'en' || activeLanguage !== 'ko'}
                     >
                       {isTranslating ? '번역 중...' : '전체 번역'}
                     </Button>
@@ -437,9 +557,16 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                   </div>
                 </FormLabel>
                 <FormControl>
+                  <input type="hidden" {...field} />
                   <RichTextEditor
-                    value={field.value}
-                    onChange={field.onChange}
+                    value={activeLanguage === 'ko' ? koContent : enContent}
+                    onChange={(value) => {
+                      if (activeLanguage === 'ko') {
+                        setKoContentWithSync(value);
+                      } else {
+                        setEnContentWithSync(value);
+                      }
+                    }}
                     placeholder="내용을 작성하세요..."
                   />
                 </FormControl>
@@ -470,7 +597,9 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                 {translationData && (
                   <div className="mt-3 rounded-lg border border-emerald-100 bg-emerald-50 p-3 text-sm text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold">번역 미리보기 (영어)</span>
+                      <span className="font-semibold">
+                        번역 미리보기 ({translationData.target === 'en' ? '영어' : translationData.target})
+                      </span>
                       <Button type="button" size="sm" onClick={handleApplyTranslation}>
                         본문에 적용
                       </Button>
