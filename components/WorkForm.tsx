@@ -565,8 +565,8 @@ export default function WorkForm({ editingWork, onSuccess, onCancel }: WorkFormP
                     </Button>
                   </div>
                 </FormLabel>
+                <input type="hidden" {...field} />
                 <FormControl>
-                  <input type="hidden" {...field} />
                   <RichTextEditor
                     value={activeLanguage === 'ko' ? koContent : enContent}
                     onChange={(value) => {
