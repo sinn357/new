@@ -77,6 +77,8 @@ export default async function ArchiveDetailPage({ params }: Props) {
     notFound();
   }
 
+  const contentForMeta = getContentForLang(archive.content, 'ko');
+
   // JSON-LD 구조화 데이터
   const jsonLd = {
     '@context': 'https://schema.org',
