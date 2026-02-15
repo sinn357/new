@@ -89,7 +89,7 @@ export default function Home() {
   const homeAboutTitle = pageContent?.sections?.homeAboutTitle || 'About This Space';
   const homeAboutContent =
     pageContent?.sections?.homeAboutContent ||
-    'SHIN의 개인 공간 - 작업물, 글, 그리고 나';
+    "SHIN's personal space - works, writings, and me";
 
   const fetchPageContent = async () => {
     try {
@@ -332,7 +332,7 @@ export default function Home() {
                 onSave={saveTitle}
                 className="mb-6"
                 textClassName="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-teal-600 dark:from-indigo-400 dark:via-purple-400 dark:to-teal-400 bg-clip-text text-transparent pb-2"
-                placeholder="제목을 입력하세요"
+                placeholder="Enter title"
               />
             ) : (
               <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-teal-600 dark:from-indigo-400 dark:via-purple-400 dark:to-teal-400 bg-clip-text text-transparent pb-2 mb-6">
@@ -355,7 +355,7 @@ export default function Home() {
                 className="mb-12 max-w-2xl mx-auto"
                 textClassName="text-xl md:text-2xl text-gray-600 dark:text-gray-300"
                 isTextarea={true}
-                placeholder="내용을 입력하세요"
+                placeholder="Enter content"
               />
             ) : (
               <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto whitespace-pre-line">
@@ -380,7 +380,7 @@ export default function Home() {
                     onSave={saveStatusLine}
                     className="min-w-[220px]"
                     textClassName="text-sm text-gray-700 dark:text-gray-300"
-                    placeholder="상태 문구를 입력하세요"
+                    placeholder="Enter status message"
                   />
                 ) : (
                   <span>{statusLine}</span>
@@ -410,7 +410,7 @@ export default function Home() {
                 Featured Projects
               </h2>
               <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                특별히 선정된 대표 프로젝트를 확인해보세요
+                Check out specially selected featured projects
               </p>
             </div>
 
@@ -493,7 +493,7 @@ export default function Home() {
       <section className="px-6 py-16">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">
-            최신 작업물
+            Latest Works
           </h2>
           
           {loading ? (
@@ -502,12 +502,12 @@ export default function Home() {
             </div>
           ) : works.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400 text-lg">아직 작업물이 없습니다.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">No works yet.</p>
               <Link
                 href="/work"
                 className="inline-block mt-4 text-indigo-500 dark:text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 font-medium"
               >
-                첫 번째 작업물 추가하기 →
+                Add your first work →
               </Link>
             </div>
           ) : (
@@ -570,7 +570,7 @@ export default function Home() {
                 href="/work"
                 className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium"
               >
-                모든 작업물 보기
+                View All Works
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -584,7 +584,7 @@ export default function Home() {
       <section className="px-6 py-16 bg-gray-50 dark:bg-gray-800">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">
-            최신 아카이브
+            Latest Archive
           </h2>
           <p className="text-gray-600 dark:text-gray-300 text-center mb-12 max-w-2xl mx-auto">
             
@@ -596,12 +596,12 @@ export default function Home() {
             </div>
           ) : archives.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400 text-lg">아직 아카이브 글이 없습니다.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">No archive posts yet.</p>
               <Link
                 href="/archive"
                 className="inline-block mt-4 text-teal-500 dark:text-teal-400 hover:text-teal-600 dark:hover:text-teal-300 font-medium"
               >
-                첫 번째 글 작성하기 →
+                Write your first post →
               </Link>
             </div>
           ) : (
@@ -669,7 +669,7 @@ export default function Home() {
                 href="/archive"
                 className="inline-flex items-center text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 font-medium"
               >
-                모든 아카이브 보기
+                View All Archive
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -688,7 +688,7 @@ export default function Home() {
               onSave={saveHomeAboutTitle}
               className="mb-6"
               textClassName="text-3xl font-bold text-gray-800 dark:text-gray-100"
-              placeholder="제목을 입력하세요"
+              placeholder="Enter title"
             />
           ) : (
             <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">
@@ -703,7 +703,7 @@ export default function Home() {
               className="mb-12 max-w-2xl mx-auto"
               textClassName="text-lg text-gray-600 dark:text-gray-300"
               isTextarea={true}
-              placeholder="내용을 입력하세요"
+              placeholder="Enter content"
             />
           ) : (
             <p className="text-lg text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">

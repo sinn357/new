@@ -182,8 +182,8 @@ function ArchivePageContent() {
       isOpen: true,
       type: 'archive',
       id: archive.id,
-      title: '글 삭제',
-      message: `"${archive.title}" 글을 삭제하시겠습니까?`
+      title: 'Delete Post',
+      message: `Are you sure you want to delete "${archive.title}"?`
     });
   };
 
@@ -227,7 +227,7 @@ function ArchivePageContent() {
                 onSave={saveTitle}
                 className="mb-6"
                 textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2"
-                placeholder="제목을 입력하세요"
+                placeholder="Enter title"
               />
             </motion.div>
           ) : (
@@ -253,7 +253,7 @@ function ArchivePageContent() {
                 className="mb-12 max-w-2xl mx-auto"
                 textClassName="text-xl text-gray-600 dark:text-gray-300"
                 isTextarea={true}
-                placeholder="내용을 입력하세요"
+                placeholder="Enter content"
               />
             </motion.div>
           ) : (
@@ -281,7 +281,7 @@ function ArchivePageContent() {
               }}
               className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 dark:from-indigo-600 dark:to-teal-600 dark:hover:from-indigo-700 dark:hover:to-teal-700 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
-              {showForm ? (editingArchive ? '편집 취소' : '폼 숨기기') : '새 글 작성'}
+              {showForm ? (editingArchive ? 'Cancel Edit' : 'Hide Form') : 'Write New Post'}
             </motion.button>
           )}
         </div>
@@ -313,7 +313,7 @@ function ArchivePageContent() {
                     : 'bg-white/50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-700/80'
                 }`}
               >
-                <span>전체</span>
+                <span>All</span>
                 <span className={`text-xs ${selectedCategory === '' ? 'opacity-90' : 'opacity-60'}`}>
                   {allArchives.length}
                 </span>
@@ -370,17 +370,17 @@ function ArchivePageContent() {
                   📝
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                  {selectedCategory ? '해당 카테고리에 글이 없습니다' : '아직 작성된 글이 없습니다'}
+                  {selectedCategory ? 'No posts in this category' : 'No posts yet'}
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  {isAdmin ? '첫 번째 글을 작성해서 아카이브를 시작해보세요!' : '관리자가 글을 작성하면 여기에 표시됩니다.'}
+                  {isAdmin ? 'Write your first post to start the archive!' : 'Posts will appear here when the administrator writes them.'}
                 </p>
                 {isAdmin && (
                   <button
                     onClick={() => setShowForm(true)}
                     className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
                   >
-                    첫 글 작성하기
+                    Write First Post
                   </button>
                 )}
               </div>
@@ -441,7 +441,7 @@ function ArchivePageContent() {
                         </span>
                         {isAdmin && !archive.isPublished && (
                           <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200">
-                            숨김
+                            Hidden
                           </span>
                         )}
                         <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -457,14 +457,14 @@ function ArchivePageContent() {
                           <button
                             onClick={() => handleEditArchive(archive)}
                             className="text-indigo-500 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 p-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
-                            title="글 수정"
+                            title="Edit Post"
                           >
                             ✏️
                           </button>
                           <button
                             onClick={() => handleDeleteArchive(archive)}
                             className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
-                            title="글 삭제"
+                            title="Delete Post"
                           >
                             🗑️
                           </button>
@@ -505,13 +505,13 @@ function ArchivePageContent() {
                         {archive.imageUrl && (
                           <div className="flex items-center gap-1 text-xs text-gray-500 bg-indigo-50 px-2 py-1 rounded-md">
                             <span>🖼️</span>
-                            <span>이미지</span>
+                            <span>Image</span>
                           </div>
                         )}
                         {archive.fileUrl && (
                           <div className="flex items-center gap-1 text-xs text-gray-500 bg-green-50 px-2 py-1 rounded-md">
                             <span>📎</span>
-                            <span>첨부파일</span>
+                            <span>Attachment</span>
                           </div>
                         )}
                       </div>

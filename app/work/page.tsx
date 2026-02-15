@@ -68,9 +68,9 @@ function stripHtml(html: string): string {
 }
 
 const statusLabels = {
-  'completed': '완료됨',
-  'in-progress': '진행중',
-  'planned': '계획됨'
+  'completed': 'Completed',
+  'in-progress': 'In Progress',
+  'planned': 'Planned'
 };
 
 const statusColors = {
@@ -193,8 +193,8 @@ function WorkPageContent() {
       isOpen: true,
       type: 'work',
       id: work.id,
-      title: '작업물 삭제',
-      message: `"${work.title}" 작업물을 삭제하시겠습니까?`
+      title: 'Delete Work',
+      message: `Are you sure you want to delete "${work.title}"?`
     });
   };
 
@@ -245,7 +245,7 @@ function WorkPageContent() {
                 onSave={saveTitle}
                 className="mb-6"
                 textClassName="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-teal-600 dark:from-indigo-400 dark:to-teal-400 bg-clip-text text-transparent pb-2"
-                placeholder="제목을 입력하세요"
+                placeholder="Enter title"
               />
             </motion.div>
           ) : (
@@ -271,7 +271,7 @@ function WorkPageContent() {
                 className="mb-12 max-w-2xl mx-auto"
                 textClassName="text-xl text-gray-600 dark:text-gray-300"
                 isTextarea={true}
-                placeholder="내용을 입력하세요"
+                placeholder="Enter content"
               />
             </motion.div>
           ) : (
@@ -299,7 +299,7 @@ function WorkPageContent() {
               }}
               className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 dark:from-indigo-600 dark:to-teal-600 dark:hover:from-indigo-700 dark:hover:to-teal-700 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
-              {showForm ? (editingWork ? '편집 취소' : '폼 숨기기') : '새 작업물 추가'}
+              {showForm ? (editingWork ? 'Cancel Edit' : 'Hide Form') : 'Add New Work'}
             </motion.button>
           )}
         </div>
@@ -331,7 +331,7 @@ function WorkPageContent() {
                     : 'bg-white/50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-700/80'
                 }`}
               >
-                <span>전체</span>
+                <span>All</span>
                 <span className={`text-xs ${selectedCategory === '' ? 'opacity-90' : 'opacity-60'}`}>
                   {allWorks.length}
                 </span>
@@ -387,21 +387,21 @@ function WorkPageContent() {
                 <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
                   💼
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">아직 작업물이 없습니다</h3>
+                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">No works yet</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  첫 번째 프로젝트를 추가해서 포트폴리오를 시작해보세요!
+                  Add your first project to start your portfolio!
                 </p>
                 {isAdmin && (
                   <button
                     onClick={() => setShowForm(true)}
                     className="bg-gradient-to-r from-indigo-500 to-teal-500 hover:from-indigo-600 hover:to-teal-600 dark:from-indigo-600 dark:to-teal-600 dark:hover:from-indigo-700 dark:hover:to-teal-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300"
                   >
-                    첫 작업물 추가하기
+                    Add First Work
                   </button>
                 )}
                 {!isAdmin && (
                   <p className="text-gray-500 dark:text-gray-400 text-sm">
-                    관리자만 작업물을 추가할 수 있습니다.
+                    Only administrators can add works.
                   </p>
                 )}
               </div>
@@ -473,7 +473,7 @@ function WorkPageContent() {
                         </span>
                         {isAdmin && !work.isPublished && (
                           <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200">
-                            숨김
+                            Hidden
                           </span>
                         )}
                       </div>
@@ -488,14 +488,14 @@ function WorkPageContent() {
                             <button
                               onClick={() => handleEditWork(work)}
                               className="text-indigo-500 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 p-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
-                              title="작업물 수정"
+                              title="Edit Work"
                             >
                               ✏️
                             </button>
                             <button
                               onClick={() => handleDeleteWork(work)}
                               className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-1 rounded hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
-                              title="작업물 삭제"
+                              title="Delete Work"
                             >
                               🗑️
                             </button>

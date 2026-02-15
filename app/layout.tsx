@@ -27,25 +27,25 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://testshinblog.vercel
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'SHIN 블로그',
+    default: 'SHIN Blog',
     template: '%s',
   },
-  description: 'SHIN의 개인 공간 - 작업물, 글, 그리고 나',
-  keywords: ['블로그', '포트폴리오', '개발', 'SHIN'],
+  description: "SHIN's personal space - works, writings, and me",
+  keywords: ['blog', 'portfolio', 'development', 'SHIN'],
   authors: [{ name: 'SHIN' }],
   creator: 'SHIN',
   openGraph: {
     type: 'website',
-    locale: 'ko_KR',
+    locale: 'en_US',
     url: baseUrl,
-    siteName: 'SHIN 블로그',
-    title: 'SHIN 블로그',
-    description: 'SHIN의 개인 공간 - 작업물, 글, 그리고 나',
+    siteName: 'SHIN Blog',
+    title: 'SHIN Blog',
+    description: "SHIN's personal space - works, writings, and me",
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SHIN 블로그',
-    description: 'SHIN의 개인 공간 - 작업물, 글, 그리고 나',
+    title: 'SHIN Blog',
+    description: "SHIN's personal space - works, writings, and me",
   },
   robots: {
     index: true,
@@ -74,10 +74,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* RSS Feed */}
-        <link rel="alternate" type="application/rss+xml" title="SHIN 블로그 RSS" href="/feed.xml" />
+        <link rel="alternate" type="application/rss+xml" title="SHIN Blog RSS" href="/feed.xml" />
         {/* Google Analytics */}
         {GA_ID && (
           <>

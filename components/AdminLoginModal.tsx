@@ -29,7 +29,7 @@ export default function AdminLoginModal() {
       setIsLocked(false);
       setLockoutTime(null);
     } else {
-      setError(result.message || '로그인에 실패했습니다.');
+      setError(result.message || 'Login failed.');
 
       if (result.lockedUntil) {
         setIsLocked(true);
@@ -52,14 +52,14 @@ export default function AdminLoginModal() {
   const getRemainingLockoutTime = () => {
     if (!lockoutTime) return '';
     const remaining = Math.ceil((lockoutTime - Date.now()) / 1000 / 60);
-    return `${remaining}분`;
+    return `${remaining} minute(s)`;
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">관리자 로그인</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Admin Login</h2>
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
@@ -71,9 +71,9 @@ export default function AdminLoginModal() {
         {isLocked && (
           <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
             <p className="text-sm text-red-800 dark:text-red-300">
-              <strong>🚫 계정 잠금</strong><br />
-              너무 많은 로그인 시도로 인해 계정이 잠겼습니다.<br />
-              {getRemainingLockoutTime()} 후에 다시 시도해주세요.
+              <strong>🚫 Account Locked</strong><br />
+              Too many login attempts. Account is locked.<br />
+              Please try again in {getRemainingLockoutTime()}.
             </p>
           </div>
         )}
@@ -81,7 +81,7 @@ export default function AdminLoginModal() {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="admin-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              관리자 이메일
+              Admin Email
             </label>
             <input
               type="email"
@@ -98,7 +98,7 @@ export default function AdminLoginModal() {
 
           <div className="mb-6">
             <label htmlFor="admin-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              비밀번호
+              Password
             </label>
             <input
               type="password"
@@ -106,7 +106,7 @@ export default function AdminLoginModal() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              placeholder="비밀번호를 입력하세요"
+              placeholder="Enter password"
               disabled={loading || isLocked}
               autoComplete="current-password"
             />
@@ -122,23 +122,23 @@ export default function AdminLoginModal() {
               className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               disabled={loading}
             >
-              취소
+              Cancel
             </button>
             <button
               type="submit"
               disabled={!email.trim() || !password.trim() || loading || isLocked}
               className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:from-gray-400 disabled:to-gray-500 text-white px-4 py-3 rounded-lg font-medium transition-all duration-300"
             >
-              {loading ? '로그인 중...' : '로그인'}
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </div>
         </form>
 
         <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg">
           <p className="text-sm text-yellow-800 dark:text-yellow-300">
-            <strong>🔒 보안 안내</strong><br />
-            • 5회 로그인 실패 시 15분간 잠금됩니다.<br />
-            • 로그인하면 글 작성/수정/삭제가 가능합니다.
+            <strong>🔒 Security Notice</strong><br />
+            • Account will be locked for 15 minutes after 5 failed attempts.<br />
+            • Login enables creating/editing/deleting posts.
           </p>
         </div>
       </div>
