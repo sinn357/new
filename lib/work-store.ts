@@ -17,9 +17,9 @@ export interface Work {
 }
 
 export const WORK_CATEGORIES = {
-  'product': { label: '프로덕트', color: 'bg-blue-100 text-blue-800', icon: '💻' },
-  'media': { label: '미디어', color: 'bg-red-100 text-red-800', icon: '🎥' },
-  'photography': { label: '포토그래피', color: 'bg-green-100 text-green-800', icon: '📸' }
+  'product': { label: 'Product', color: 'bg-blue-100 text-blue-800', icon: '💻' },
+  'media': { label: 'Media', color: 'bg-red-100 text-red-800', icon: '🎥' },
+  'photography': { label: 'Photography', color: 'bg-green-100 text-green-800', icon: '📸' }
 } as const;
 
 export type WorkCategory = keyof typeof WORK_CATEGORIES;

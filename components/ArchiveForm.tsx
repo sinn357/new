@@ -149,7 +149,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
     } catch (error) {
       console.error('Form submission error:', error);
       form.setError('root', {
-        message: `아카이브 ${isEditing ? '수정' : '생성'}에 실패했습니다.`
+        message: `Failed to ${isEditing ? 'update' : 'create'} archive.`
       });
     }
   };
@@ -181,7 +181,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
       });
       const result = await response.json().catch(() => null);
       if (!response.ok) {
-        const message = result?.error || '임시 저장에 실패했습니다.';
+        const message = result?.error || 'Failed to save draft.';
         setDraftError(message);
         return;
       }
@@ -192,7 +192,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
       setDraftSavedAt(new Date().toISOString());
     } catch (error) {
       console.error('Draft save error:', error);
-      setDraftError('임시 저장에 실패했습니다.');
+      setDraftError('Failed to save draft.');
     } finally {
       setIsDraftSaving(false);
     }
@@ -285,7 +285,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
     const text = stripHtml(content);
 
     if (!text) {
-      setSummaryError('요약할 내용이 없습니다.');
+      setSummaryError('No content to summarize.');
       return;
     }
 
@@ -299,7 +299,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
 
       const result = await response.json();
       if (!response.ok || !result.success) {
-        const message = result?.error || '요약 생성에 실패했습니다.';
+        const message = result?.error || 'Failed to generate summary.';
         setSummaryError(message);
         return;
       }
@@ -310,7 +310,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
       });
     } catch (error) {
       console.error('Summary generation error:', error);
-      setSummaryError('요약 생성에 실패했습니다.');
+      setSummaryError('Failed to generate summary.');
     } finally {
       setIsSummarizing(false);
     }
@@ -332,7 +332,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
     const text = typeof content === 'string' ? content.trim() : '';
 
     if (!text) {
-      setTranslationError('번역할 내용이 없습니다.');
+      setTranslationError('No content to translate.');
       return;
     }
 
@@ -346,7 +346,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
 
       const result = await response.json().catch(() => null);
       if (!response.ok || !result?.success) {
-        const message = result?.error || '번역 생성에 실패했습니다.';
+        const message = result?.error || 'Failed to generate translation.';
         setTranslationError(message);
         return;
       }
@@ -357,7 +357,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
       });
     } catch (error) {
       console.error('Translation generation error:', error);
-      setTranslationError('번역 생성에 실패했습니다.');
+      setTranslationError('Failed to generate translation.');
     } finally {
       setIsTranslating(false);
     }
@@ -379,17 +379,17 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-8">
       <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">
-        {isEditing ? '아카이브 수정' : '새 아카이브 추가'}
+        {isEditing ? 'Edit Archive' : 'Add New Archive'}
       </h2>
       <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
         <Button type="button" variant="outline" size="sm" onClick={handleSaveDraft} disabled={isDraftSaving}>
-          {isDraftSaving ? '저장 중...' : '임시 저장'}
+          {isDraftSaving ? 'Saving...' : 'Save Draft'}
         </Button>
         {draftSavedAt && (
-          <span>마지막 임시 저장: {formatDraftTime(draftSavedAt)}</span>
+          <span>Last saved: {formatDraftTime(draftSavedAt)}</span>
         )}
         <span className="text-xs text-gray-400 dark:text-gray-500">
-          임시 저장은 숨김 상태로 저장됩니다.
+          Drafts are saved as hidden.
         </span>
       </div>
       {draftError && (
@@ -410,10 +410,10 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>제목 *</FormLabel>
+                <FormLabel>Title *</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="제목을 입력하세요"
+                    placeholder="Enter title"
                     {...field}
                     className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   />
@@ -429,11 +429,11 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>카테고리 *</FormLabel>
+                <FormLabel>Category *</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger className="dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                      <SelectValue placeholder="카테고리를 선택하세요" />
+                      <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent className="max-h-80 overflow-y-auto">
@@ -455,7 +455,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
             name="rating"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>평점 (선택사항)</FormLabel>
+                <FormLabel>Rating (Optional)</FormLabel>
                 <FormControl>
                   <div className="py-2">
                     <StarRating
@@ -465,7 +465,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                   </div>
                 </FormControl>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  영화, 책, 음악 등 리뷰 글에 평점을 남겨보세요
+                  Leave a rating for reviews like movies, books, music, etc.
                 </p>
                 <FormMessage />
               </FormItem>
@@ -479,7 +479,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center justify-between gap-3">
-                  <span>내용 *</span>
+                  <span>Content *</span>
                   <div className="flex flex-wrap items-center gap-2">
                     <div className="inline-flex rounded-full border border-gray-200 bg-white px-1 py-1 text-xs shadow-sm dark:border-gray-700 dark:bg-gray-900">
                       <button
@@ -491,7 +491,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                             : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
                         }`}
                       >
-                        한국어
+                        Korean
                       </button>
                       <button
                         type="button"
@@ -513,26 +513,26 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                         onClick={handleCopyKoMediaToEn}
                         disabled={getMediaTags(koContent).length === 0}
                       >
-                        한국어 미디어 복사
+                        Copy Korean Media
                       </Button>
                     )}
                     <Select value={translateTarget} onValueChange={setTranslateTarget}>
                       <SelectTrigger className="h-8 w-[150px] dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                        <SelectValue placeholder="번역 언어" />
+                        <SelectValue placeholder="Target Language" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="en">영어</SelectItem>
+                        <SelectItem value="en">English</SelectItem>
                         <SelectItem value="zh" disabled>
-                          중국어 (준비중)
+                          Chinese (Coming Soon)
                         </SelectItem>
                         <SelectItem value="ja" disabled>
-                          일본어 (준비중)
+                          Japanese (Coming Soon)
                         </SelectItem>
                         <SelectItem value="es" disabled>
-                          스페인어 (준비중)
+                          Spanish (Coming Soon)
                         </SelectItem>
                         <SelectItem value="ar" disabled>
-                          아랍어 (준비중)
+                          Arabic (Coming Soon)
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -543,7 +543,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                       onClick={handleGenerateTranslation}
                       disabled={isTranslating || translateTarget !== 'en' || activeLanguage !== 'ko'}
                     >
-                      {isTranslating ? '번역 중...' : '전체 번역'}
+                      {isTranslating ? 'Translating...' : 'Translate All'}
                     </Button>
                     <Button
                       type="button"
@@ -552,7 +552,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                       onClick={handleGenerateSummary}
                       disabled={isSummarizing}
                     >
-                      {isSummarizing ? '요약 중...' : 'AI TL;DR'}
+                      {isSummarizing ? 'Summarizing...' : 'AI TL;DR'}
                     </Button>
                   </div>
                 </FormLabel>
@@ -567,7 +567,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                         setEnContentWithSync(value);
                       }
                     }}
-                    placeholder="내용을 작성하세요..."
+                    placeholder="Write your content..."
                   />
                 </FormControl>
                 {summaryError && (
@@ -579,9 +579,9 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                 {summaryData && (
                   <div className="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-900 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-100">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold">TL;DR 미리보기</span>
+                      <span className="font-semibold">TL;DR Preview</span>
                       <Button type="button" size="sm" onClick={handleApplySummary}>
-                        본문에 적용
+                        Apply to Content
                       </Button>
                     </div>
                     <p className="mt-2">{summaryData.summary}</p>
@@ -598,10 +598,10 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
                   <div className="mt-3 rounded-lg border border-emerald-100 bg-emerald-50 p-3 text-sm text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100">
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-semibold">
-                        번역 미리보기 ({translationData.target === 'en' ? '영어' : translationData.target})
+                        Translation Preview ({translationData.target === 'en' ? 'English' : translationData.target})
                       </span>
                       <Button type="button" size="sm" onClick={handleApplyTranslation}>
-                        본문에 적용
+                        Apply to Content
                       </Button>
                     </div>
                     <div
@@ -621,10 +621,10 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
             name="tags"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>태그</FormLabel>
+                <FormLabel>Tags</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="태그1, 태그2, 태그3 (쉼표로 구분)"
+                    placeholder="tag1, tag2, tag3 (comma separated)"
                     {...field}
                     className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   />
@@ -640,9 +640,9 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800">
                 <div className="space-y-0.5">
-                  <FormLabel className="text-base">공개 상태</FormLabel>
+                  <FormLabel className="text-base">Published</FormLabel>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    체크 해제 시 관리자만 볼 수 있습니다.
+                    Uncheck to make visible only to admin.
                   </p>
                 </div>
                 <FormControl>
@@ -665,8 +665,8 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
               className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
             >
               {form.formState.isSubmitting
-                ? (isEditing ? '수정 중...' : '추가 중...')
-                : (isEditing ? '아카이브 수정' : '아카이브 추가')}
+                ? (isEditing ? 'Updating...' : 'Adding...')
+                : (isEditing ? 'Update Archive' : 'Add Archive')}
             </Button>
 
             <Button
@@ -675,7 +675,7 @@ export default function ArchiveForm({ editingArchive, onSuccess, onCancel }: Arc
               onClick={handleCancel}
               disabled={form.formState.isSubmitting}
             >
-              취소
+              Cancel
             </Button>
           </div>
         </form>
