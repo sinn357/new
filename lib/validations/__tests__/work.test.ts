@@ -42,10 +42,10 @@ describe('workSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects content longer than 10000 characters', () => {
+  it('rejects content longer than 100000 characters', () => {
     const invalidData = {
       title: 'Test',
-      content: 'a'.repeat(10001),
+      content: 'a'.repeat(100001),
       category: 'product',
     }
 

@@ -1,5 +1,20 @@
 # Blog Web - Error Fixes
 
+## 2026-02-20
+
+### Work Content Limit Update
+
+**Change**:
+- Work 본문 길이 제한을 10,000자에서 100,000자로 상향
+
+**Affected**: `lib/validations/work.ts`, `lib/validations/__tests__/work.test.ts`
+
+**Result**:
+- 긴 본문 업로드/저장 가능
+
+---
+
+
 ## 2026-02-05
 
 ### Build Failures (TypeScript)
@@ -73,4 +88,4 @@ The column Work.isFeatured does not exist in the current database.
 
 ---
 
-**Last Updated**: 2026-02-05
+**Last Updated**: 2026-02-20

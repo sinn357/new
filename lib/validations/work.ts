@@ -15,7 +15,7 @@ export const workSchema = z.object({
 
   content: z.string()
     .min(1, '내용을 입력하세요')
-    .max(10000, '내용은 10,000자 이하여야 합니다')
+    .max(100000, '내용은 100,000자 이하여야 합니다')
     .refine((val) => {
       // HTML에서 태그 제거하고 텍스트만 추출
       const textContent = val.replace(/<[^>]*>/g, '').trim();
@@ -94,7 +94,7 @@ export const workDraftSchema = z.object({
     .default(''),
 
   content: z.string()
-    .max(10000, '내용은 10,000자 이하여야 합니다')
+    .max(100000, '내용은 100,000자 이하여야 합니다')
     .optional()
     .default(''),
 
