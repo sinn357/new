@@ -41,6 +41,8 @@ export default function RichTextEditor({
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHighlightPicker, setShowHighlightPicker] = useState(false);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [customTextColor, setCustomTextColor] = useState('#2563eb');
+  const [customHighlightColor, setCustomHighlightColor] = useState('#fde68a');
 
   const editorRef = useRef<Editor | null>(null);
 
@@ -321,19 +323,23 @@ export default function RichTextEditor({
   }
 
   const colors = [
-    '#000000', '#374151', '#6B7280', '#EF4444', '#F59E0B',
-    '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#FFFFFF'
+    '#111827', '#1f2937', '#374151', '#4b5563', '#6b7280', '#9ca3af',
+    '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e',
+    '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6',
+    '#a855f7', '#d946ef', '#ec4899', '#f43f5e', '#ffffff',
   ];
 
   const highlightColors = [
-    '#FEF3C7', '#FED7AA', '#FCA5A5', '#DDD6FE', '#BFDBFE',
-    '#A7F3D0', '#FDE68A', '#FBCFE8', '#E9D5FF', 'transparent'
+    '#fef3c7', '#fde68a', '#fcd34d', '#fb7185', '#fecaca', '#ffedd5',
+    '#fed7aa', '#fbcfe8', '#f5d0fe', '#e9d5ff', '#ddd6fe', '#c7d2fe',
+    '#bfdbfe', '#bae6fd', '#a7f3d0', '#bbf7d0', '#dcfce7', '#e5e7eb',
+    '#d1fae5', '#fef9c3', 'transparent',
   ];
 
   return (
     <div className="w-full border border-gray-300 rounded-lg bg-white dark:bg-gray-800">
       {/* Toolbar */}
-      <div className="sticky top-4 z-30 border-b border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3 flex flex-wrap items-center gap-2">
+      <div className="sticky top-24 z-40 border-b border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3 flex flex-wrap items-center gap-2">
         {/* 텍스트 스타일 */}
         <div className="flex items-center gap-1 border-r border-gray-300 dark:border-gray-700 pr-2">
           <button
@@ -504,8 +510,31 @@ export default function RichTextEditor({
             🎨
           </button>
           {showColorPicker && (
-            <div className="absolute top-10 left-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-2 shadow-lg z-10">
-              <div className="grid grid-cols-5 gap-1">
+            <div className="absolute top-10 left-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-3 shadow-lg z-20 w-64">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-300">텍스트 컬러</span>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={customTextColor}
+                    onChange={(event) => {
+                      const next = event.target.value;
+                      setCustomTextColor(next);
+                      editor.chain().focus().setColor(next).run();
+                    }}
+                    className="h-7 w-10 cursor-pointer rounded border border-gray-300 bg-transparent p-0"
+                    title="커스텀 컬러"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => editor.chain().focus().unsetColor().run()}
+                    className="text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    기본
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-8 gap-1">
                 {colors.map((color) => (
                   <button
                     key={color}
@@ -535,8 +564,22 @@ export default function RichTextEditor({
             🖍️
           </button>
           {showHighlightPicker && (
-            <div className="absolute top-10 left-8 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-2 shadow-lg z-10">
-              <div className="grid grid-cols-5 gap-1">
+            <div className="absolute top-10 left-8 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-3 shadow-lg z-20 w-64">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-300">형광펜 컬러</span>
+                <input
+                  type="color"
+                  value={customHighlightColor}
+                  onChange={(event) => {
+                    const next = event.target.value;
+                    setCustomHighlightColor(next);
+                    editor.chain().focus().setHighlight({ color: next }).run();
+                  }}
+                  className="h-7 w-10 cursor-pointer rounded border border-gray-300 bg-transparent p-0"
+                  title="커스텀 형광펜"
+                />
+              </div>
+              <div className="grid grid-cols-8 gap-1">
                 {highlightColors.map((color) => (
                   <button
                     key={color}
@@ -710,6 +753,26 @@ export default function RichTextEditor({
       {/* Editor Content */}
       <div className="bg-white dark:bg-gray-800 rounded-b-lg">
         <EditorContent editor={editor} />
+      </div>
+
+      {/* Quick scroll controls */}
+      <div className="fixed right-6 bottom-6 z-40 flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="h-10 w-10 rounded-full bg-gray-900/80 text-white shadow-lg backdrop-blur hover:bg-gray-900 transition-colors"
+          title="맨 위로"
+        >
+          ↑
+        </button>
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
+          className="h-10 w-10 rounded-full bg-gray-900/80 text-white shadow-lg backdrop-blur hover:bg-gray-900 transition-colors"
+          title="맨 아래로"
+        >
+          ↓
+        </button>
       </div>
     </div>
   );
