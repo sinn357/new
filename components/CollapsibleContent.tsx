@@ -76,30 +76,6 @@ export default function CollapsibleContent({ html, className = '' }: Collapsible
         index={lightboxIndex}
         slides={lightboxSlides}
         plugins={[Zoom]}
-        render={{
-          buttonPrev: ({ onClick, disabled }: { onClick?: () => void; disabled?: boolean }) => (
-            <button
-              type="button"
-              aria-label="이전 이미지"
-              onClick={onClick}
-              disabled={disabled}
-              className="yarl__nav-btn yarl__nav-btn--prev"
-            >
-              ‹
-            </button>
-          ),
-          buttonNext: ({ onClick, disabled }: { onClick?: () => void; disabled?: boolean }) => (
-            <button
-              type="button"
-              aria-label="다음 이미지"
-              onClick={onClick}
-              disabled={disabled}
-              className="yarl__nav-btn yarl__nav-btn--next"
-            >
-              ›
-            </button>
-          ),
-        }}
       />
     </>
   );

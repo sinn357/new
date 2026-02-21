@@ -139,6 +139,7 @@ export default function RichTextEditor({
                 // Update node attributes
                 if (typeof getPos === 'function') {
                   const pos = getPos();
+                  if (typeof pos !== 'number') return;
                   const currentNode = editor.state.doc.nodeAt(pos);
                   if (currentNode) {
                     const width = Math.round(img.getBoundingClientRect().width);
