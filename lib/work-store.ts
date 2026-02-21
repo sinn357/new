@@ -12,6 +12,7 @@ export interface Work {
   fileUrl?: string;
   status: 'completed' | 'in-progress' | 'planned';
   duration?: string;
+  isFeatured?: boolean;
   isPublished: boolean;
   createdAt: string;
 }
@@ -46,9 +47,10 @@ export function createWork({
   youtubeUrl,
   instagramUrl,
   imageUrl, 
-  fileUrl,
+  fileUrl, 
   status = 'completed', 
   duration,
+  isFeatured = false,
   isPublished = true
 }: { 
   title: string; 
@@ -63,6 +65,7 @@ export function createWork({
   fileUrl?: string;
   status?: 'completed' | 'in-progress' | 'planned';
   duration?: string;
+  isFeatured?: boolean;
   isPublished?: boolean;
 }): Work {
   const work: Work = {
@@ -79,6 +82,7 @@ export function createWork({
     fileUrl,
     status,
     duration,
+    isFeatured,
     isPublished,
     createdAt: new Date().toISOString()
   };

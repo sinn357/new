@@ -544,6 +544,93 @@
   background-color: rgb(99, 102, 241);
 }
 
+/* Featured card emphasis */
+.featured-border {
+  border: 1px solid transparent;
+  background-image:
+    linear-gradient(rgb(255 255 255), rgb(255 255 255)),
+    linear-gradient(120deg, rgba(250, 204, 21, 0.9), rgba(249, 115, 22, 0.75), rgba(250, 204, 21, 0.9));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow:
+    0 0 0 1px rgba(250, 204, 21, 0.2),
+    0 12px 28px rgba(217, 119, 6, 0.16);
+}
+
+.featured-border:hover {
+  box-shadow:
+    0 0 0 1px rgba(250, 204, 21, 0.45),
+    0 16px 34px rgba(217, 119, 6, 0.24);
+}
+
+.dark .featured-border {
+  background-image:
+    linear-gradient(rgb(31 41 55), rgb(31 41 55)),
+    linear-gradient(120deg, rgba(250, 204, 21, 0.85), rgba(249, 115, 22, 0.6), rgba(250, 204, 21, 0.85));
+  box-shadow:
+    0 0 0 1px rgba(250, 204, 21, 0.25),
+    0 14px 30px rgba(15, 23, 42, 0.55);
+}
+
+/* Content image interactions */
+.clickable-content-image {
+  cursor: zoom-in;
+}
+
+/* YouTube embed sizing in editor/read mode */
+.ProseMirror iframe[data-youtube-embed="true"],
+.prose iframe[data-youtube-embed="true"] {
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.75rem;
+  border: 0;
+  margin: 0.75rem 0;
+}
+
+/* Lightbox navigation: place arrows outside image area */
+.yarl__nav-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 9999px;
+  background: rgba(17, 24, 39, 0.7);
+  color: #fff;
+  font-size: 1.6rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 80;
+}
+
+.yarl__nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.yarl__nav-btn--prev {
+  left: 2vw;
+}
+
+.yarl__nav-btn--next {
+  right: 2vw;
+}
+
+@media (max-width: 768px) {
+  .yarl__nav-btn--prev {
+    left: 8px;
+  }
+
+  .yarl__nav-btn--next {
+    right: 8px;
+  }
+}
+
 /* Print Optimization */
 @media print {
   /* Hide unnecessary elements */

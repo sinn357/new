@@ -310,7 +310,7 @@ function WorkPageContent() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="sticky top-20 z-40 px-6 pb-8"
+        className="px-6 pb-8"
       >
         <div className="max-w-6xl mx-auto relative">
           {/* Scroll Indicator Left */}
@@ -413,7 +413,7 @@ function WorkPageContent() {
                   <article
                     className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer ${
                       (work as any).isFeatured
-                        ? 'border-2 border-yellow-400 dark:border-yellow-500'
+                        ? 'featured-border border border-transparent'
                         : 'border border-gray-100 dark:border-gray-700'
                     }`}
                     role="link"

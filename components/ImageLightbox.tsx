@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
 import Image from 'next/image';
 import { getCloudinaryImageUrl } from '@/lib/cloudinary';
@@ -50,10 +51,8 @@ export default function ImageLightbox({
         open={isOpen}
         close={() => setIsOpen(false)}
         slides={[{ src: displaySrc }]}
-        render={{
-          buttonPrev: () => null,
-          buttonNext: () => null,
-        }}
+        plugins={[Zoom]}
+        render={{}}
       />
     </>
   );
@@ -81,8 +80,33 @@ export function ImageGalleryLightbox({
       close={onClose}
       index={index}
       slides={images.map(img => ({ src: img.src, alt: img.alt }))}
+      plugins={[Zoom]}
       on={{
         view: ({ index: newIndex }) => setIndex(newIndex)
+      }}
+      render={{
+        buttonPrev: ({ onClick, disabled }: { onClick?: () => void; disabled?: boolean }) => (
+          <button
+            type="button"
+            aria-label="이전 이미지"
+            onClick={onClick}
+            disabled={disabled}
+            className="yarl__nav-btn yarl__nav-btn--prev"
+          >
+            ‹
+          </button>
+        ),
+        buttonNext: ({ onClick, disabled }: { onClick?: () => void; disabled?: boolean }) => (
+          <button
+            type="button"
+            aria-label="다음 이미지"
+            onClick={onClick}
+            disabled={disabled}
+            className="yarl__nav-btn yarl__nav-btn--next"
+          >
+            ›
+          </button>
+        ),
       }}
     />
   );
@@ -114,10 +138,8 @@ export function ClickableImage({ src, alt, className = '' }: ClickableImageProps
         open={isOpen}
         close={() => setIsOpen(false)}
         slides={[{ src: displaySrc }]}
-        render={{
-          buttonPrev: () => null,
-          buttonNext: () => null,
-        }}
+        plugins={[Zoom]}
+        render={{}}
       />
     </>
   );

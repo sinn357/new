@@ -22,6 +22,8 @@ import { AppleNotesShortcuts } from '@/lib/tiptap-extensions/AppleNotesShortcuts
 import { CollapsibleHeading } from '@/lib/tiptap-extensions/CollapsibleHeading';
 import { CollapsibleHeadingPlugin } from '@/lib/tiptap-extensions/CollapsibleHeadingPlugin';
 import { Video } from '@/lib/tiptap-extensions/Video';
+import { YouTubeEmbed } from '@/lib/tiptap-extensions/YouTubeEmbed';
+import { buildYouTubeEmbedUrl, parseYouTubeVideoId } from '@/lib/youtube';
 
 interface RichTextEditorProps {
   value: string;
@@ -115,12 +117,11 @@ export default function RichTextEditor({
             const resizeHandle = document.createElement('div');
             resizeHandle.className = 'absolute bottom-0 right-0 w-4 h-4 bg-blue-500 rounded-full cursor-se-resize opacity-0 group-hover:opacity-100 transition-opacity';
 
-            let startX = 0, startY = 0, startWidth = 0;
+            let startX = 0, startWidth = 0;
 
             resizeHandle.addEventListener('mousedown', (e) => {
               e.preventDefault();
               startX = e.clientX;
-              startY = e.clientY;
               startWidth = img.offsetWidth;
 
               const onMouseMove = (e: MouseEvent) => {
@@ -137,10 +138,17 @@ export default function RichTextEditor({
 
                 // Update node attributes
                 if (typeof getPos === 'function') {
-                  editor.commands.updateAttributes('image', {
-                    width: parseInt(img.style.width),
-                    height: null
-                  });
+                  const pos = getPos();
+                  const currentNode = editor.state.doc.nodeAt(pos);
+                  if (currentNode) {
+                    const width = Math.round(img.getBoundingClientRect().width);
+                    const tr = editor.state.tr.setNodeMarkup(pos, currentNode.type, {
+                      ...currentNode.attrs,
+                      width,
+                      height: null,
+                    });
+                    editor.view.dispatch(tr);
+                  }
                 }
               };
 
@@ -166,6 +174,12 @@ export default function RichTextEditor({
           style: 'max-width: 100%; height: auto;',
           controls: true,
         }
+      }),
+      YouTubeEmbed.configure({
+        HTMLAttributes: {
+          class: 'rounded-lg w-full',
+          style: 'max-width: 100%; aspect-ratio: 16 / 9;',
+        },
       }),
       ImageGallery,
       AppleNotesShortcuts
@@ -285,6 +299,22 @@ export default function RichTextEditor({
     }
   };
 
+  const addYouTubeEmbed = () => {
+    const url = window.prompt('YouTube URL을 입력하세요:');
+    if (!url || !editor) return;
+    const videoId = parseYouTubeVideoId(url);
+    if (!videoId) {
+      window.alert('올바른 YouTube URL을 입력하세요.');
+      return;
+    }
+
+    editor.chain().focus().setYouTubeEmbed({
+      src: buildYouTubeEmbedUrl(videoId, { autoplay: true, mute: true }),
+      width: 960,
+      height: 540,
+    }).run();
+  };
+
   if (!editor) {
     return null;
   }
@@ -302,7 +332,7 @@ export default function RichTextEditor({
   return (
     <div className="w-full border border-gray-300 rounded-lg bg-white dark:bg-gray-800">
       {/* Toolbar */}
-      <div className="border-b border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3 flex flex-wrap items-center gap-2">
+      <div className="sticky top-4 z-30 border-b border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3 flex flex-wrap items-center gap-2">
         {/* 텍스트 스타일 */}
         <div className="flex items-center gap-1 border-r border-gray-300 dark:border-gray-700 pr-2">
           <button
@@ -585,6 +615,14 @@ export default function RichTextEditor({
             title="이미지 갤러리"
           >
             🖼️ 갤러리
+          </button>
+          <button
+            type="button"
+            onClick={addYouTubeEmbed}
+            className="px-3 py-1 text-sm bg-red-500 dark:bg-red-600 text-white rounded hover:bg-red-600 dark:hover:bg-red-700 transition-colors"
+            title="YouTube 삽입 (자동재생/무음)"
+          >
+            ▶ YouTube
           </button>
         </div>
       </div>

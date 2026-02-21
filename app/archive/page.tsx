@@ -292,7 +292,7 @@ function ArchivePageContent() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="sticky top-20 z-40 px-6 pb-8"
+        className="px-6 pb-8"
       >
         <div className="max-w-6xl mx-auto relative">
           {/* Scroll Indicator Left */}

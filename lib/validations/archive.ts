@@ -37,7 +37,8 @@ export const archiveSchema = z.object({
       // HTML에서 태그 제거하고 텍스트만 추출
       const textContent = val.replace(/<[^>]*>/g, '').trim();
       // 텍스트가 없어도 이미지나 갤러리가 있으면 OK
-      const hasMedia = val.includes('<img') || val.includes('<video') || val.includes('data-type="image-gallery"');
+      const hasYouTube = /<iframe[^>]+src="https?:\/\/(?:www\.)?(?:youtube\.com|youtube-nocookie\.com)\/embed\//i.test(val);
+      const hasMedia = val.includes('<img') || val.includes('<video') || val.includes('data-type="image-gallery"') || hasYouTube;
       return textContent.length > 0 || hasMedia;
     }, '텍스트, 이미지 또는 동영상을 추가하세요'),
 

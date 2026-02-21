@@ -419,7 +419,7 @@ export default function Home() {
                 <AnimatedCard key={work.id} delay={index * 0.1}>
                   <Link href={`/work/${work.id}`} className="block">
                     <article
-                      className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group border-2 border-indigo-200 dark:border-indigo-900"
+                      className="featured-border border border-transparent bg-white dark:bg-gray-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group"
                     >
                     <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10">
                       ⭐ FEATURED

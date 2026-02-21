@@ -88,6 +88,7 @@ export async function POST(request: Request) {
         fileUrl: data.fileUrl || null,
         status: data.status,
         duration: data.duration || null,
+        isFeatured: data.isFeatured ?? false,
         isPublished: data.isPublished ?? true
       }
     });

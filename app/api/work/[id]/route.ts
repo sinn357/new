@@ -98,6 +98,7 @@ export async function PUT(
         fileUrl: data.fileUrl || null,
         status: data.status,
         duration: data.duration || null,
+        isFeatured: data.isFeatured ?? false,
         isPublished: data.isPublished ?? true
       }
     });
