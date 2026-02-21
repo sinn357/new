@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
@@ -17,6 +17,7 @@ export default function CollapsibleContent({ html, className = '' }: Collapsible
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [lightboxSlides, setLightboxSlides] = useState<Array<{ src: string; alt?: string }>>([]);
+  const contentMarkup = useMemo(() => ({ __html: html }), [html]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -68,7 +69,7 @@ export default function CollapsibleContent({ html, className = '' }: Collapsible
       <div
         ref={containerRef}
         className={className}
-        dangerouslySetInnerHTML={{ __html: html }}
+        dangerouslySetInnerHTML={contentMarkup}
       />
       <Lightbox
         open={isLightboxOpen}
