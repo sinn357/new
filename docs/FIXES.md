@@ -1,5 +1,69 @@
 # Blog Web - Error Fixes
 
+## 2026-02-21
+
+### Lightbox Type Error on Vercel Build
+
+**Error Message**:
+```
+Type error: Type '({ onClick, disabled }) => JSX.Element' is not assignable to type '() => ReactNode'
+```
+
+**Affected**: `components/CollapsibleContent.tsx` (production build / TypeScript 단계)
+
+**Root Cause**:
+- 설치된 `yet-another-react-lightbox` 타입 정의에서 `render.buttonPrev/buttonNext` 시그니처가 인자 없는 함수였는데,
+  인자를 받는 커스텀 렌더를 전달함
+
+**Solution**:
+- 커스텀 `render.buttonPrev/buttonNext` 제거
+- 라이브러리 기본 네비 버튼 사용
+- 네비 버튼 위치/스타일은 CSS 오버라이드(`.yarl__navigation_prev`, `.yarl__navigation_next`)로 처리
+
+**Result**:
+- `next build` TypeScript 에러 해소
+
+---
+
+### Collapsible Reset + Broken Images After Closing Lightbox
+
+**Error Symptoms**:
+- 이미지 라이트박스 닫으면 접기 상태가 전부 펼쳐짐
+- 본문 이미지가 엑박으로 바뀌는 현상 발생
+
+**Affected**: `components/CollapsibleContent.tsx`
+
+**Root Cause**:
+- 라이트박스 open/close 상태 변경으로 컴포넌트 리렌더 시,
+  `dangerouslySetInnerHTML`가 재주입되어 본문 DOM 상태(접힘/이미지 상태)가 초기화됨
+
+**Solution**:
+- `dangerouslySetInnerHTML` 주입 객체를 `useMemo`로 고정해서 `html` 값이 바뀔 때만 재주입되도록 변경
+
+**Result**:
+- 라이트박스 진입/종료 후에도 접기 상태 유지
+- 이미지 엑박 재발 방지
+
+---
+
+### Editor Toolbar Overlap and FAB Collision
+
+**Error Symptoms**:
+- 글쓰기 시 sticky 툴바가 상단 네비게이션에 가려짐
+- 우하단 상/하단 이동 버튼이 로그인(Admin) 버튼과 겹침
+
+**Affected**: `components/RichTextEditor.tsx`
+
+**Solution**:
+- 툴바 sticky offset 상향 (`top-24`)
+- 빠른 이동 버튼 위치 상향 (`bottom-24`)
+
+**Result**:
+- 상단 툴바 가림 해소
+- 하단 고정 버튼 간 겹침 해소
+
+---
+
 ## 2026-02-20
 
 ### Work Content Limit Update
@@ -88,4 +152,4 @@ The column Work.isFeatured does not exist in the current database.
 
 ---
 
-**Last Updated**: 2026-02-20
+**Last Updated**: 2026-02-21

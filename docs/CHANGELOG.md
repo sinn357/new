@@ -1,5 +1,32 @@
 # Blog Web Changelog
 
+## 2026-02-21
+
+### Added
+- **에디터 YouTube 임베드**: URL 입력으로 `youtube-nocookie` iframe 삽입, 무음 자동재생 파라미터(`autoplay=1&mute=1`) 적용
+- **읽기 모드 이미지 라이트박스 강화**: 본문 이미지 클릭 시 갤러리 라이트박스 오픈, 확대/축소(Zoom) 지원
+- **빠른 스크롤 FAB**: 작성 화면 우하단 `맨 위/맨 아래` 이동 버튼 추가
+- **컬러 선택 강화**: 텍스트/형광펜 색상 팔레트 대폭 확장 + 커스텀 컬러 피커(`input[type=color]`) 지원
+
+### Changed
+- **카테고리 바 동작 변경**: Work/Archive 카테고리 바의 sticky 추종 제거 (고정형)
+- **에디터 툴바 추종 개선**: 툴바 sticky 유지 + 헤더와 겹치지 않도록 top offset 조정
+- **Featured 카드 강조**: 홈/Work 목록 카드에 전용 특수 테두리(gradient + glow) 스타일 적용
+
+### Fixed
+- **Featured 저장 누락 해결**: Work 생성/수정 API에서 `isFeatured` 저장 로직 반영
+- **이미지 리사이즈 지속성**: 에디터 우하단 핸들로 조절한 width가 읽기 모드에도 반영되도록 노드 속성 저장 안정화
+- **라이트박스 닫힘 후 본문 상태 초기화 문제**: 닫은 뒤 접기 상태가 풀리거나 이미지가 엑박으로 변하는 현상 수정
+- **Vercel TypeScript 빌드 에러**: Lightbox 커스텀 nav 렌더 타입 충돌 제거, 기본 네비 + CSS 오버라이드로 전환
+- **작성 화면 FAB 겹침**: 상/하단 이동 버튼이 로그인(Admin) 버튼과 겹치지 않도록 위치 상향
+
+### Commits
+- `2e0d3b4`: feat(editor): sticky toolbar, youtube embed, lightbox nav, featured border, and image resize persistence
+- `a59f9bf`: fix(lightbox): use built-in nav buttons and resolve TS build errors
+- `dd0f9ed`: fix(content): preserve collapsible and image state when closing lightbox
+- `86851b5`: feat(editor): prevent header overlap, expand color pickers, add quick top/bottom scroll buttons
+- `7e0bdca`: fix(editor): move quick scroll buttons above admin button
+
 ## 2026-02-20
 
 ### Changed
@@ -266,4 +293,4 @@
 
 ---
 
-**Last Updated**: 2026-02-05
+**Last Updated**: 2026-02-21
