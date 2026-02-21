@@ -756,7 +756,7 @@ export default function RichTextEditor({
       </div>
 
       {/* Quick scroll controls */}
-      <div className="fixed right-6 bottom-6 z-40 flex flex-col gap-2">
+      <div className="fixed right-6 bottom-24 z-40 flex flex-col gap-2">
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
